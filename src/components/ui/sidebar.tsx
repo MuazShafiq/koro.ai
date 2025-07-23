@@ -89,8 +89,8 @@ export const DesktopSidebar = ({
   return (
     <motion.div
       className={cn(
-        "h-full px-4 py-4 hidden md:flex md:flex-col backdrop-blur-md bg-white/70 dark:bg-neutral-900/70",
-        "border-r border-white/20 dark:border-neutral-700/50 flex-shrink-0",
+        "h-full px-4 py-4 hidden md:flex md:flex-col bg-card/80 backdrop-blur-md",
+        "border-r border-border flex-shrink-0",
         "shadow-xl",
         className
       )}
@@ -120,13 +120,13 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "h-10 px-4 py-4 flex flex-row md:hidden items-center justify-between bg-neutral-100 dark:bg-neutral-800 w-full"
+          "h-10 px-4 py-4 flex flex-row md:hidden items-center justify-between bg-card w-full"
         )}
         {...props}
       >
         <div className="flex justify-end z-20 w-full">
           <Menu
-            className="text-neutral-800 dark:text-neutral-200 cursor-pointer"
+            className="text-foreground cursor-pointer"
             onClick={() => setOpen(!open)}
           />
         </div>
@@ -141,12 +141,12 @@ export const MobileSidebar = ({
                 ease: "easeInOut",
               }}
               className={cn(
-                "fixed h-full w-full inset-0 bg-white dark:bg-neutral-900 p-10 z-[100] flex flex-col justify-between",
+                "fixed h-full w-full inset-0 bg-background p-10 z-[100] flex flex-col justify-between",
                 className
               )}
             >
               <div
-                className="absolute right-10 top-10 z-50 text-neutral-800 dark:text-neutral-200 cursor-pointer"
+                className="absolute right-10 top-10 z-50 text-foreground cursor-pointer"
                 onClick={() => setOpen(!open)}
               >
                 <X />
@@ -190,7 +190,7 @@ export const SidebarLink = ({
           duration: 0.15,
           ease: "easeInOut",
         }}
-        className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+        className="text-muted-foreground text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
       >
         {link.label}
       </motion.span>

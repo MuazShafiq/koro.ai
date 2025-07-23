@@ -34,13 +34,13 @@ export const SubjectCard = ({
         whileTap={{ scale: 0.98 }}
         transition={{ duration: 0.2 }}
         className={cn(
-          "backdrop-blur-sm bg-white/70 dark:bg-neutral-900/70 border border-white/20 dark:border-neutral-700/50",
+          "bg-card border border-border",
           "rounded-2xl p-4 shadow-md hover:shadow-xl transition-all duration-300",
           "space-y-3 group cursor-pointer"
         )}
       >
         <div className="flex items-center justify-between">
-          <div className="text-lg font-semibold group-hover:text-primary transition-colors">{subject}</div>
+          <div className="text-lg font-semibold text-card-foreground group-hover:text-primary transition-colors">{subject}</div>
           <div className={cn(
             "p-2 rounded-full bg-gradient-to-r",
             gradient,
