@@ -8,25 +8,33 @@
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
+    --primary: 221 83% 53%; /* Electric blue #0066FF */
     --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
+    --secondary: 262 83% 58%; /* Violet #8B5CF6 */
+    --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 96.1%;
     --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --accent: 221 83% 53%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
+    --ring: 221 83% 53%;
+    --chart-1: 221 83% 53%;
+    --chart-2: 262 83% 58%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+    
+    /* Koro.ai Custom Variables */
+    --electric-blue: 221 83% 53%;
+    --violet: 262 83% 58%;
+    --neon-cyan: 180 100% 50%;
+    --neon-pink: 330 100% 70%;
+    --glass-bg: 255 255 255 / 0.1;
+    --glass-border: 255 255 255 / 0.2;
   }
 
   .dark {
@@ -36,24 +44,30 @@
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
+    --primary: 221 83% 53%; /* Electric blue #0066FF */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 262 83% 58%; /* Violet #8B5CF6 */
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
+    --accent: 221 83% 53%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
+    --ring: 221 83% 53%;
+    --chart-1: 221 83% 53%;
+    --chart-2: 262 83% 58%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    
+    /* Dark mode glass effects */
+    --glass-bg: 0 0 0 / 0.1;
+    --glass-border: 255 255 255 / 0.1;
+    --neon-cyan: 180 100% 60%;
+    --neon-pink: 330 100% 80%;
   }
 }
 
@@ -65,11 +79,72 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     min-height: 100vh;
   }
   
   * {
     transition: background-color 0.2s ease, color 0.2s ease;
+  }
+}
+
+@layer utilities {
+  /* Glassmorphism Effects */
+  .glass {
+    background: rgba(var(--glass-bg));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(var(--glass-border));
+  }
+  
+  .glass-strong {
+    background: rgba(var(--glass-bg));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(var(--glass-border));
+  }
+  
+  /* Gradient Utilities */
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--electric-blue)), hsl(var(--violet)));
+  }
+  
+  .gradient-neon {
+    background: linear-gradient(135deg, hsl(var(--neon-cyan)), hsl(var(--neon-pink)));
+  }
+  
+  /* Animation Utilities */
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  /* 3D Tilt Effect */
+  .tilt-3d {
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease;
+  }
+  
+  .tilt-3d:hover {
+    transform: perspective(1000px) rotateX(5deg) rotateY(5deg) scale(1.02);
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 20px hsl(var(--electric-blue) / 0.5);
+  }
+  to {
+    box-shadow: 0 0 30px hsl(var(--violet) / 0.8), 0 0 40px hsl(var(--electric-blue) / 0.3);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
   }
 }
