@@ -3,7 +3,6 @@
 import { SubjectCard } from "@/components/cards/SubjectCard";
 import { PerformanceCard } from "@/components/cards/PerformanceCard";
 import { BentoGrid, BentoGridItem } from "@/components/layouts/BentoGrid";
-import { KoroSidebar } from "@/components/layouts/Sidebar";
 import { motion } from "framer-motion";
 import { BookOpen, Calculator, Atom, Globe, Target, Trophy, Clock, Zap, TrendingUp, Users, FlaskConical, Dna, Code } from "lucide-react";
 import { useStore } from "@/lib/store";
@@ -141,9 +140,8 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-background via-background to-background/95">
-      <KoroSidebar />
-      <main className="flex-1 overflow-auto">
+    <div className="w-full h-full overflow-auto bg-gradient-to-br from-background via-background to-background/95">
+      <main className="w-full">
         <div className="container mx-auto p-6 space-y-8">
           {/* Header */}
           <motion.div

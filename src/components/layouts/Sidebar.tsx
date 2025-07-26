@@ -21,6 +21,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "@/lib/store";
 
+
 interface SidebarProps {
   className?: string;
 }
@@ -185,34 +186,40 @@ export function KoroSidebar({ className }: SidebarProps) {
                   whileHover={{ 
                     scale: 1.02,
                     x: 4,
-                    transition: { duration: 0.2 }
+                    transition: { duration: 0.2, ease: "easeOut" }
                   }}
                   whileTap={{ scale: 0.98 }}
                   onHoverStart={() => setHoveredItem(item.name)}
                   onHoverEnd={() => setHoveredItem(null)}
                   className={cn(
                     "relative flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium",
-                    "text-muted-foreground hover:text-foreground",
-                    "transition-all duration-300 ease-out",
+                    "text-muted-foreground transition-all duration-300 ease-out",
                     "group cursor-pointer overflow-hidden",
-                    isHovered && "glass border border-white/10 bg-gradient-to-r from-primary/10 to-secondary/10"
+                    "hover:text-foreground hover:bg-gradient-to-r hover:from-primary/8 hover:to-secondary/8",
+                    "hover:border hover:border-white/10 hover:shadow-lg hover:shadow-primary/5"
                   )}
                 >
-                  {/* Hover background */}
+                  {/* Unified hover background */}
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl"
-                    initial={{ opacity: 0, scale: 0.8 }}
+                    className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl border border-transparent"
+                    initial={{ opacity: 0 }}
                     animate={{ 
                       opacity: isHovered ? 1 : 0,
-                      scale: isHovered ? 1 : 0.8
+                      borderColor: isHovered ? "rgba(255,255,255,0.1)" : "transparent"
                     }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
                   />
                   
                   {/* Icon */}
                   <motion.div
-                    className="relative z-10 p-2 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 group-hover:from-primary/30 group-hover:to-secondary/30 transition-all duration-300"
-                    whileHover={{ rotate: 5 }}
+                    className="relative z-10 p-2 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 transition-all duration-300 ease-out"
+                    animate={{
+                      background: isHovered 
+                        ? "linear-gradient(135deg, rgba(var(--primary), 0.3), rgba(var(--secondary), 0.3))"
+                        : "linear-gradient(135deg, rgba(var(--primary), 0.2), rgba(var(--secondary), 0.2))",
+                      rotate: isHovered ? 5 : 0
+                    }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
                   >
                     <Icon className="h-4 w-4 flex-shrink-0" />
                   </motion.div>
@@ -227,21 +234,13 @@ export function KoroSidebar({ className }: SidebarProps) {
                         transition={{ duration: 0.2 }}
                         className="relative z-10 flex-1"
                       >
-                        <div className="font-medium">{item.name}</div>
-                        <div className="text-xs text-muted-foreground group-hover:text-muted-foreground/80 transition-colors">
+                        <div className="font-medium transition-colors duration-300">{item.name}</div>
+                        <div className="text-xs text-muted-foreground transition-colors duration-300">
                           {item.description}
                         </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
-                  
-                  {/* Glow effect */}
-                  <motion.div
-                    className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/10 to-secondary/10 blur-sm"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: isHovered ? 0.5 : 0 }}
-                    transition={{ duration: 0.3 }}
-                  />
                 </motion.div>
               </Link>
             );
@@ -251,21 +250,28 @@ export function KoroSidebar({ className }: SidebarProps) {
 
       {/* Bottom Navigation */}
       <div className="relative z-10 border-t border-white/10 p-4 space-y-2">
+
+        
         {bottomNavigation.map((item) => {
           const Icon = item.icon;
           return (
             <Link key={item.name} href={item.href}>
               <motion.div
-                whileHover={{ scale: 1.02, x: 4 }}
+                whileHover={{ 
+                  scale: 1.02, 
+                  x: 4,
+                  transition: { duration: 0.2, ease: "easeOut" }
+                }}
                 whileTap={{ scale: 0.98 }}
                 className={cn(
                   "flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium",
-                  "text-muted-foreground hover:text-foreground",
-                  "hover:bg-primary/10 transition-all duration-300",
-                  "group cursor-pointer"
+                  "text-muted-foreground transition-all duration-300 ease-out",
+                  "hover:text-foreground hover:bg-gradient-to-r hover:from-primary/8 hover:to-secondary/8",
+                  "hover:border hover:border-white/10 hover:shadow-md hover:shadow-primary/5",
+                  "group cursor-pointer border border-transparent"
                 )}
               >
-                <Icon className="h-4 w-4 flex-shrink-0" />
+                <Icon className="h-4 w-4 flex-shrink-0 transition-colors duration-300" />
                 <AnimatePresence mode="wait">
                   {sidebarExpanded && (
                     <motion.span
@@ -273,7 +279,7 @@ export function KoroSidebar({ className }: SidebarProps) {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -10 }}
                       transition={{ duration: 0.2 }}
-                      className="truncate"
+                      className="truncate transition-colors duration-300"
                     >
                       {item.name}
                     </motion.span>
