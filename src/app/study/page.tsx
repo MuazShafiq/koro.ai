@@ -26,17 +26,23 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
+import { useSupabase } from '@/utils/supabase/provider';
 import VoiceAssistant from '@/components/voice/VoiceAssistant';
 import InteractiveWhiteboard from '@/components/whiteboard/InteractiveWhiteboard';
+import { Database } from '@/utils/supabase/database.types';
+
+type Subject = Database['public']['Tables']['subjects']['Row'];
+type Topic = Database['public']['Tables']['topics']['Row'];
 
 interface StudyTopic {
   id: string;
-  title: string;
+  name: string;
   description: string;
   duration: number; // in minutes
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   concepts: string[];
   completed: boolean;
+  progress: number;
 }
 
 interface StudySession {
@@ -50,39 +56,46 @@ interface StudySession {
   achievements: string[];
 }
 
-const mockTopics: StudyTopic[] = [
+// Fallback topics if database fetch fails
+const fallbackTopics: StudyTopic[] = [
   {
     id: '1',
-    title: 'Introduction to Algebra',
+    name: 'Introduction to Algebra',
     description: 'Learn the basics of algebraic expressions and equations',
     duration: 45,
     difficulty: 'beginner',
     concepts: ['Variables', 'Expressions', 'Equations', 'Solving for x'],
     completed: false,
+    progress: 0
   },
   {
     id: '2',
-    title: 'Quadratic Equations',
+    name: 'Quadratic Equations',
     description: 'Master quadratic equations and their solutions',
     duration: 60,
     difficulty: 'intermediate',
     concepts: ['Standard form', 'Factoring', 'Quadratic formula', 'Graphing'],
     completed: false,
+    progress: 0
   },
   {
     id: '3',
-    title: 'Systems of Equations',
+    name: 'Systems of Equations',
     description: 'Solve systems using substitution and elimination',
     duration: 50,
     difficulty: 'intermediate',
     concepts: ['Substitution', 'Elimination', 'Graphing method', 'Applications'],
     completed: false,
+    progress: 0
   },
 ];
 
 export default function StudyPage() {
   const { currentSubject, userProgress, updateUserProgress } = useStore();
-  const [currentTopic, setCurrentTopic] = useState<StudyTopic>(mockTopics[0]);
+  const { supabase } = useSupabase();
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [topics, setTopics] = useState<StudyTopic[]>(fallbackTopics);
+  const [currentTopic, setCurrentTopic] = useState<StudyTopic>(fallbackTopics[0]);
   const [session, setSession] = useState<StudySession | null>(null);
   const [isStudying, setIsStudying] = useState(false);
   const [studyTime, setStudyTime] = useState(0);
@@ -90,6 +103,72 @@ export default function StudyPage() {
   const [isWhiteboardExpanded, setIsWhiteboardExpanded] = useState(false);
   const [studyNotes, setStudyNotes] = useState('');
   const [completedConcepts, setCompletedConcepts] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Fetch subjects and topics from Supabase
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        
+        // Get current user
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+          throw new Error('User not authenticated');
+        }
+        
+        // Fetch subjects for the current user
+        const { data: subjectsData, error: subjectsError } = await supabase
+          .from('subjects')
+          .select('*')
+          .eq('user_id', user.id);
+        
+        if (subjectsError) throw subjectsError;
+        
+        if (subjectsData && subjectsData.length > 0) {
+          setSubjects(subjectsData);
+          
+          // Fetch topics for the first subject
+          const subjectId = currentSubject || subjectsData[0].id;
+          const { data: topicsData, error: topicsError } = await supabase
+            .from('topics')
+            .select('*')
+            .eq('subject_id', subjectId);
+          
+          if (topicsError) throw topicsError;
+          
+          if (topicsData && topicsData.length > 0) {
+            // Transform topics to match StudyTopic interface
+            const formattedTopics: StudyTopic[] = topicsData.map(topic => ({
+              id: topic.id,
+              name: topic.name,
+              description: 'Learn about ' + topic.name, // Default description
+              duration: 45, // Default duration
+              difficulty: 'intermediate' as 'beginner' | 'intermediate' | 'advanced', // Default difficulty
+              concepts: ['Concept 1', 'Concept 2'], // Default concepts
+              completed: topic.completed,
+              progress: topic.progress
+            }));
+            
+            setTopics(formattedTopics);
+            setCurrentTopic(formattedTopics[0]);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError('Failed to load study materials');
+        // Fall back to mock data
+        setTopics(fallbackTopics);
+        setCurrentTopic(fallbackTopics[0]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchData();
+  }, [supabase, currentSubject]);
 
   // Timer for study session
   useEffect(() => {
@@ -137,7 +216,7 @@ export default function StudyPage() {
     setIsStudying(true);
   };
 
-  const endStudySession = () => {
+  const endStudySession = async () => {
     if (session) {
       const updatedSession = {
         ...session,
@@ -146,7 +225,7 @@ export default function StudyPage() {
         notes: studyNotes,
       };
       
-      // Update user progress
+      // Update user progress in Zustand store
       updateUserProgress({
         totalSessions: userProgress.totalSessions + 1,
         streak: userProgress.streak + (sessionProgress >= 80 ? 1 : 0),
@@ -157,12 +236,60 @@ export default function StudyPage() {
         }
       });
       
-      setIsStudying(false);
-      setSession(null);
-      
-      // Mark topic as completed if progress >= 80%
-      if (sessionProgress >= 80) {
-        setCurrentTopic(prev => ({ ...prev, completed: true }));
+      try {
+        // Update topic progress in Supabase
+        if (sessionProgress >= 80) {
+          const { error } = await supabase
+            .from('topics')
+            .update({ 
+              completed: true,
+              progress: 100,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', currentTopic.id);
+            
+          if (error) throw error;
+          
+          // Update local state
+          setCurrentTopic(prev => ({ ...prev, completed: true, progress: 100 }));
+        } else {
+          // Update progress but not mark as completed
+          const newProgress = Math.max(currentTopic.progress, sessionProgress);
+          const { error } = await supabase
+            .from('topics')
+            .update({ 
+              progress: newProgress,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', currentTopic.id);
+            
+          if (error) throw error;
+          
+          // Update local state
+          setCurrentTopic(prev => ({ ...prev, progress: newProgress }));
+        }
+        
+        // Update user profile with new streak and XP
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .update({ 
+              streak: userProgress.streak + (sessionProgress >= 80 ? 1 : 0),
+              xp: userProgress.xp + Math.floor(studyTime / 60) * 10,
+              total_sessions: userProgress.totalSessions + 1,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', user.id);
+            
+          if (profileError) throw profileError;
+        }
+      } catch (err) {
+        console.error('Error updating progress:', err);
+        // Continue with local state updates even if database update fails
+      } finally {
+        setIsStudying(false);
+        setSession(null);
       }
     }
   };
@@ -229,7 +356,7 @@ export default function StudyPage() {
                     <BookOpen className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <CardTitle>{currentTopic.title}</CardTitle>
+                    <CardTitle>{currentTopic.name}</CardTitle>
                     <p className="text-sm text-muted-foreground">{currentTopic.description}</p>
                   </div>
                 </div>
