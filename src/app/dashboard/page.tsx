@@ -4,12 +4,22 @@ import { SubjectCard } from "@/components/cards/SubjectCard";
 import { PerformanceCard } from "@/components/cards/PerformanceCard";
 import { BentoGrid, BentoGridItem } from "@/components/layouts/BentoGrid";
 import { motion } from "framer-motion";
-import { BookOpen, Calculator, Atom, Globe, Target, Trophy, Clock, Zap, TrendingUp, Users, FlaskConical, Dna, Code } from "lucide-react";
+import { BookOpen, Calculator, Atom, Globe, Target, Trophy, Clock, Zap, TrendingUp, Users, FlaskConical, Dna, Code, Loader2 } from "lucide-react";
 import { useStore } from "@/lib/store";
-import { useState, useEffect } from "react";
+import { useSupabase } from "@/utils/supabase/provider";
+import { Database } from "@/utils/supabase/database.types";
+import React, { useState, useEffect } from 'react';
+
+type Profile = Database['public']['Tables']['profiles']['Row'];
+type Subject = Database['public']['Tables']['subjects']['Row'];
+type Topic = Database['public']['Tables']['topics']['Row'];
 
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState('');
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [subjects, setSubjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { supabase } = useSupabase();
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -18,103 +28,156 @@ export default function DashboardPage() {
     else setGreeting('Good evening');
   }, []);
 
-  const subjects = [
-    {
-      id: 1,
-      subject: "Mathematics",
-      icon: <Calculator className="w-5 h-5" />,
-      progress: 75,
-      nextTopic: "Algebra, Calculus, and more",
-      href: "/lessons/math",
-      gradient: "from-sky-400 to-blue-500",
-      completedTopics: 12
-    },
-    {
-      id: 2,
-      subject: "Physics",
-      icon: <Atom className="w-5 h-5" />,
-      progress: 60,
-      nextTopic: "Mechanics, Thermodynamics",
-      href: "/lessons/physics",
-      gradient: "from-emerald-400 to-green-500",
-      completedTopics: 8
-    },
-    {
-      id: 3,
-      subject: "Chemistry",
-      icon: <FlaskConical className="w-5 h-5" />,
-      progress: 45,
-      nextTopic: "Organic, Inorganic Chemistry",
-      href: "/lessons/chemistry",
-      gradient: "from-pink-400 to-fuchsia-500",
-      completedTopics: 6
-    },
-    {
-      id: 4,
-      subject: "Biology",
-      icon: <Dna className="w-5 h-5" />,
-      progress: 80,
-      nextTopic: "Cell Biology, Genetics",
-      href: "/lessons/biology",
-      gradient: "from-emerald-400 to-green-500",
-      completedTopics: 15
-    },
-    {
-      id: 5,
-      subject: "Computer Science",
-      icon: <Code className="w-5 h-5" />,
-      progress: 90,
-      nextTopic: "Programming, Algorithms",
-      href: "/lessons/computer-science",
-      gradient: "from-indigo-400 to-purple-500",
-      completedTopics: 18
-    },
-    {
-      id: 6,
-      subject: "English",
-      icon: <BookOpen className="w-5 h-5" />,
-      progress: 55,
-      nextTopic: "Literature, Grammar",
-      href: "/lessons/english",
-      gradient: "from-rose-400 to-red-500",
-      completedTopics: 9
+  useEffect(() => {
+     fetchUserData();
+   }, []);
+
+  const fetchUserData = async () => {
+     try {
+       setLoading(true);
+       
+       // Get current user
+       const { data: { user } } = await supabase.auth.getUser();
+       
+       if (!user) {
+         setLoading(false);
+         return;
+       }
+       
+       // Fetch user profile
+       const { data: profileData } = await supabase
+         .from('profiles')
+         .select('*')
+         .eq('id', user.id)
+         .single();
+      
+      setProfile(profileData);
+      
+      // Fetch user subjects with progress
+      const { data: subjectsData } = await supabase
+        .from('subjects')
+        .select(`
+          *,
+          topics(
+            id,
+            title,
+            completed
+          )
+        `)
+        .eq('user_id', user.id);
+      
+      if (subjectsData) {
+        const formattedSubjects = subjectsData.map((subject: any) => {
+          const totalTopics = subject.topics?.length || 0;
+          const completedTopics = subject.topics?.filter((topic: any) => topic.completed).length || 0;
+          const progress = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
+          
+          return {
+            id: subject.id,
+            subject: subject.name,
+            icon: getSubjectIcon(subject.name),
+            progress,
+            nextTopic: getNextTopic(subject.name),
+            href: `/lessons/${subject.name.toLowerCase().replace(/\s+/g, '-')}`,
+            gradient: getSubjectGradient(subject.name),
+            completedTopics
+          };
+        });
+        
+        setSubjects(formattedSubjects);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const getSubjectIcon = (subjectName: string) => {
+     const iconMap: { [key: string]: React.JSX.Element } = {
+      'Mathematics': <Calculator className="w-5 h-5" />,
+      'Physics': <Atom className="w-5 h-5" />,
+      'Chemistry': <FlaskConical className="w-5 h-5" />,
+      'Biology': <Dna className="w-5 h-5" />,
+      'Computer Science': <Code className="w-5 h-5" />,
+      'English': <BookOpen className="w-5 h-5" />
+    };
+    return iconMap[subjectName] || <BookOpen className="w-5 h-5" />;
+  };
+
+  const getSubjectGradient = (subjectName: string) => {
+    const gradientMap: { [key: string]: string } = {
+      'Mathematics': 'from-sky-400 to-blue-500',
+      'Physics': 'from-emerald-400 to-green-500',
+      'Chemistry': 'from-pink-400 to-fuchsia-500',
+      'Biology': 'from-emerald-400 to-green-500',
+      'Computer Science': 'from-indigo-400 to-purple-500',
+      'English': 'from-rose-400 to-red-500'
+    };
+    return gradientMap[subjectName] || 'from-gray-400 to-gray-500';
+  };
+
+  const getNextTopic = (subjectName: string) => {
+    const topicMap: { [key: string]: string } = {
+      'Mathematics': 'Algebra, Calculus, and more',
+      'Physics': 'Mechanics, Thermodynamics',
+      'Chemistry': 'Organic, Inorganic Chemistry',
+      'Biology': 'Cell Biology, Genetics',
+      'Computer Science': 'Programming, Algorithms',
+      'English': 'Literature, Grammar'
+    };
+    return topicMap[subjectName] || 'Continue learning';
+  };
+
+  if (loading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="flex items-center gap-2">
+          <Loader2 className="w-6 h-6 animate-spin" />
+          <span>Loading your dashboard...</span>
+        </div>
+      </div>
+    );
+  }
+
+  const totalCompletedTopics = subjects.reduce((acc, subject) => acc + subject.completedTopics, 0);
+  const totalStudyHours = profile?.total_sessions ? (profile.total_sessions * 0.5).toFixed(1) : '0';
+  const averageProgress = subjects.length > 0 ? Math.round(subjects.reduce((acc, subject) => acc + subject.progress, 0) / subjects.length) : 0;
 
   const performanceData = [
     {
       title: "Learning Streak",
-      value: 12,
-      change: 12,
-      period: "vs last week",
+      value: profile?.streak || 0,
+      change: profile?.streak || 0,
+      period: "days",
       icon: <Target className="w-5 h-5" />,
-      chartData: [3, 5, 4, 6, 5, 7, 5],
+      chartData: [3, 5, 4, 6, 5, 7, profile?.streak || 0],
       target: 7
     },
     {
-      title: "Weekly Score",
-      value: "92%",
-      change: 8,
-      period: "this week",
+      title: "Average Progress",
+      value: `${averageProgress}%`,
+      change: averageProgress > 75 ? 8 : averageProgress > 50 ? 5 : 2,
+      period: "overall",
       icon: <Trophy className="w-5 h-5" />,
-      chartData: [85, 88, 90, 87, 92, 89, 92]
+      chartData: [65, 70, 75, 80, 85, 88, averageProgress]
     },
     {
       title: "Study Time",
-      value: "24.5h",
+      value: `${totalStudyHours}h`,
       change: -5,
       period: "this week",
       icon: <Clock className="w-5 h-5" />,
-      chartData: [2, 3, 4, 2, 5, 3, 4],
+      chartData: [2, 3, 4, 2, 5, 3, parseFloat(totalStudyHours) % 10],
       target: 30
     },
     {
       title: "Focus Score",
-      value: "87%",
+      value: `${Math.min(100, Math.max(0, averageProgress + 5))}%`,
       change: 15,
       period: "vs last week",
       icon: <Zap className="w-5 h-5" />,
-      chartData: [75, 78, 82, 85, 87, 89, 87]
+      chartData: [75, 78, 82, 85, 87, 89, Math.min(100, Math.max(0, averageProgress + 5))]
     }
   ];
 
@@ -127,13 +190,13 @@ export default function DashboardPage() {
     },
     {
       title: "Completed Topics",
-      value: subjects.reduce((acc, subject) => acc + subject.completedTopics, 0),
+      value: totalCompletedTopics,
       icon: <TrendingUp className="w-6 h-6" />,
       color: "from-green-500 to-emerald-500"
     },
     {
       title: "Study Sessions",
-      value: 24,
+      value: profile?.total_sessions || 0,
       icon: <Users className="w-6 h-6" />,
       color: "from-purple-500 to-pink-500"
     }
@@ -160,7 +223,7 @@ export default function DashboardPage() {
               </motion.div>
               <div>
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-                  {greeting}! 👋
+                  {greeting}, {profile?.full_name || 'there'}! 👋
                 </h1>
                 <p className="text-muted-foreground text-lg">
                   Ready to continue your learning journey?

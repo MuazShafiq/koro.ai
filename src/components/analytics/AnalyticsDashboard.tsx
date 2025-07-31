@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   LineChart,
@@ -32,6 +32,7 @@ import {
   BarChart3,
   PieChart as PieChartIcon,
   Activity,
+  Loader2,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,68 +40,41 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
+import { useSupabase } from '@/utils/supabase/provider';
+import { Database } from '@/utils/supabase/database.types';
 
-// Mock data for analytics
-const weeklyProgress = [
-  { day: 'Mon', hours: 2.5, score: 85, topics: 3 },
-  { day: 'Tue', hours: 3.2, score: 92, topics: 4 },
-  { day: 'Wed', hours: 1.8, score: 78, topics: 2 },
-  { day: 'Thu', hours: 4.1, score: 95, topics: 5 },
-  { day: 'Fri', hours: 2.9, score: 88, topics: 3 },
-  { day: 'Sat', hours: 3.5, score: 91, topics: 4 },
-  { day: 'Sun', hours: 2.2, score: 83, topics: 2 },
-];
+type Profile = Database['public']['Tables']['profiles']['Row'];
+type Subject = Database['public']['Tables']['subjects']['Row'];
+type Topic = Database['public']['Tables']['topics']['Row'];
+type Achievement = Database['public']['Tables']['achievements']['Row'];
 
+// Mock data for charts (these would be calculated from real data in production)
 const monthlyTrends = [
-  { month: 'Jan', mathematics: 75, science: 82, english: 78, history: 85 },
-  { month: 'Feb', mathematics: 78, science: 85, english: 81, history: 87 },
-  { month: 'Mar', mathematics: 82, science: 88, english: 84, history: 89 },
-  { month: 'Apr', mathematics: 85, science: 91, english: 87, history: 92 },
-  { month: 'May', mathematics: 88, science: 93, english: 89, history: 94 },
-  { month: 'Jun', mathematics: 91, science: 95, english: 92, history: 96 },
-];
-
-const subjectDistribution = [
-  { name: 'Mathematics', value: 35, color: '#3B82F6' },
-  { name: 'Science', value: 28, color: '#10B981' },
-  { name: 'English', value: 22, color: '#F59E0B' },
-  { name: 'History', value: 15, color: '#8B5CF6' },
+  { month: 'Jan', score: 78, hours: 45 },
+  { month: 'Feb', score: 82, hours: 52 },
+  { month: 'Mar', score: 85, hours: 48 },
+  { month: 'Apr', score: 88, hours: 61 },
+  { month: 'May', score: 91, hours: 58 },
+  { month: 'Jun', score: 87, hours: 64 },
 ];
 
 const skillsRadar = [
   { skill: 'Problem Solving', current: 85, target: 90 },
   { skill: 'Critical Thinking', current: 78, target: 85 },
-  { skill: 'Communication', current: 92, target: 95 },
-  { skill: 'Creativity', current: 76, target: 80 },
-  { skill: 'Collaboration', current: 88, target: 90 },
+  { skill: 'Memory', current: 92, target: 95 },
+  { skill: 'Speed', current: 76, target: 80 },
+  { skill: 'Accuracy', current: 88, target: 90 },
+  { skill: 'Comprehension', current: 82, target: 88 },
 ];
 
-const achievements = [
-  {
-    id: 1,
-    title: 'Math Master',
-    description: 'Completed 50 math problems',
-    icon: '🧮',
-    date: '2024-01-15',
-    rarity: 'gold',
-  },
-  {
-    id: 2,
-    title: 'Science Explorer',
-    description: 'Discovered 10 new concepts',
-    icon: '🔬',
-    date: '2024-01-12',
-    rarity: 'silver',
-  },
-  {
-    id: 3,
-    title: 'Streak Champion',
-    description: '7-day learning streak',
-    icon: '🔥',
-    date: '2024-01-10',
-    rarity: 'bronze',
-  },
-];
+type FormattedAchievement = {
+  id: string | number;
+  title: string;
+  description: string;
+  icon: string;
+  date: string;
+  rarity: 'gold' | 'silver' | 'bronze';
+};
 
 interface StatCardProps {
   title: string;
@@ -147,38 +121,167 @@ interface AnalyticsDashboardProps {
 
 export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) => {
   const { userProgress } = useStore();
+  const { supabase } = useSupabase();
   const [selectedPeriod, setSelectedPeriod] = useState('week');
+  const [loading, setLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState<Profile | null>(null);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [topics, setTopics] = useState<Topic[]>([]);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [weeklyProgress, setWeeklyProgress] = useState<any[]>([]);
+  const [subjectDistribution, setSubjectDistribution] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) return;
+
+      // Fetch user profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      
+      setUserProfile(profile);
+
+      // Fetch user subjects
+      const { data: userSubjects } = await supabase
+        .from('subjects')
+        .select('*')
+        .eq('user_id', user.id);
+      
+      setSubjects(userSubjects || []);
+
+      // Fetch user topics
+      const { data: userTopics } = await supabase
+        .from('topics')
+        .select('*')
+        .in('subject_id', (userSubjects || []).map(s => s.id));
+      
+      setTopics(userTopics || []);
+
+      // Fetch user achievements
+      const { data: userAchievements } = await supabase
+        .from('achievements')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+      
+      setAchievements(userAchievements || []);
+
+      // Calculate subject distribution
+      if (userTopics && userTopics.length > 0) {
+        const distribution = userSubjects?.map(subject => {
+          const subjectTopics = userTopics.filter(t => t.subject_id === subject.id);
+          const completedTopics = subjectTopics.filter(t => t.completed).length;
+          return {
+            name: subject.name,
+            value: completedTopics,
+            color: getSubjectColor(subject.name)
+          };
+        }) || [];
+        setSubjectDistribution(distribution);
+      }
+
+      // Generate mock weekly progress (in real app, you'd track this in database)
+      const mockWeeklyData = [
+        { day: 'Mon', hours: 2.5, score: 85, topics: 3 },
+        { day: 'Tue', hours: 3.2, score: 92, topics: 4 },
+        { day: 'Wed', hours: 1.8, score: 78, topics: 2 },
+        { day: 'Thu', hours: 4.1, score: 95, topics: 5 },
+        { day: 'Fri', hours: 2.9, score: 88, topics: 3 },
+        { day: 'Sat', hours: 3.5, score: 91, topics: 4 },
+        { day: 'Sun', hours: 2.2, score: 83, topics: 2 },
+      ];
+      setWeeklyProgress(mockWeeklyData);
+
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getSubjectColor = (subjectName: string) => {
+    const colors: { [key: string]: string } = {
+      'Mathematics': '#3B82F6',
+      'Science': '#10B981',
+      'Computer Science': '#8B5CF6',
+      'Physics': '#F59E0B',
+      'Chemistry': '#EF4444',
+      'Biology': '#06B6D4',
+    };
+    return colors[subjectName] || '#6B7280';
+  };
+
+  const recentAchievements: FormattedAchievement[] = achievements.length > 0 ? achievements.map((achievement: Achievement) => ({
+    id: achievement.id,
+    title: achievement.name,
+    description: achievement.description,
+    icon: '🏆', // Default icon since it's not in the database
+    date: new Date(achievement.created_at).toISOString().split('T')[0],
+    rarity: 'bronze' as const, // Default rarity since it's not in the database
+  })) : [
+    {
+      id: 1,
+      title: 'Welcome!',
+      description: 'Start your learning journey',
+      icon: '🎯',
+      date: new Date().toISOString().split('T')[0],
+      rarity: 'bronze' as const,
+    },
+  ];
+
+  const completedTopicsCount = topics.filter(t => t.completed).length;
+  const totalStudyHours = userProfile?.total_sessions ? (userProfile.total_sessions * 0.5).toFixed(1) : '0';
+  const averageScore = topics.length > 0 ? Math.round(topics.reduce((acc, t) => acc + (t.progress || 0), 0) / topics.length) : 0;
 
   const stats = [
     {
       title: 'Study Hours',
-      value: '24.2h',
+      value: `${totalStudyHours}h`,
       change: 12,
       icon: <Clock className="w-6 h-6 text-white" />,
       trend: 'up' as const,
     },
     {
       title: 'Average Score',
-      value: '87%',
+      value: `${averageScore}%`,
       change: 5,
       icon: <Target className="w-6 h-6 text-white" />,
       trend: 'up' as const,
     },
     {
       title: 'Topics Completed',
-      value: '23',
+      value: completedTopicsCount.toString(),
       change: 8,
       icon: <Brain className="w-6 h-6 text-white" />,
       trend: 'up' as const,
     },
     {
       title: 'Current Streak',
-      value: '7 days',
+      value: `${userProfile?.streak || 0} days`,
       change: -2,
       icon: <Award className="w-6 h-6 text-white" />,
-      trend: 'down' as const,
+      trend: userProfile?.streak && userProfile.streak > 5 ? 'up' as const : 'down' as const,
     },
   ];
+
+  if (loading) {
+    return (
+      <div className={cn("flex items-center justify-center h-96", className)}>
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className={cn("space-y-6", className)}>
@@ -390,34 +493,34 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ classNam
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {achievements.map((achievement) => (
-                  <motion.div
-                    key={achievement.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10"
-                  >
-                    <div className="text-2xl">{achievement.icon}</div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-medium text-foreground">{achievement.title}</h4>
-                        <Badge 
-                          variant="secondary"
-                          className={cn(
-                            "text-xs",
-                            achievement.rarity === 'gold' && "bg-yellow-500/20 text-yellow-400",
-                            achievement.rarity === 'silver' && "bg-gray-500/20 text-gray-400",
-                            achievement.rarity === 'bronze' && "bg-orange-500/20 text-orange-400"
-                          )}
-                        >
-                          {achievement.rarity}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{achievement.description}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{achievement.date}</p>
-                    </div>
-                  </motion.div>
-                ))}
+                {recentAchievements.map((achievement: FormattedAchievement) => (
+                   <motion.div
+                     key={achievement.id}
+                     initial={{ opacity: 0, x: -20 }}
+                     animate={{ opacity: 1, x: 0 }}
+                     className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10"
+                   >
+                     <div className="text-2xl">{achievement.icon}</div>
+                     <div className="flex-1">
+                       <div className="flex items-center gap-2">
+                         <h4 className="font-medium">{achievement.title}</h4>
+                         <Badge
+                           variant="secondary"
+                           className={cn(
+                             'text-xs',
+                             achievement.rarity === 'gold' && 'bg-yellow-500/20 text-yellow-400',
+                             achievement.rarity === 'silver' && 'bg-gray-500/20 text-gray-400',
+                             achievement.rarity === 'bronze' && 'bg-orange-500/20 text-orange-400'
+                           )}
+                         >
+                           {achievement.rarity}
+                         </Badge>
+                       </div>
+                       <p className="text-sm text-muted-foreground">{achievement.description}</p>
+                       <p className="text-xs text-muted-foreground mt-1">{achievement.date}</p>
+                     </div>
+                   </motion.div>
+                 ))}
               </CardContent>
             </Card>
           </div>
