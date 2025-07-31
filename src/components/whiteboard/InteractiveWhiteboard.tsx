@@ -24,6 +24,7 @@ interface WhiteboardProps {
   width?: number;
   height?: number;
   className?: string;
+  enablePhysics?: boolean;
 }
 
 export const InteractiveWhiteboard: React.FC<WhiteboardProps> = ({

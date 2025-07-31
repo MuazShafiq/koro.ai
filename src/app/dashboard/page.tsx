@@ -246,7 +246,8 @@ export default function DashboardPage() {
                        completedTopics: subject.completedTopics,
                        totalTopics: Math.round(subject.completedTopics / (subject.progress / 100)),
                        nextTopic: subject.nextTopic,
-                       lastSession: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000)
+                       lastSession: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
+                       gradient: subject.gradient
                      }}
                      onClick={() => window.location.href = subject.href}
                      delay={0.5 + index * 0.1}

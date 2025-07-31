@@ -435,10 +435,8 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ classNam
               <ResponsiveContainer width="100%" height={400}>
                 <RadialBarChart cx="50%" cy="50%" innerRadius="20%" outerRadius="80%" data={skillsRadar}>
                   <RadialBar
-                    minAngle={15}
                     label={{ position: 'insideStart', fill: '#fff' }}
                     background
-                    clockWise
                     dataKey="current"
                     fill="#3B82F6"
                   />

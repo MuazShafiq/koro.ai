@@ -140,11 +140,9 @@ interface ThemeEngineProps {
 export const ThemeEngine: React.FC<ThemeEngineProps> = ({ className }) => {
   const { 
     theme, 
-    motionIntensity, 
-    setTheme, 
-    setMotionIntensity,
     reducedMotion,
-    setReducedMotion 
+    setTheme, 
+    toggleReducedMotion
   } = useStore();
   
   const [selectedTheme, setSelectedTheme] = useState(colorThemes[0]);
@@ -177,7 +175,8 @@ export const ThemeEngine: React.FC<ThemeEngineProps> = ({ className }) => {
     root.style.setProperty('--accent', selectedTheme.accent);
     root.style.setProperty('--glass-opacity', glassIntensity.toString());
     
-    setMotionIntensity(selectedAnimation.intensity);
+    // Motion intensity is no longer supported
+    // Using reducedMotion toggle instead
     setPreviewMode(false);
   };
 
@@ -401,7 +400,7 @@ export const ThemeEngine: React.FC<ThemeEngineProps> = ({ className }) => {
                   </div>
                   <Switch
                     checked={reducedMotion}
-                    onCheckedChange={setReducedMotion}
+                    onCheckedChange={toggleReducedMotion}
                   />
                 </div>
                 
@@ -409,12 +408,12 @@ export const ThemeEngine: React.FC<ThemeEngineProps> = ({ className }) => {
                   <div className="flex items-center justify-between mb-2">
                     <Label className="text-sm font-medium">Motion Intensity</Label>
                     <span className="text-sm text-muted-foreground">
-                      {Math.round(motionIntensity * 100)}%
+                      {reducedMotion ? "Off" : "On"}
                     </span>
                   </div>
                   <Slider
-                    value={[motionIntensity]}
-                    onValueChange={(value) => setMotionIntensity(value[0])}
+                    value={[reducedMotion ? 0 : 1]}
+                    onValueChange={(value) => toggleReducedMotion()}
                     max={1}
                     min={0}
                     step={0.1}

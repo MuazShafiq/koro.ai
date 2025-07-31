@@ -81,7 +81,7 @@ const mockTopics: StudyTopic[] = [
 ];
 
 export default function StudyPage() {
-  const { currentSubject, userProgress, setUserProgress } = useStore();
+  const { currentSubject, userProgress, updateUserProgress } = useStore();
   const [currentTopic, setCurrentTopic] = useState<StudyTopic>(mockTopics[0]);
   const [session, setSession] = useState<StudySession | null>(null);
   const [isStudying, setIsStudying] = useState(false);
@@ -114,7 +114,7 @@ export default function StudyPage() {
   const startStudySession = () => {
     const newSession: StudySession = {
       id: Date.now().toString(),
-      subjectId: currentSubject?.id || '1',
+      subjectId: currentSubject || '1',
       topicId: currentTopic.id,
       startTime: new Date(),
       duration: 0,
@@ -147,11 +147,14 @@ export default function StudyPage() {
       };
       
       // Update user progress
-      setUserProgress({
-        ...userProgress,
-        totalStudyTime: userProgress.totalStudyTime + studyTime,
-        sessionsCompleted: userProgress.sessionsCompleted + 1,
-        currentStreak: userProgress.currentStreak + (sessionProgress >= 80 ? 1 : 0),
+      updateUserProgress({
+        totalSessions: userProgress.totalSessions + 1,
+        streak: userProgress.streak + (sessionProgress >= 80 ? 1 : 0),
+        xp: userProgress.xp + Math.floor(studyTime / 60) * 10, // 10 XP per minute
+        weeklyGoal: {
+          current: userProgress.weeklyGoal.current + 1,
+          target: userProgress.weeklyGoal.target
+        }
       });
       
       setIsStudying(false);

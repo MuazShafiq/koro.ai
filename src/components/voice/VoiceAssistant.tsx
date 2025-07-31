@@ -52,7 +52,7 @@ interface VoiceAssistantProps {
 }
 
 export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ className }) => {
-  const { voiceState, setVoiceListening, setVoiceSpeaking } = useStore();
+  const { voiceState, updateVoiceState } = useStore();
   const [amplitude, setAmplitude] = useState(0.5);
   const [transcript, setTranscript] = useState('');
   const [response, setResponse] = useState('');
@@ -63,7 +63,7 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ className }) => 
 
   // Simulate voice amplitude for demo
   useEffect(() => {
-    if (voiceState.isListening || voiceState.isSpeaking) {
+    if (voiceState.status === 'listening' || voiceState.status === 'responding') {
       const interval = setInterval(() => {
         setAmplitude(Math.random() * 0.8 + 0.2);
       }, 100);
@@ -71,7 +71,7 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ className }) => 
     } else {
       setAmplitude(0.1);
     }
-  }, [voiceState.isListening, voiceState.isSpeaking]);
+  }, [voiceState.status]);
 
   const startListening = async () => {
     try {
@@ -99,11 +99,11 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ className }) => 
       };
       
       mediaRecorderRef.current.start();
-      setVoiceListening(true);
+      updateVoiceState({ isRecording: true, status: 'listening' });
       
       // Analyze audio for waveform
       const analyzeAudio = () => {
-        if (analyserRef.current && voiceState.isListening) {
+        if (analyserRef.current && voiceState.status === 'listening') {
           const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
           analyserRef.current.getByteFrequencyData(dataArray);
           const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
@@ -128,7 +128,7 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ className }) => 
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
     }
-    setVoiceListening(false);
+    updateVoiceState({ isRecording: false, status: 'processing' });
   };
 
   const simulateTranscription = () => {
@@ -146,7 +146,7 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ className }) => 
       
       // Simulate AI response
       setTimeout(() => {
-        setVoiceSpeaking(true);
+        updateVoiceState({ status: 'responding' });
         const responses = {
           "What is photosynthesis?": "Photosynthesis is the process by which plants convert sunlight, carbon dioxide, and water into glucose and oxygen.",
           "Explain Newton's first law": "Newton's first law states that an object at rest stays at rest, and an object in motion stays in motion, unless acted upon by an external force.",
@@ -158,14 +158,14 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ className }) => 
         
         // Simulate speech duration
         setTimeout(() => {
-          setVoiceSpeaking(false);
+          updateVoiceState({ status: 'idle' });
         }, 3000);
       }, 1000);
     }, 2000);
   };
 
   const toggleListening = () => {
-    if (voiceState.isListening) {
+    if (voiceState.status === 'listening') {
       stopListening();
     } else {
       startListening();
@@ -190,8 +190,8 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ className }) => 
             <div>
               <h3 className="font-semibold text-foreground">Koro Assistant</h3>
               <p className="text-sm text-muted-foreground">
-                {voiceState.isListening ? 'Listening...' : 
-                 voiceState.isSpeaking ? 'Speaking...' : 'Ready to help'}
+                {voiceState.status === 'listening' ? 'Listening...' :
+                 voiceState.status === 'responding' ? 'Speaking...' : 'Ready to help'}
               </p>
             </div>
           </div>
@@ -204,7 +204,7 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ className }) => 
         {/* Waveform Visualization */}
         <div className="mb-6 p-4 rounded-lg bg-black/20 border border-white/10">
           <Waveform 
-            isActive={voiceState.isListening || voiceState.isSpeaking} 
+            isActive={voiceState.status === 'listening' || voiceState.status === 'responding'} 
             amplitude={amplitude}
           />
         </div>
@@ -243,12 +243,12 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ className }) => 
             size="lg"
             className={cn(
               "w-16 h-16 rounded-full transition-all duration-300",
-              voiceState.isListening
+              voiceState.status === 'listening'
                 ? "bg-red-500 hover:bg-red-600 animate-pulse"
                 : "bg-gradient-to-r from-electric-blue to-violet hover:from-electric-blue/80 hover:to-violet/80"
             )}
           >
-            {voiceState.isListening ? (
+            {voiceState.status === 'listening' ? (
               <MicOff className="w-6 h-6" />
             ) : (
               <Mic className="w-6 h-6" />
@@ -259,9 +259,9 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({ className }) => 
             variant="outline"
             size="lg"
             className="glass border-white/20 hover:bg-white/10"
-            disabled={voiceState.isSpeaking}
+            disabled={voiceState.status === 'responding'}
           >
-            {voiceState.isSpeaking ? (
+            {voiceState.status === 'responding' ? (
               <VolumeX className="w-5 h-5" />
             ) : (
               <Volume2 className="w-5 h-5" />
