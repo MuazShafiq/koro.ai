@@ -42,6 +42,7 @@ import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
 import { useSupabase } from '@/utils/supabase/provider';
 import { Database } from '@/utils/supabase/database.types';
+import { analyticsService, UserAnalytics, WeeklyProgressData } from '@/utils/supabase/analytics';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 type Subject = Database['public']['Tables']['subjects']['Row'];
@@ -61,10 +62,9 @@ const monthlyTrends = [
 const skillsRadar = [
   { skill: 'Problem Solving', current: 85, target: 90 },
   { skill: 'Critical Thinking', current: 78, target: 85 },
-  { skill: 'Memory', current: 92, target: 95 },
-  { skill: 'Speed', current: 76, target: 80 },
-  { skill: 'Accuracy', current: 88, target: 90 },
-  { skill: 'Comprehension', current: 82, target: 88 },
+  { skill: 'Communication', current: 92, target: 95 },
+  { skill: 'Creativity', current: 74, target: 80 },
+  { skill: 'Leadership', current: 81, target: 85 },
 ];
 
 type FormattedAchievement = {
@@ -128,8 +128,10 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ classNam
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [topics, setTopics] = useState<Topic[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const [weeklyProgress, setWeeklyProgress] = useState<any[]>([]);
+  const [weeklyProgress, setWeeklyProgress] = useState<WeeklyProgressData[]>([]);
   const [subjectDistribution, setSubjectDistribution] = useState<any[]>([]);
+  const [userAnalytics, setUserAnalytics] = useState<UserAnalytics | null>(null);
+  const [subjectProgress, setSubjectProgress] = useState<any[]>([]);
 
   useEffect(() => {
     fetchUserData();
@@ -172,13 +174,34 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ classNam
         .from('achievements')
         .select('*')
         .eq('user_id', user.id)
+        .eq('unlocked', true)
         .order('created_at', { ascending: false })
         .limit(5);
       
       setAchievements(userAchievements || []);
 
-      // Calculate subject distribution
-      if (userTopics && userTopics.length > 0) {
+      // Fetch real analytics data
+      const analytics = await analyticsService.getUserAnalytics(user.id);
+      setUserAnalytics(analytics);
+
+      // Fetch weekly progress data
+      const weeklyData = await analyticsService.getWeeklyProgress(user.id);
+      setWeeklyProgress(weeklyData);
+
+      // Fetch subject progress
+      const subjectProgressData = await analyticsService.getSubjectProgress(user.id);
+      setSubjectProgress(subjectProgressData);
+
+      // Calculate subject distribution from real data
+      if (subjectProgressData && subjectProgressData.length > 0) {
+        const distribution = subjectProgressData.map(subject => ({
+          name: subject.name,
+          value: subject.totalTime || 0,
+          color: getSubjectColor(subject.name)
+        }));
+        setSubjectDistribution(distribution);
+      } else if (userTopics && userTopics.length > 0) {
+        // Fallback to topic completion if no study sessions yet
         const distribution = userSubjects?.map(subject => {
           const subjectTopics = userTopics.filter(t => t.subject_id === subject.id);
           const completedTopics = subjectTopics.filter(t => t.completed).length;
@@ -191,17 +214,8 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ classNam
         setSubjectDistribution(distribution);
       }
 
-      // Generate mock weekly progress (in real app, you'd track this in database)
-      const mockWeeklyData = [
-        { day: 'Mon', hours: 2.5, score: 85, topics: 3 },
-        { day: 'Tue', hours: 3.2, score: 92, topics: 4 },
-        { day: 'Wed', hours: 1.8, score: 78, topics: 2 },
-        { day: 'Thu', hours: 4.1, score: 95, topics: 5 },
-        { day: 'Fri', hours: 2.9, score: 88, topics: 3 },
-        { day: 'Sat', hours: 3.5, score: 91, topics: 4 },
-        { day: 'Sun', hours: 2.2, score: 83, topics: 2 },
-      ];
-      setWeeklyProgress(mockWeeklyData);
+      // Check and unlock achievements
+      await analyticsService.checkAndUnlockAchievements(user.id);
 
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -226,9 +240,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ classNam
     id: achievement.id,
     title: achievement.name,
     description: achievement.description,
-    icon: '🏆', // Default icon since it's not in the database
-    date: new Date(achievement.created_at).toISOString().split('T')[0],
-    rarity: 'bronze' as const, // Default rarity since it's not in the database
+    icon: achievement.icon || '🏆',
+    date: new Date(achievement.created_at).toLocaleDateString(),
+    rarity: (achievement.rarity as 'bronze' | 'silver' | 'gold') || 'bronze' as const,
   })) : [
     {
       id: 1,
@@ -240,9 +254,33 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ classNam
     },
   ];
 
-  const completedTopicsCount = topics.filter(t => t.completed).length;
-  const totalStudyHours = userProfile?.total_sessions ? (userProfile.total_sessions * 0.5).toFixed(1) : '0';
-  const averageScore = topics.length > 0 ? Math.round(topics.reduce((acc, t) => acc + (t.progress || 0), 0) / topics.length) : 0;
+  // Calculate stats from real data
+  const totalTopics = topics.length;
+  const completedTopics = topics.filter(t => t.completed).length;
+  const completionRate = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
+  const totalStudyHours = userAnalytics?.total_study_time || 0;
+  const averageScore = userAnalytics?.quiz_accuracy || 0;
+  const currentStreak = userAnalytics?.current_streak || 0;
+  const totalXP = userAnalytics?.total_xp || 0;
+  const level = userAnalytics?.level || 1;
+
+  // Use real weekly progress data for score trends
+  const scoreTrends = weeklyProgress.length > 0 ? weeklyProgress.map(day => ({
+    date: day.date,
+    score: day.xp || 0,
+    average: averageScore
+  })) : [
+    { date: new Date().toISOString().split('T')[0], score: 0, average: 0 }
+  ];
+
+  // Use real subject progress data for skills
+  const skillsData = subjectProgress.length > 0 ? subjectProgress.map(subject => ({
+    name: subject.name,
+    progress: Math.round((subject.completedTopics / Math.max(subject.totalTopics, 1)) * 100),
+    color: getSubjectColor(subject.name)
+  })) : [
+    { name: 'No Data', progress: 0, color: '#8884d8' }
+  ];
 
   const stats = [
     {
@@ -261,17 +299,17 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ classNam
     },
     {
       title: 'Topics Completed',
-      value: completedTopicsCount.toString(),
+      value: completedTopics.toString(),
       change: 8,
       icon: <Brain className="w-6 h-6 text-white" />,
       trend: 'up' as const,
     },
     {
       title: 'Current Streak',
-      value: `${userProfile?.streak || 0} days`,
+      value: `${currentStreak} days`,
       change: -2,
       icon: <Award className="w-6 h-6 text-white" />,
-      trend: userProfile?.streak && userProfile.streak > 5 ? 'up' as const : 'down' as const,
+      trend: currentStreak > 5 ? 'up' as const : 'down' as const,
     },
   ];
 
@@ -430,24 +468,26 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ classNam
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={monthlyTrends}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                  <XAxis dataKey="month" stroke="rgba(255,255,255,0.7)" />
-                  <YAxis stroke="rgba(255,255,255,0.7)" />
-                  <Tooltip 
-                    contentStyle={{
-                      backgroundColor: 'rgba(0,0,0,0.8)',
-                      border: '1px solid rgba(255,255,255,0.2)',
-                      borderRadius: '8px',
-                    }}
-                  />
-                  <Legend />
-                  <Bar dataKey="mathematics" fill="#3B82F6" radius={[2, 2, 0, 0]} />
-                  <Bar dataKey="science" fill="#10B981" radius={[2, 2, 0, 0]} />
-                  <Bar dataKey="english" fill="#F59E0B" radius={[2, 2, 0, 0]} />
-                  <Bar dataKey="history" fill="#8B5CF6" radius={[2, 2, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+                  <BarChart data={subjectProgress.map(subject => ({
+                    name: subject.name,
+                    completion: Math.round((subject.completedTopics / Math.max(subject.totalTopics, 1)) * 100),
+                    totalTime: subject.totalTime || 0
+                  }))}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                    <XAxis dataKey="name" stroke="rgba(255,255,255,0.7)" />
+                    <YAxis stroke="rgba(255,255,255,0.7)" />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        borderRadius: '8px',
+                      }}
+                    />
+                    <Legend />
+                    <Bar dataKey="completion" fill="#3B82F6" radius={[2, 2, 0, 0]} name="Completion %" />
+                    <Bar dataKey="totalTime" fill="#10B981" radius={[2, 2, 0, 0]} name="Study Time (min)" />
+                  </BarChart>
+                </ResponsiveContainer>
             </CardContent>
           </Card>
         </TabsContent>
