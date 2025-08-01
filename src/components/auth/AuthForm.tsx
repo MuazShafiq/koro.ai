@@ -47,11 +47,11 @@ export function AuthForm() {
   };
 
   return (
-    <Card className="backdrop-blur-sm bg-white/80 border-0 shadow-2xl">
+    <Card className="backdrop-blur-sm bg-gray-900/90 border border-gray-700 shadow-2xl">
       <form onSubmit={handleSignIn}>
         <CardContent className="space-y-6 p-8">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="email" className="text-sm font-medium text-gray-200">
               Email Address
             </Label>
             <div className="relative">
@@ -62,14 +62,14 @@ export function AuthForm() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 h-12 border-gray-200 focus:border-purple-500 focus:ring-purple-500"
+                className="pl-10 h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400"
                 required
               />
             </div>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="password" className="text-sm font-medium text-gray-200">
               Password
             </Label>
             <div className="relative">
@@ -80,7 +80,7 @@ export function AuthForm() {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 pr-10 h-12 border-gray-200 focus:border-purple-500 focus:ring-purple-500"
+                className="pl-10 pr-10 h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400"
                 required
               />
               <button
@@ -94,8 +94,8 @@ export function AuthForm() {
           </div>
           
           {error && (
-            <div className="p-3 rounded-lg bg-red-50 border border-red-200">
-              <p className="text-sm text-red-600">{error}</p>
+            <div className="p-3 rounded-lg bg-red-900/50 border border-red-700">
+              <p className="text-sm text-red-300">{error}</p>
             </div>
           )}
         </CardContent>
@@ -117,11 +117,11 @@ export function AuthForm() {
           </Button>
           
           <div className="text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-300">
               Don't have an account?{' '}
               <Link 
                 href="/signup" 
-                className="font-medium text-purple-600 hover:text-purple-500 transition-colors"
+                className="font-medium text-purple-400 hover:text-purple-300 transition-colors"
               >
                 Sign up here
               </Link>

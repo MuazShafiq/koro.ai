@@ -117,12 +117,12 @@ export default function SignupForm() {
   };
 
   return (
-    <Card className="w-full shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
+    <Card className="w-full shadow-2xl border border-gray-700 bg-gray-900/90 backdrop-blur-sm">
       <CardHeader className="text-center pb-4">
-        <CardTitle className="text-2xl font-bold text-gray-800">
+        <CardTitle className="text-2xl font-bold text-gray-100">
           {step === 1 ? 'Create Account' : 'Tell us about yourself'}
         </CardTitle>
-        <CardDescription className="text-gray-600">
+        <CardDescription className="text-gray-300">
           {step === 1 ? 'Enter your basic information' : 'Help us personalize your experience'}
         </CardDescription>
         <div className="flex justify-center mt-4">
@@ -141,7 +141,7 @@ export default function SignupForm() {
           {step === 1 && (
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="fullName" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <Label htmlFor="fullName" className="text-sm font-medium text-gray-200 flex items-center gap-2">
                   <User className="w-4 h-4" />
                   Full Name *
                 </Label>
@@ -150,14 +150,14 @@ export default function SignupForm() {
                   type="text"
                   value={formData.fullName}
                   onChange={(e) => handleInputChange('fullName', e.target.value)}
-                  className="h-12 border-gray-200 focus:border-purple-500 focus:ring-purple-500"
+                  className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400"
                   placeholder="Enter your full name"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <Label htmlFor="email" className="text-sm font-medium text-gray-200 flex items-center gap-2">
                   <Mail className="w-4 h-4" />
                   Email *
                 </Label>
@@ -166,14 +166,14 @@ export default function SignupForm() {
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="h-12 border-gray-200 focus:border-purple-500 focus:ring-purple-500"
+                  className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400"
                   placeholder="Enter your email"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <Label htmlFor="password" className="text-sm font-medium text-gray-200 flex items-center gap-2">
                   <Lock className="w-4 h-4" />
                   Password *
                 </Label>
@@ -183,14 +183,14 @@ export default function SignupForm() {
                     type={showPassword ? 'text' : 'password'}
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
-                    className="h-12 border-gray-200 focus:border-purple-500 focus:ring-purple-500 pr-12"
+                    className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400 pr-12"
                     placeholder="Create a password"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -198,7 +198,7 @@ export default function SignupForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-200 flex items-center gap-2">
                   <Lock className="w-4 h-4" />
                   Confirm Password *
                 </Label>
@@ -208,14 +208,14 @@ export default function SignupForm() {
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={formData.confirmPassword}
                     onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                    className="h-12 border-gray-200 focus:border-purple-500 focus:ring-purple-500 pr-12"
+                    className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400 pr-12"
                     placeholder="Confirm your password"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200"
                   >
                     {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -236,7 +236,7 @@ export default function SignupForm() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="age" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="age" className="text-sm font-medium text-gray-200">
                     Age
                   </Label>
                   <Input
@@ -244,7 +244,7 @@ export default function SignupForm() {
                     type="number"
                     value={formData.age}
                     onChange={(e) => handleInputChange('age', e.target.value)}
-                    className="h-12 border-gray-200 focus:border-purple-500 focus:ring-purple-500"
+                    className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400"
                     placeholder="Your age"
                     min="1"
                     max="120"
@@ -252,7 +252,7 @@ export default function SignupForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="location" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                  <Label htmlFor="location" className="text-sm font-medium text-gray-200 flex items-center gap-2">
                     <MapPin className="w-4 h-4" />
                     Location
                   </Label>
@@ -261,14 +261,14 @@ export default function SignupForm() {
                     type="text"
                     value={formData.location}
                     onChange={(e) => handleInputChange('location', e.target.value)}
-                    className="h-12 border-gray-200 focus:border-purple-500 focus:ring-purple-500"
+                    className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400"
                     placeholder="City, Country"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="school" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <Label htmlFor="school" className="text-sm font-medium text-gray-200 flex items-center gap-2">
                   <GraduationCap className="w-4 h-4" />
                   School/Institution
                 </Label>
@@ -277,17 +277,17 @@ export default function SignupForm() {
                   type="text"
                   value={formData.school}
                   onChange={(e) => handleInputChange('school', e.target.value)}
-                  className="h-12 border-gray-200 focus:border-purple-500 focus:ring-purple-500"
+                  className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400"
                   placeholder="Your school or institution"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
+                <Label className="text-sm font-medium text-gray-200">
                   Grade Level
                 </Label>
                 <Select value={formData.gradeLevel} onValueChange={(value) => handleInputChange('gradeLevel', value)}>
-                  <SelectTrigger className="h-12 border-gray-200 focus:border-purple-500 focus:ring-purple-500">
+                  <SelectTrigger className="h-12 bg-gray-800 border-gray-600 text-white focus:border-purple-400 focus:ring-purple-400">
                     <SelectValue placeholder="Select your grade level" />
                   </SelectTrigger>
                   <SelectContent>
@@ -301,7 +301,7 @@ export default function SignupForm() {
               </div>
 
               <div className="space-y-3">
-                <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <Label className="text-sm font-medium text-gray-200 flex items-center gap-2">
                   <BookOpen className="w-4 h-4" />
                   Subjects of Interest
                 </Label>
@@ -314,7 +314,7 @@ export default function SignupForm() {
                         onCheckedChange={() => handleSubjectToggle(subject)}
                         className="border-gray-300 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                       />
-                      <Label htmlFor={subject} className="text-sm text-gray-700 cursor-pointer">
+                      <Label htmlFor={subject} className="text-sm text-gray-200 cursor-pointer">
                         {subject}
                       </Label>
                     </div>
@@ -323,7 +323,7 @@ export default function SignupForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="learningGoals" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <Label htmlFor="learningGoals" className="text-sm font-medium text-gray-200 flex items-center gap-2">
                   <Target className="w-4 h-4" />
                   Learning Goals
                 </Label>
@@ -331,21 +331,21 @@ export default function SignupForm() {
                   id="learningGoals"
                   value={formData.learningGoals}
                   onChange={(e) => handleInputChange('learningGoals', e.target.value)}
-                  className="border-gray-200 focus:border-purple-500 focus:ring-purple-500 resize-none"
+                  className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400 resize-none"
                   placeholder="What do you hope to achieve with your learning?"
                   rows={3}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="bio" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="bio" className="text-sm font-medium text-gray-200">
                   Bio (Optional)
                 </Label>
                 <Textarea
                   id="bio"
                   value={formData.bio}
                   onChange={(e) => handleInputChange('bio', e.target.value)}
-                  className="border-gray-200 focus:border-purple-500 focus:ring-purple-500 resize-none"
+                  className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400 resize-none"
                   placeholder="Tell us a bit about yourself..."
                   rows={3}
                 />
@@ -356,7 +356,7 @@ export default function SignupForm() {
                   type="button"
                   onClick={() => setStep(1)}
                   variant="outline"
-                  className="flex-1 h-12 border-gray-300 text-gray-700 hover:bg-gray-50"
+                  className="flex-1 h-12 border-gray-600 text-gray-200 bg-gray-800 hover:bg-gray-700"
                 >
                   Back
                 </Button>
@@ -373,9 +373,9 @@ export default function SignupForm() {
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-300">
             Already have an account?{' '}
-            <Link href="/login" className="text-purple-600 hover:text-purple-700 font-medium transition-colors">
+            <Link href="/login" className="text-purple-400 hover:text-purple-300 font-medium transition-colors">
               Sign in
             </Link>
           </p>
