@@ -5,19 +5,30 @@ import { PerformanceCard } from "@/components/cards/PerformanceCard";
 import { BentoGrid, BentoGridItem } from "@/components/layouts/BentoGrid";
 import { motion } from "framer-motion";
 import { BookOpen, Calculator, Atom, Globe, Target, Trophy, Clock, Zap, TrendingUp, Users, FlaskConical, Dna, Code, Loader2 } from "lucide-react";
-import { useStore } from "@/lib/store";
+import { useAppStore } from "@/lib/store";
 import { useSupabase } from "@/utils/supabase/provider";
 import { Database } from "@/utils/supabase/database.types";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 type Subject = Database['public']['Tables']['subjects']['Row'];
 type Topic = Database['public']['Tables']['topics']['Row'];
 
+type FormattedSubject = {
+  id: string;
+  subject: string;
+  icon: React.JSX.Element;
+  progress: number;
+  nextTopic: string;
+  href: string;
+  gradient: string;
+  completedTopics: number;
+};
+
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState('');
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [subjects, setSubjects] = useState<any[]>([]);
+  const [subjects, setSubjects] = useState<FormattedSubject[]>([]);
   const [loading, setLoading] = useState(true);
   const { supabase } = useSupabase();
 
@@ -28,11 +39,7 @@ export default function DashboardPage() {
     else setGreeting('Good evening');
   }, []);
 
-  useEffect(() => {
-     fetchUserData();
-   }, []);
-
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
      try {
        setLoading(true);
        
@@ -67,9 +74,9 @@ export default function DashboardPage() {
         .eq('user_id', user.id);
       
       if (subjectsData) {
-        const formattedSubjects = subjectsData.map((subject: any) => {
+        const formattedSubjects = subjectsData.map((subject: Subject & { topics?: Topic[] }) => {
           const totalTopics = subject.topics?.length || 0;
-          const completedTopics = subject.topics?.filter((topic: any) => topic.completed).length || 0;
+          const completedTopics = subject.topics?.filter((topic: Topic) => topic.completed).length || 0;
           const progress = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
           
           return {
@@ -91,7 +98,11 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase]);
+
+  useEffect(() => {
+     fetchUserData();
+   }, [fetchUserData]);
 
   const getSubjectIcon = (subjectName: string) => {
      const iconMap: { [key: string]: React.JSX.Element } = {

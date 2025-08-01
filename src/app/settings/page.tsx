@@ -21,10 +21,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { ThemeEngine } from '@/components/theme/ThemeEngine';
-import { useStore } from '@/lib/store';
+import { useAppStore } from '@/lib/store';
 
 export default function SettingsPage() {
-  const { userProgress } = useStore();
+  const { userProgress } = useAppStore();
 
   return (
     <motion.div

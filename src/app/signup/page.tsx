@@ -1,13 +1,13 @@
-import { AuthForm } from '@/components/auth/AuthForm';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
+import SignupForm from '@/components/auth/SignupForm';
 
-export default async function LoginPage() {
-  // Check if user is already logged in
+export default async function SignupPage() {
   const supabase = await createClient();
   const { data: { session } } = await supabase.auth.getSession();
 
-  // If there is a session, redirect to the dashboard
+  // If user is already authenticated, redirect to home
   if (session) {
     redirect('/');
   }
@@ -17,13 +17,13 @@ export default async function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
-            Welcome Back
+            Join Koro.ai
           </h1>
           <p className="text-gray-600">
-            Sign in to continue your learning journey
+            Start your personalized learning journey today
           </p>
         </div>
-        <AuthForm />
+        <SignupForm />
       </div>
     </div>
   );

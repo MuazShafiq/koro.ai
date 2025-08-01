@@ -18,6 +18,13 @@ export interface Database {
           full_name: string | null
           avatar_url: string | null
           website: string | null
+          age: number | null
+          location: string | null
+          school: string | null
+          grade_level: string | null
+          subjects_of_interest: string[] | null
+          learning_goals: string | null
+          bio: string | null
           streak: number
           total_sessions: number
           xp: number
@@ -31,6 +38,13 @@ export interface Database {
           full_name?: string | null
           avatar_url?: string | null
           website?: string | null
+          age?: number | null
+          location?: string | null
+          school?: string | null
+          grade_level?: string | null
+          subjects_of_interest?: string[] | null
+          learning_goals?: string | null
+          bio?: string | null
           streak?: number
           total_sessions?: number
           xp?: number
@@ -44,6 +58,13 @@ export interface Database {
           full_name?: string | null
           avatar_url?: string | null
           website?: string | null
+          age?: number | null
+          location?: string | null
+          school?: string | null
+          grade_level?: string | null
+          subjects_of_interest?: string[] | null
+          learning_goals?: string | null
+          bio?: string | null
           streak?: number
           total_sessions?: number
           xp?: number
