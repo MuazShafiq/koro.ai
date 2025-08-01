@@ -3,6 +3,7 @@
 import { SubjectCard } from "@/components/cards/SubjectCard";
 import { PerformanceCard } from "@/components/cards/PerformanceCard";
 import { BentoGrid, BentoGridItem } from "@/components/layouts/BentoGrid";
+import { SubjectSelectionModal } from "@/components/modals/SubjectSelectionModal";
 import { motion } from "framer-motion";
 import { BookOpen, Calculator, Atom, Globe, Target, Trophy, Clock, Zap, TrendingUp, Users, FlaskConical, Dna, Code, Loader2 } from "lucide-react";
 import { useAppStore } from "@/lib/store";
@@ -30,6 +31,7 @@ export default function DashboardPage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [subjects, setSubjects] = useState<FormattedSubject[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
   const { supabase } = useSupabase();
 
   useEffect(() => {
@@ -293,7 +295,7 @@ export default function DashboardPage() {
             </div>
           </motion.div>
 
-          {/* Subjects Bento Grid */}
+          {/* AI Tutor Subjects Grid */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -302,40 +304,162 @@ export default function DashboardPage() {
           >
             <h2 className="text-2xl font-semibold text-foreground flex items-center gap-2">
               <BookOpen className="w-6 h-6 text-primary" />
-              Your Subjects
+              AI Tutor - Your Subjects
             </h2>
-            <BentoGrid className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {subjects.map((subject, index) => (
-                <BentoGridItem
-                  key={subject.id}
-                  className="group"
-                  size={index === 0 ? "large" : "medium"}
-                >
-                  <SubjectCard
-                     subject={{
-                       id: subject.id.toString(),
-                       name: subject.subject,
-                       icon: subject.icon.props.children || '📚',
-                       progress: subject.progress,
-                       completedTopics: subject.completedTopics,
-                       totalTopics: Math.round(subject.completedTopics / (subject.progress / 100)),
-                       nextTopic: subject.nextTopic,
-                       lastSession: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
-                       gradient: subject.gradient
-                     }}
-                     onClick={() => window.location.href = subject.href}
-                     delay={0.5 + index * 0.1}
-                     className="h-full border-0 bg-transparent"
-                   />
-                </BentoGridItem>
-              ))}
-              
-              {/* Add Subject Card */}
-              <BentoGridItem className="group" size="medium">
+            <BentoGrid className="max-w-4xl mx-auto">
+              {/* Physics Subject Card - Enhanced for AI Tutor */}
+              <BentoGridItem
+                className="md:col-span-2 group cursor-pointer hover:shadow-xl transition-all duration-300"
+                size="large"
+              >
                 <motion.div
+                  className="relative h-full p-6 bg-gradient-to-br from-emerald-500/10 to-green-600/10 rounded-xl border border-emerald-500/20 overflow-hidden"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="h-full glass rounded-xl border border-dashed border-primary/30 bg-gradient-to-br from-primary/5 to-secondary/5 hover:from-primary/10 hover:to-secondary/10 transition-all duration-300 flex flex-col items-center justify-center p-6 cursor-pointer group"
+                  onClick={() => window.location.href = '/study/physics'}
+                >
+                  {/* Animated background particles */}
+                  <div className="absolute inset-0 overflow-hidden">
+                    {[...Array(5)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute w-2 h-2 bg-emerald-400/30 rounded-full"
+                        animate={{
+                          x: [0, 100, 0],
+                          y: [0, -50, 0],
+                          opacity: [0, 1, 0]
+                        }}
+                        transition={{
+                          duration: 3 + i,
+                          repeat: Infinity,
+                          delay: i * 0.5
+                        }}
+                        style={{
+                          left: `${20 + i * 15}%`,
+                          top: `${30 + i * 10}%`
+                        }}
+                      />
+                    ))}
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="relative z-10 h-full flex flex-col">
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-3">
+                        <motion.div
+                          className="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center shadow-lg"
+                          whileHover={{ rotate: 5, scale: 1.1 }}
+                        >
+                          <Atom className="w-8 h-8 text-white" />
+                        </motion.div>
+                        <div>
+                          <h3 className="text-2xl font-bold text-foreground">Physics</h3>
+                          <p className="text-emerald-400 font-medium">AI Tutor Ready</p>
+                        </div>
+                      </div>
+                      
+                      {/* AI Status Indicator */}
+                      <motion.div
+                        className="flex items-center gap-2 px-3 py-1 bg-emerald-500/20 rounded-full border border-emerald-500/30"
+                        animate={{ opacity: [0.7, 1, 0.7] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      >
+                        <div className="w-2 h-2 bg-emerald-400 rounded-full" />
+                        <span className="text-sm text-emerald-400 font-medium">AI Active</span>
+                      </motion.div>
+                    </div>
+                    
+                    {/* Metrics Grid */}
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      {/* Learning Streak */}
+                      <motion.div
+                        className="p-4 rounded-lg bg-gradient-to-br from-orange-500/20 to-red-500/20 border border-orange-500/30"
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
+                            <motion.div
+                              animate={{ scale: [1, 1.2, 1] }}
+                              transition={{ duration: 1.5, repeat: Infinity }}
+                            >
+                              🔥
+                            </motion.div>
+                          </div>
+                          <span className="text-sm font-medium text-muted-foreground">Learning Streak</span>
+                        </div>
+                        <p className="text-2xl font-bold text-foreground">{profile?.streak || 7} days</p>
+                      </motion.div>
+                      
+                      {/* Study Time */}
+                      <motion.div
+                        className="p-4 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30"
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center">
+                            <Clock className="w-4 h-4 text-white" />
+                          </div>
+                          <span className="text-sm font-medium text-muted-foreground">Study Time</span>
+                        </div>
+                        <p className="text-2xl font-bold text-foreground">{totalStudyHours}h</p>
+                      </motion.div>
+                      
+                      {/* Average Progress */}
+                      <motion.div
+                        className="p-4 rounded-lg bg-gradient-to-br from-purple-500/20 to-violet-500/20 border border-purple-500/30"
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-400 to-violet-500 flex items-center justify-center">
+                            <TrendingUp className="w-4 h-4 text-white" />
+                          </div>
+                          <span className="text-sm font-medium text-muted-foreground">Progress</span>
+                        </div>
+                        <p className="text-2xl font-bold text-foreground">{averageProgress}%</p>
+                      </motion.div>
+                      
+                      {/* Focus Score */}
+                      <motion.div
+                        className="p-4 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30"
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center">
+                            <Zap className="w-4 h-4 text-white" />
+                          </div>
+                          <span className="text-sm font-medium text-muted-foreground">Focus Score</span>
+                        </div>
+                        <p className="text-2xl font-bold text-foreground">{Math.min(100, Math.max(0, averageProgress + 5))}%</p>
+                      </motion.div>
+                    </div>
+                    
+                    {/* Next Topic */}
+                    <div className="mt-auto">
+                      <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
+                        <div>
+                          <p className="text-sm text-muted-foreground">Next Topic</p>
+                          <p className="font-medium text-foreground">Mechanics & Motion</p>
+                        </div>
+                        <motion.div
+                          className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center"
+                          whileHover={{ scale: 1.1, rotate: 5 }}
+                        >
+                          <BookOpen className="w-5 h-5 text-white" />
+                        </motion.div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </BentoGridItem>
+              
+              {/* Add Subject Card */}
+              <BentoGridItem className="group cursor-pointer hover:shadow-xl transition-all duration-300">
+                <motion.div
+                  className="flex flex-col items-center justify-center h-full p-6 text-center"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsSubjectModalOpen(true)}
                 >
                   <motion.div
                     className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center mb-4 group-hover:from-primary/30 group-hover:to-secondary/30 transition-all duration-300"
@@ -344,7 +468,7 @@ export default function DashboardPage() {
                     <BookOpen className="w-6 h-6 text-primary" />
                   </motion.div>
                   <h3 className="text-lg font-semibold text-foreground mb-2">Add Subject</h3>
-                  <p className="text-sm text-muted-foreground text-center">Start learning something new</p>
+                  <p className="text-sm text-muted-foreground text-center">Mathematics, Chemistry & more coming soon</p>
                 </motion.div>
               </BentoGridItem>
             </BentoGrid>
@@ -387,6 +511,13 @@ export default function DashboardPage() {
           </motion.div>
         </div>
       </main>
+      
+      {/* Subject Selection Modal */}
+      <SubjectSelectionModal
+        isOpen={isSubjectModalOpen}
+        onClose={() => setIsSubjectModalOpen(false)}
+        onSubjectsAdded={fetchUserData}
+      />
     </div>
   );
 }
