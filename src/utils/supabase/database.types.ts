@@ -77,6 +77,7 @@ export interface Database {
           created_at: string
           updated_at: string | null
           name: string
+          description: string | null
           icon: string
           gradient: string
           total_topics: number
@@ -87,6 +88,7 @@ export interface Database {
           created_at?: string
           updated_at?: string | null
           name: string
+          description?: string | null
           icon: string
           gradient: string
           total_topics?: number
@@ -97,6 +99,7 @@ export interface Database {
           created_at?: string
           updated_at?: string | null
           name?: string
+          description?: string | null
           icon?: string
           gradient?: string
           total_topics?: number

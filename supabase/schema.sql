@@ -26,6 +26,7 @@ CREATE TABLE public.subjects (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE,
   name TEXT NOT NULL,
+  description TEXT,
   icon TEXT NOT NULL,
   gradient TEXT NOT NULL,
   total_topics INTEGER DEFAULT 0 NOT NULL,
