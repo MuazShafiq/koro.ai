@@ -307,151 +307,157 @@ export default function DashboardPage() {
               AI Tutor - Your Subjects
             </h2>
             <BentoGrid className="max-w-4xl mx-auto">
-              {/* Physics Subject Card - Enhanced for AI Tutor */}
-              <BentoGridItem
-                className="md:col-span-2 group cursor-pointer hover:shadow-xl transition-all duration-300"
-                size="large"
-              >
-                <motion.div
-                  className="relative h-full p-6 bg-gradient-to-br from-emerald-500/10 to-green-600/10 rounded-xl border border-emerald-500/20 overflow-hidden"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => window.location.href = '/study/physics'}
+              {/* Render user's selected subjects */}
+              {subjects.map((subject, index) => (
+                <BentoGridItem
+                  key={subject.id}
+                  className="md:col-span-2 group cursor-pointer hover:shadow-xl transition-all duration-300"
+                  size="large"
                 >
-                  {/* Animated background particles */}
-                  <div className="absolute inset-0 overflow-hidden">
-                    {[...Array(5)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        className="absolute w-2 h-2 bg-emerald-400/30 rounded-full"
-                        animate={{
-                          x: [0, 100, 0],
-                          y: [0, -50, 0],
-                          opacity: [0, 1, 0]
-                        }}
-                        transition={{
-                          duration: 3 + i,
-                          repeat: Infinity,
-                          delay: i * 0.5
-                        }}
-                        style={{
-                          left: `${20 + i * 15}%`,
-                          top: `${30 + i * 10}%`
-                        }}
-                      />
-                    ))}
-                  </div>
-                  
-                  {/* Content */}
-                  <div className="relative z-10 h-full flex flex-col">
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center gap-3">
-                        <motion.div
-                          className="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center shadow-lg"
-                          whileHover={{ rotate: 5, scale: 1.1 }}
-                        >
-                          <Atom className="w-8 h-8 text-white" />
-                        </motion.div>
-                        <div>
-                          <h3 className="text-2xl font-bold text-foreground">Physics</h3>
-                          <p className="text-emerald-400 font-medium">AI Tutor Ready</p>
-                        </div>
-                      </div>
-                      
-                      {/* AI Status Indicator */}
-                      <motion.div
-                        className="flex items-center gap-2 px-3 py-1 bg-emerald-500/20 rounded-full border border-emerald-500/30"
-                        animate={{ opacity: [0.7, 1, 0.7] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      >
-                        <div className="w-2 h-2 bg-emerald-400 rounded-full" />
-                        <span className="text-sm text-emerald-400 font-medium">AI Active</span>
-                      </motion.div>
+                  <motion.div
+                    className="relative h-full p-6 bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl border border-primary/20 overflow-hidden"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => window.location.href = subject.href}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                  >
+                    {/* Animated background particles */}
+                    <div className="absolute inset-0 overflow-hidden">
+                      {[...Array(5)].map((_, i) => (
+                         <motion.div
+                           key={i}
+                           className="absolute w-2 h-2 bg-primary/30 rounded-full"
+                           animate={{
+                             x: [0, 100, 0],
+                             y: [0, -50, 0],
+                             opacity: [0, 1, 0]
+                           }}
+                           transition={{
+                             duration: 3 + i,
+                             repeat: Infinity,
+                             delay: i * 0.5
+                           }}
+                           style={{
+                             left: `${20 + i * 15}%`,
+                             top: `${30 + i * 10}%`
+                           }}
+                         />
+                       ))}
                     </div>
                     
-                    {/* Metrics Grid */}
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      {/* Learning Streak */}
-                      <motion.div
-                        className="p-4 rounded-lg bg-gradient-to-br from-orange-500/20 to-red-500/20 border border-orange-500/30"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
-                            <motion.div
-                              animate={{ scale: [1, 1.2, 1] }}
-                              transition={{ duration: 1.5, repeat: Infinity }}
-                            >
-                              🔥
-                            </motion.div>
-                          </div>
-                          <span className="text-sm font-medium text-muted-foreground">Learning Streak</span>
-                        </div>
-                        <p className="text-2xl font-bold text-foreground">{profile?.streak || 7} days</p>
-                      </motion.div>
+                    {/* Content */}
+                    <div className="relative z-10 h-full flex flex-col">
+                      {/* Header */}
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-3">
+                          <motion.div
+                            className={`w-16 h-16 rounded-xl bg-gradient-to-br ${subject.gradient} flex items-center justify-center shadow-lg`}
+                            whileHover={{ rotate: 5, scale: 1.1 }}
+                          >
+                            {subject.icon}
+                          </motion.div>
+                          <div>
+                             <h3 className="text-2xl font-bold text-foreground">{subject.subject}</h3>
+                             <p className="text-primary font-medium">AI Tutor Ready</p>
+                           </div>
+                         </div>
+                         
+                         {/* AI Status Indicator */}
+                         <motion.div
+                           className="flex items-center gap-2 px-3 py-1 bg-primary/20 rounded-full border border-primary/30"
+                           animate={{ opacity: [0.7, 1, 0.7] }}
+                           transition={{ duration: 2, repeat: Infinity }}
+                         >
+                           <div className="w-2 h-2 bg-primary rounded-full" />
+                           <span className="text-sm text-primary font-medium">AI Active</span>
+                         </motion.div>
+                      </div>
                       
-                      {/* Study Time */}
-                      <motion.div
-                        className="p-4 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center">
-                            <Clock className="w-4 h-4 text-white" />
-                          </div>
-                          <span className="text-sm font-medium text-muted-foreground">Study Time</span>
-                        </div>
-                        <p className="text-2xl font-bold text-foreground">{totalStudyHours}h</p>
-                      </motion.div>
-                      
-                      {/* Average Progress */}
-                      <motion.div
-                        className="p-4 rounded-lg bg-gradient-to-br from-purple-500/20 to-violet-500/20 border border-purple-500/30"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-400 to-violet-500 flex items-center justify-center">
-                            <TrendingUp className="w-4 h-4 text-white" />
-                          </div>
-                          <span className="text-sm font-medium text-muted-foreground">Progress</span>
-                        </div>
-                        <p className="text-2xl font-bold text-foreground">{averageProgress}%</p>
-                      </motion.div>
-                      
-                      {/* Focus Score */}
-                      <motion.div
-                        className="p-4 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center">
-                            <Zap className="w-4 h-4 text-white" />
-                          </div>
-                          <span className="text-sm font-medium text-muted-foreground">Focus Score</span>
-                        </div>
-                        <p className="text-2xl font-bold text-foreground">{Math.min(100, Math.max(0, averageProgress + 5))}%</p>
-                      </motion.div>
-                    </div>
-                    
-                    {/* Next Topic */}
-                    <div className="mt-auto">
-                      <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
-                        <div>
-                          <p className="text-sm text-muted-foreground">Next Topic</p>
-                          <p className="font-medium text-foreground">Mechanics & Motion</p>
-                        </div>
+                      {/* Metrics Grid */}
+                      <div className="grid grid-cols-2 gap-4 mb-6">
+                        {/* Learning Streak */}
                         <motion.div
-                          className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center"
-                          whileHover={{ scale: 1.1, rotate: 5 }}
+                          className="p-4 rounded-lg bg-gradient-to-br from-orange-500/20 to-red-500/20 border border-orange-500/30"
+                          whileHover={{ scale: 1.05 }}
                         >
-                          <BookOpen className="w-5 h-5 text-white" />
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
+                              <motion.div
+                                animate={{ scale: [1, 1.2, 1] }}
+                                transition={{ duration: 1.5, repeat: Infinity }}
+                              >
+                                🔥
+                              </motion.div>
+                            </div>
+                            <span className="text-sm font-medium text-muted-foreground">Learning Streak</span>
+                          </div>
+                          <p className="text-2xl font-bold text-foreground">{profile?.streak || 7} days</p>
+                        </motion.div>
+                        
+                        {/* Study Time */}
+                        <motion.div
+                          className="p-4 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30"
+                          whileHover={{ scale: 1.05 }}
+                        >
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center">
+                              <Clock className="w-4 h-4 text-white" />
+                            </div>
+                            <span className="text-sm font-medium text-muted-foreground">Study Time</span>
+                          </div>
+                          <p className="text-2xl font-bold text-foreground">{totalStudyHours}h</p>
+                        </motion.div>
+                        
+                        {/* Progress */}
+                        <motion.div
+                          className="p-4 rounded-lg bg-gradient-to-br from-purple-500/20 to-violet-500/20 border border-purple-500/30"
+                          whileHover={{ scale: 1.05 }}
+                        >
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-400 to-violet-500 flex items-center justify-center">
+                              <TrendingUp className="w-4 h-4 text-white" />
+                            </div>
+                            <span className="text-sm font-medium text-muted-foreground">Progress</span>
+                          </div>
+                          <p className="text-2xl font-bold text-foreground">{subject.progress}%</p>
+                        </motion.div>
+                        
+                        {/* Focus Score */}
+                        <motion.div
+                          className="p-4 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30"
+                          whileHover={{ scale: 1.05 }}
+                        >
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center">
+                              <Zap className="w-4 h-4 text-white" />
+                            </div>
+                            <span className="text-sm font-medium text-muted-foreground">Focus Score</span>
+                          </div>
+                          <p className="text-2xl font-bold text-foreground">{Math.min(100, Math.max(0, subject.progress + 5))}%</p>
                         </motion.div>
                       </div>
+                      
+                      {/* Next Topic */}
+                      <div className="mt-auto">
+                        <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
+                          <div>
+                            <p className="text-sm text-muted-foreground">Next Topic</p>
+                            <p className="font-medium text-foreground">{subject.nextTopic}</p>
+                          </div>
+                          <motion.div
+                            className={`w-10 h-10 rounded-lg bg-gradient-to-br ${subject.gradient} flex items-center justify-center`}
+                            whileHover={{ scale: 1.1, rotate: 5 }}
+                          >
+                            <BookOpen className="w-5 h-5 text-white" />
+                          </motion.div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              </BentoGridItem>
+                  </motion.div>
+                </BentoGridItem>
+              ))}
               
               {/* Add Subject Card */}
               <BentoGridItem className="group cursor-pointer hover:shadow-xl transition-all duration-300">

@@ -73,39 +73,86 @@ export function SubjectSelectionModal({ isOpen, onClose, onSubjectsAdded }: Subj
     }
 
     setIsLoading(true);
+    console.log('Adding subjects:', selectedSubjects);
+    
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) {
+        console.error('User authentication error:', userError);
+        toast.error('Authentication error. Please log in again.');
+        return;
+      }
+      
       if (!user) {
+        console.error('No user found');
         toast.error('Please log in to add subjects');
         return;
       }
 
+      console.log('User authenticated:', user.id);
+
+      // Check for existing subjects to avoid duplicates
+      const { data: existingSubjects, error: fetchError } = await supabase
+        .from('subjects')
+        .select('name')
+        .eq('user_id', user.id);
+
+      if (fetchError) {
+        console.error('Error fetching existing subjects:', fetchError);
+        toast.error('Error checking existing subjects.');
+        return;
+      }
+
+      const existingSubjectNames = existingSubjects?.map(s => s.name) || [];
+      console.log('Existing subjects:', existingSubjectNames);
+
+      // Filter out subjects that already exist
+      const newSubjects = selectedSubjects.filter(subjectId => {
+        const subject = availableSubjects.find(s => s.id === subjectId);
+        return subject && !existingSubjectNames.includes(subject.name);
+      });
+
+      if (newSubjects.length === 0) {
+        toast.error('All selected subjects are already added to your dashboard.');
+        setIsLoading(false);
+        return;
+      }
+
       // Add selected subjects to the database
-      const subjectsToAdd = selectedSubjects.map(subjectId => {
+      const subjectsToAdd = newSubjects.map(subjectId => {
         const subject = availableSubjects.find(s => s.id === subjectId);
         return {
           name: subject?.name || '',
+          description: subject?.description || '',
+          icon: subject?.id || '',
           user_id: user.id,
           created_at: new Date().toISOString()
         };
       });
 
-      const { error } = await supabase
-        .from('subjects')
-        .insert(subjectsToAdd);
+      console.log('Subjects to add:', subjectsToAdd);
 
-      if (error) {
-        console.error('Error adding subjects:', error);
-        toast.error('Failed to add subjects. Please try again.');
+      const { data: insertedData, error: insertError } = await supabase
+        .from('subjects')
+        .insert(subjectsToAdd)
+        .select();
+
+      if (insertError) {
+        console.error('Error adding subjects:', insertError);
+        toast.error(`Failed to add subjects: ${insertError.message}`);
         return;
       }
 
-      toast.success(`Successfully added ${selectedSubjects.length} subject${selectedSubjects.length > 1 ? 's' : ''}!`);
+      console.log('Successfully inserted subjects:', insertedData);
+      toast.success(`Successfully added ${newSubjects.length} subject${newSubjects.length > 1 ? 's' : ''}!`);
+      
       setSelectedSubjects([]);
-      onSubjectsAdded();
+      
+      // Refresh the dashboard data
+      await onSubjectsAdded();
       onClose();
     } catch (error) {
-      console.error('Error adding subjects:', error);
+      console.error('Unexpected error adding subjects:', error);
       toast.error('An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);
@@ -119,7 +166,7 @@ export function SubjectSelectionModal({ isOpen, onClose, onSubjectsAdded }: Subj
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl bg-gradient-to-br from-background/95 to-background/90 backdrop-blur-xl border border-white/10">
+      <DialogContent className="max-w-4xl max-h-[85vh] w-[95vw] sm:w-[90vw] md:w-[80vw] lg:w-[70vw] overflow-y-auto bg-gradient-to-br from-background/95 to-background/90 backdrop-blur-xl border border-white/10 mx-2 sm:mx-4 my-2 sm:my-4">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center text-foreground">
             Add New Subjects
@@ -129,7 +176,7 @@ export function SubjectSelectionModal({ isOpen, onClose, onSubjectsAdded }: Subj
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 py-4 sm:py-6 px-2 sm:px-0">
           {availableSubjects.map((subject, index) => {
             const isSelected = selectedSubjects.includes(subject.id);
             
@@ -143,7 +190,7 @@ export function SubjectSelectionModal({ isOpen, onClose, onSubjectsAdded }: Subj
                 onClick={() => toggleSubject(subject.id)}
               >
                 <motion.div
-                  className={`p-6 rounded-xl border-2 transition-all duration-300 ${
+                  className={`p-4 sm:p-6 rounded-xl border-2 transition-all duration-300 ${
                     isSelected 
                       ? 'border-primary bg-primary/10 shadow-lg shadow-primary/20' 
                       : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
@@ -163,22 +210,22 @@ export function SubjectSelectionModal({ isOpen, onClose, onSubjectsAdded }: Subj
                   )}
 
                   {/* Subject icon */}
-                  <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${subject.gradient} flex items-center justify-center mb-4 mx-auto shadow-lg`}>
+                  <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br ${subject.gradient} flex items-center justify-center mb-3 sm:mb-4 mx-auto shadow-lg`}>
                     {subject.icon}
                   </div>
 
                   {/* Subject name */}
-                  <h3 className="text-xl font-bold text-center text-foreground mb-2">
+                  <h3 className="text-lg sm:text-xl font-bold text-center text-foreground mb-1 sm:mb-2">
                     {subject.name}
                   </h3>
 
                   {/* Cambridge GCSE label */}
-                  <p className="text-sm text-center text-muted-foreground mb-3 font-medium">
+                  <p className="text-xs sm:text-sm text-center text-muted-foreground mb-2 sm:mb-3 font-medium">
                     Cambridge GCSE
                   </p>
 
                   {/* Subject description */}
-                  <p className="text-sm text-center text-muted-foreground">
+                  <p className="text-xs sm:text-sm text-center text-muted-foreground">
                     {subject.description}
                   </p>
                 </motion.div>
@@ -187,26 +234,27 @@ export function SubjectSelectionModal({ isOpen, onClose, onSubjectsAdded }: Subj
           })}
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-white/10">
-          <p className="text-sm text-muted-foreground">
+        <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-white/10 gap-3 sm:gap-0 px-2 sm:px-0">
+          <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
             {selectedSubjects.length > 0 
               ? `${selectedSubjects.length} subject${selectedSubjects.length > 1 ? 's' : ''} selected`
               : 'Select subjects to add to your dashboard'
             }
           </p>
           
-          <div className="flex gap-3">
+          <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
             <Button
               variant="outline"
               onClick={handleClose}
               disabled={isLoading}
+              className="flex-1 sm:flex-none"
             >
               Cancel
             </Button>
             <Button
               onClick={handleAddSubjects}
               disabled={selectedSubjects.length === 0 || isLoading}
-              className="bg-primary hover:bg-primary/90"
+              className="bg-primary hover:bg-primary/90 flex-1 sm:flex-none"
             >
               {isLoading ? 'Adding...' : `Add ${selectedSubjects.length > 0 ? selectedSubjects.length : ''} Subject${selectedSubjects.length !== 1 ? 's' : ''}`}
             </Button>
