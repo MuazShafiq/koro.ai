@@ -125,6 +125,7 @@ export function SubjectSelectionModal({ isOpen, onClose, onSubjectsAdded }: Subj
           name: subject?.name || '',
           description: subject?.description || '',
           icon: subject?.id || '',
+          gradient: subject?.gradient || '',
           user_id: user.id,
           created_at: new Date().toISOString()
         };
