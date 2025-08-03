@@ -402,3 +402,274 @@ $$;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+
+-- Create resources table for storing educational content
+CREATE TABLE public.resources (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  subject_id UUID REFERENCES public.subjects(id) ON DELETE CASCADE,
+  topic_id UUID REFERENCES public.topics(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  description TEXT,
+  file_url TEXT NOT NULL,
+  content_type TEXT NOT NULL, -- 'pdf', 'doc', 'text', etc.
+  content_text TEXT, -- Extracted text content for RAG
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Create lessons table for storing generated lesson plans
+CREATE TABLE public.lessons (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  subject_id UUID REFERENCES public.subjects(id) ON DELETE CASCADE,
+  topic_id UUID REFERENCES public.topics(id) ON DELETE CASCADE,
+  lesson_content TEXT NOT NULL,
+  audio_url TEXT,
+  duration_minutes INTEGER DEFAULT 0,
+  status TEXT DEFAULT 'generated' CHECK (status IN ('generated', 'in_progress', 'completed')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Enable RLS on new tables
+ALTER TABLE public.resources ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Create policies for resources table (public read access for educational content)
+CREATE POLICY "Anyone can view resources."
+  ON public.resources FOR SELECT
+  USING (true);
+
+CREATE POLICY "Authenticated users can insert resources."
+  ON public.resources FOR INSERT
+  WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can update resources."
+  ON public.resources FOR UPDATE
+  USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can delete resources."
+  ON public.resources FOR DELETE
+  USING (auth.role() = 'authenticated');
+
+-- Create policies for lessons table
+CREATE POLICY "Users can view their own lessons."
+  ON public.lessons FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own lessons."
+  ON public.lessons FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own lessons."
+  ON public.lessons FOR UPDATE
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own lessons."
+  ON public.lessons FOR DELETE
+  USING (auth.uid() = user_id);
+
+-- Create indexes for better performance
+CREATE INDEX idx_resources_subject_topic ON public.resources(subject_id, topic_id);
+CREATE INDEX idx_resources_content_type ON public.resources(content_type);
+CREATE INDEX idx_lessons_user_subject ON public.lessons(user_id, subject_id);
+CREATE INDEX idx_lessons_status ON public.lessons(status);
+
+-- Function to get resources by subject and topic
+CREATE OR REPLACE FUNCTION public.get_resources_by_topic(subject_uuid UUID, topic_uuid UUID)
+RETURNS TABLE(
+  id UUID,
+  title TEXT,
+  description TEXT,
+  file_url TEXT,
+  content_type TEXT,
+  content_text TEXT
+)
+LANGUAGE PLPGSQL
+SECURITY DEFINER
+AS $$
+BEGIN
+  RETURN QUERY
+  SELECT r.id, r.title, r.description, r.file_url, r.content_type, r.content_text
+  FROM public.resources r
+  WHERE r.subject_id = subject_uuid AND r.topic_id = topic_uuid
+  ORDER BY r.created_at DESC;
+END;
+$$;
+
+-- Function to create a new lesson
+CREATE OR REPLACE FUNCTION public.create_lesson(
+  user_uuid UUID,
+  subject_uuid UUID,
+  topic_uuid UUID,
+  lesson_text TEXT,
+  audio_file_url TEXT DEFAULT NULL
+)
+RETURNS UUID
+LANGUAGE PLPGSQL
+SECURITY DEFINER
+AS $$
+DECLARE
+  lesson_id UUID;
+BEGIN
+  INSERT INTO public.lessons (user_id, subject_id, topic_id, lesson_content, audio_url)
+  VALUES (user_uuid, subject_uuid, topic_uuid, lesson_text, audio_file_url)
+  RETURNING id INTO lesson_id;
+  
+  RETURN lesson_id;
+END;
+$$;
+
+-- Function to update lesson with audio URL
+CREATE OR REPLACE FUNCTION public.update_lesson_audio(lesson_uuid UUID, audio_file_url TEXT)
+RETURNS VOID
+LANGUAGE PLPGSQL
+SECURITY DEFINER
+AS $$
+BEGIN
+  UPDATE public.lessons
+  SET audio_url = audio_file_url, updated_at = timezone('utc'::text, now())
+  WHERE id = lesson_uuid;
+END;
+$$;
+
+-- Create lesson_sessions table for AI tutor sessions
+CREATE TABLE public.lesson_sessions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  subject_id UUID REFERENCES public.subjects(id) ON DELETE CASCADE NOT NULL,
+  topic_id UUID REFERENCES public.topics(id) ON DELETE CASCADE,
+  current_phase TEXT DEFAULT 'planning' CHECK (current_phase IN ('planning', 'assessment', 'delivery', 'interaction', 'completed')) NOT NULL,
+  lesson_plan JSONB,
+  student_responses JSONB DEFAULT '[]'::jsonb,
+  current_chunk_index INTEGER DEFAULT 0,
+  session_status TEXT DEFAULT 'active' CHECK (session_status IN ('active', 'paused', 'completed', 'cancelled')) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Create lesson_chunks table for storing lesson segments
+CREATE TABLE public.lesson_chunks (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  session_id UUID REFERENCES public.lesson_sessions(id) ON DELETE CASCADE NOT NULL,
+  chunk_index INTEGER NOT NULL,
+  script_content TEXT NOT NULL,
+  audio_url TEXT,
+  delivered_at TIMESTAMP WITH TIME ZONE,
+  student_interaction JSONB DEFAULT '{}'::jsonb,
+  chunk_type TEXT DEFAULT 'lesson' CHECK (chunk_type IN ('lesson', 'question', 'explanation', 'summary')) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Create student_assessments table for Q&A tracking
+CREATE TABLE public.student_assessments (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  session_id UUID REFERENCES public.lesson_sessions(id) ON DELETE CASCADE NOT NULL,
+  question TEXT NOT NULL,
+  student_answer TEXT NOT NULL,
+  ai_evaluation JSONB,
+  assessment_type TEXT DEFAULT 'understanding' CHECK (assessment_type IN ('understanding', 'knowledge', 'application', 'interaction')) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Enable RLS on new AI tutor tables
+ALTER TABLE public.lesson_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lesson_chunks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.student_assessments ENABLE ROW LEVEL SECURITY;
+
+-- Create policies for lesson_sessions table
+CREATE POLICY "Users can view their own lesson sessions."
+  ON public.lesson_sessions FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own lesson sessions."
+  ON public.lesson_sessions FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own lesson sessions."
+  ON public.lesson_sessions FOR UPDATE
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own lesson sessions."
+  ON public.lesson_sessions FOR DELETE
+  USING (auth.uid() = user_id);
+
+-- Create policies for lesson_chunks table
+CREATE POLICY "Users can view chunks from their sessions."
+  ON public.lesson_chunks FOR SELECT
+  USING (auth.uid() IN (
+    SELECT user_id FROM public.lesson_sessions WHERE id = session_id
+  ));
+
+CREATE POLICY "Users can insert chunks for their sessions."
+  ON public.lesson_chunks FOR INSERT
+  WITH CHECK (auth.uid() IN (
+    SELECT user_id FROM public.lesson_sessions WHERE id = session_id
+  ));
+
+CREATE POLICY "Users can update chunks from their sessions."
+  ON public.lesson_chunks FOR UPDATE
+  USING (auth.uid() IN (
+    SELECT user_id FROM public.lesson_sessions WHERE id = session_id
+  ));
+
+CREATE POLICY "Users can delete chunks from their sessions."
+  ON public.lesson_chunks FOR DELETE
+  USING (auth.uid() IN (
+    SELECT user_id FROM public.lesson_sessions WHERE id = session_id
+  ));
+
+-- Create policies for student_assessments table
+CREATE POLICY "Users can view their own assessments."
+  ON public.student_assessments FOR SELECT
+  USING (auth.uid() IN (
+    SELECT user_id FROM public.lesson_sessions WHERE id = session_id
+  ));
+
+CREATE POLICY "Users can insert their own assessments."
+  ON public.student_assessments FOR INSERT
+  WITH CHECK (auth.uid() IN (
+    SELECT user_id FROM public.lesson_sessions WHERE id = session_id
+  ));
+
+CREATE POLICY "Users can update their own assessments."
+  ON public.student_assessments FOR UPDATE
+  USING (auth.uid() IN (
+    SELECT user_id FROM public.lesson_sessions WHERE id = session_id
+  ));
+
+CREATE POLICY "Users can delete their own assessments."
+  ON public.student_assessments FOR DELETE
+  USING (auth.uid() IN (
+    SELECT user_id FROM public.lesson_sessions WHERE id = session_id
+  ));
+
+-- Create indexes for AI tutor tables
+CREATE INDEX idx_lesson_sessions_user_subject ON public.lesson_sessions(user_id, subject_id);
+CREATE INDEX idx_lesson_sessions_status ON public.lesson_sessions(session_status);
+CREATE INDEX idx_lesson_chunks_session ON public.lesson_chunks(session_id, chunk_index);
+CREATE INDEX idx_student_assessments_session ON public.student_assessments(session_id);
+
+-- Function to create updated_at triggers
+CREATE OR REPLACE FUNCTION public.set_updated_at()
+RETURNS TRIGGER
+LANGUAGE PLPGSQL
+AS $$
+BEGIN
+  NEW.updated_at = timezone('utc'::text, now());
+  RETURN NEW;
+END;
+$$;
+
+-- Create updated_at triggers for AI tutor tables
+CREATE TRIGGER set_lesson_sessions_updated_at
+  BEFORE UPDATE ON public.lesson_sessions
+  FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+
+CREATE TRIGGER set_resources_updated_at
+  BEFORE UPDATE ON public.resources
+  FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+
+CREATE TRIGGER set_lessons_updated_at
+  BEFORE UPDATE ON public.lessons
+  FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
