@@ -4,107 +4,57 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Play,
-  Pause,
-  Square,
-  SkipForward,
-  Volume2,
-  Settings,
   BookOpen,
   Brain,
   Target,
   Clock,
   Award,
-  Maximize2,
-  Minimize2,
-  RotateCcw,
-  Save,
+  ArrowRight,
+  Sparkles,
+  Users,
+  MessageCircle,
+  Zap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
 import { useSupabase } from '@/utils/supabase/provider';
-import VoiceAssistant from '@/components/voice/VoiceAssistant';
-import InteractiveWhiteboard from '@/components/whiteboard/InteractiveWhiteboard';
+import { AITutorInterface } from '@/components/lesson/AITutorInterface';
+import { toast } from 'sonner';
 import { Database } from '@/utils/supabase/database.types';
 
 type Subject = Database['public']['Tables']['subjects']['Row'];
 type Topic = Database['public']['Tables']['topics']['Row'];
 
-interface StudyTopic {
+interface AITutorSession {
+  sessionId: string;
+  subject: Subject;
+  topic: Topic | null;
+  isActive: boolean;
+}
+
+interface StudyOption {
   id: string;
-  name: string;
+  title: string;
   description: string;
-  duration: number; // in minutes
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
-  concepts: string[];
-  completed: boolean;
-  progress: number;
+  icon: React.ReactNode;
+  gradient: string;
+  features: string[];
+  action: () => void;
 }
-
-interface StudySession {
-  id: string;
-  subjectId: string;
-  topicId: string;
-  startTime: Date;
-  duration: number;
-  progress: number;
-  notes: string;
-  achievements: string[];
-}
-
-// Fallback topics if database fetch fails
-const fallbackTopics: StudyTopic[] = [
-  {
-    id: '1',
-    name: 'Introduction to Algebra',
-    description: 'Learn the basics of algebraic expressions and equations',
-    duration: 45,
-    difficulty: 'beginner',
-    concepts: ['Variables', 'Expressions', 'Equations', 'Solving for x'],
-    completed: false,
-    progress: 0
-  },
-  {
-    id: '2',
-    name: 'Quadratic Equations',
-    description: 'Master quadratic equations and their solutions',
-    duration: 60,
-    difficulty: 'intermediate',
-    concepts: ['Standard form', 'Factoring', 'Quadratic formula', 'Graphing'],
-    completed: false,
-    progress: 0
-  },
-  {
-    id: '3',
-    name: 'Systems of Equations',
-    description: 'Solve systems using substitution and elimination',
-    duration: 50,
-    difficulty: 'intermediate',
-    concepts: ['Substitution', 'Elimination', 'Graphing method', 'Applications'],
-    completed: false,
-    progress: 0
-  },
-];
 
 export default function StudyPage() {
-  const { currentSubject, userProgress, updateUserProgress } = useStore();
+  const { currentSubject, userProgress } = useStore();
   const { supabase } = useSupabase();
   const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [topics, setTopics] = useState<StudyTopic[]>(fallbackTopics);
-  const [currentTopic, setCurrentTopic] = useState<StudyTopic>(fallbackTopics[0]);
-  const [session, setSession] = useState<StudySession | null>(null);
-  const [isStudying, setIsStudying] = useState(false);
-  const [studyTime, setStudyTime] = useState(0);
-  const [sessionProgress, setSessionProgress] = useState(0);
-  const [isWhiteboardExpanded, setIsWhiteboardExpanded] = useState(false);
-  const [studyNotes, setStudyNotes] = useState('');
-  const [completedConcepts, setCompletedConcepts] = useState<string[]>([]);
+  const [topics, setTopics] = useState<Topic[]>([]);
+  const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
+  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+  const [aiSession, setAiSession] = useState<AITutorSession | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isStartingSession, setIsStartingSession] = useState(false);
   
   // Fetch subjects and topics from Supabase
   useEffect(() => {
@@ -116,52 +66,44 @@ export default function StudyPage() {
         const { data: { user } } = await supabase.auth.getUser();
         
         if (!user) {
-          throw new Error('User not authenticated');
+          toast.error('Please log in to access study materials');
+          return;
         }
         
         // Fetch subjects for the current user
         const { data: subjectsData, error: subjectsError } = await supabase
           .from('subjects')
           .select('*')
-          .eq('user_id', user.id);
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: true });
         
         if (subjectsError) throw subjectsError;
         
         if (subjectsData && subjectsData.length > 0) {
           setSubjects(subjectsData);
           
-          // Fetch topics for the first subject
-          const subjectId = currentSubject || subjectsData[0].id;
+          // Set the first subject as selected if currentSubject is not set
+          const targetSubject = subjectsData.find(s => s.id === currentSubject) || subjectsData[0];
+          setSelectedSubject(targetSubject);
+          
+          // Fetch topics for the selected subject
           const { data: topicsData, error: topicsError } = await supabase
             .from('topics')
             .select('*')
-            .eq('subject_id', subjectId);
+            .eq('subject_id', targetSubject.id)
+            .order('created_at', { ascending: true });
           
           if (topicsError) throw topicsError;
           
-          if (topicsData && topicsData.length > 0) {
-            // Transform topics to match StudyTopic interface
-            const formattedTopics: StudyTopic[] = topicsData.map(topic => ({
-              id: topic.id,
-              name: topic.name,
-              description: 'Learn about ' + topic.name, // Default description
-              duration: 45, // Default duration
-              difficulty: 'intermediate' as 'beginner' | 'intermediate' | 'advanced', // Default difficulty
-              concepts: ['Concept 1', 'Concept 2'], // Default concepts
-              completed: topic.completed,
-              progress: topic.progress
-            }));
-            
-            setTopics(formattedTopics);
-            setCurrentTopic(formattedTopics[0]);
+          if (topicsData) {
+            setTopics(topicsData);
           }
+        } else {
+          toast.error('No subjects found. Please create a subject first.');
         }
       } catch (err) {
         console.error('Error fetching data:', err);
-        setError('Failed to load study materials');
-        // Fall back to mock data
-        setTopics(fallbackTopics);
-        setCurrentTopic(fallbackTopics[0]);
+        toast.error('Failed to load study materials');
       } finally {
         setLoading(false);
       }
@@ -170,152 +112,99 @@ export default function StudyPage() {
     fetchData();
   }, [supabase, currentSubject]);
 
-  // Timer for study session
+  // Fetch topics when subject changes
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
-    if (isStudying && session) {
-      interval = setInterval(() => {
-        setStudyTime(prev => {
-          const newTime = prev + 1;
-          const progress = Math.min((newTime / (currentTopic.duration * 60)) * 100, 100);
-          setSessionProgress(progress);
-          return newTime;
-        });
-      }, 1000);
+    if (selectedSubject) {
+      fetchTopicsForSubject(selectedSubject.id);
     }
-    
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isStudying, session, currentTopic.duration]);
+  }, [selectedSubject]);
 
-  const startStudySession = () => {
-    const newSession: StudySession = {
-      id: Date.now().toString(),
-      subjectId: currentSubject || '1',
-      topicId: currentTopic.id,
-      startTime: new Date(),
-      duration: 0,
-      progress: 0,
-      notes: '',
-      achievements: [],
-    };
-    
-    setSession(newSession);
-    setIsStudying(true);
-    setStudyTime(0);
-    setSessionProgress(0);
-  };
-
-  const pauseStudySession = () => {
-    setIsStudying(false);
-  };
-
-  const resumeStudySession = () => {
-    setIsStudying(true);
-  };
-
-  const endStudySession = async () => {
-    if (session) {
-      const updatedSession = {
-        ...session,
-        duration: studyTime,
-        progress: sessionProgress,
-        notes: studyNotes,
-      };
+  const fetchTopicsForSubject = async (subjectId: string) => {
+    try {
+      const { data: topicsData, error } = await supabase
+        .from('topics')
+        .select('*')
+        .eq('subject_id', subjectId)
+        .order('created_at', { ascending: true });
       
-      // Update user progress in Zustand store
-      updateUserProgress({
-        totalSessions: userProgress.totalSessions + 1,
-        streak: userProgress.streak + (sessionProgress >= 80 ? 1 : 0),
-        xp: userProgress.xp + Math.floor(studyTime / 60) * 10, // 10 XP per minute
-        weeklyGoal: {
-          current: userProgress.weeklyGoal.current + 1,
-          target: userProgress.weeklyGoal.target
-        }
+      if (error) throw error;
+      
+      setTopics(topicsData || []);
+      setSelectedTopic(null); // Reset topic selection
+    } catch (error) {
+      console.error('Error fetching topics:', error);
+      toast.error('Failed to load topics');
+    }
+  };
+
+  const startAITutorSession = async (subjectId: string, topicId?: string) => {
+    if (!selectedSubject) return;
+    
+    setIsStartingSession(true);
+    
+    try {
+      const response = await fetch('/api/tutor/start-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          subjectId,
+          topicId
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to start session');
+      }
+
+      const sessionData = await response.json();
+      
+      setAiSession({
+        sessionId: sessionData.sessionId,
+        subject: selectedSubject,
+        topic: selectedTopic,
+        isActive: true
       });
       
-      try {
-        // Update topic progress in Supabase
-        if (sessionProgress >= 80) {
-          const { error } = await supabase
-            .from('topics')
-            .update({ 
-              completed: true,
-              progress: 100,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', currentTopic.id);
-            
-          if (error) throw error;
-          
-          // Update local state
-          setCurrentTopic(prev => ({ ...prev, completed: true, progress: 100 }));
-        } else {
-          // Update progress but not mark as completed
-          const newProgress = Math.max(currentTopic.progress, sessionProgress);
-          const { error } = await supabase
-            .from('topics')
-            .update({ 
-              progress: newProgress,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', currentTopic.id);
-            
-          if (error) throw error;
-          
-          // Update local state
-          setCurrentTopic(prev => ({ ...prev, progress: newProgress }));
-        }
-        
-        // Update user profile with new streak and XP
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .update({ 
-              streak: userProgress.streak + (sessionProgress >= 80 ? 1 : 0),
-              xp: userProgress.xp + Math.floor(studyTime / 60) * 10,
-              total_sessions: userProgress.totalSessions + 1,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', user.id);
-            
-          if (profileError) throw profileError;
-        }
-      } catch (err) {
-        console.error('Error updating progress:', err);
-        // Continue with local state updates even if database update fails
-      } finally {
-        setIsStudying(false);
-        setSession(null);
-      }
+      toast.success('AI Tutor session started!');
+      
+    } catch (error) {
+      console.error('Error starting AI session:', error);
+      toast.error('Failed to start AI tutor session');
+    } finally {
+      setIsStartingSession(false);
     }
   };
 
-  const toggleConcept = (concept: string) => {
-    setCompletedConcepts(prev => 
-      prev.includes(concept)
-        ? prev.filter(c => c !== concept)
-        : [...prev, concept]
+  const endAITutorSession = () => {
+    setAiSession(null);
+    setSelectedTopic(null);
+    toast.success('Session ended successfully');
+  };
+
+  // If AI session is active, render the AI Tutor Interface
+  if (aiSession) {
+    return (
+      <AITutorInterface
+        sessionId={aiSession.sessionId}
+        subject={aiSession.subject}
+        topic={aiSession.topic}
+        onEndSession={endAITutorSession}
+      />
     );
-  };
+  }
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'beginner': return 'bg-green-500/20 text-green-400';
-      case 'intermediate': return 'bg-yellow-500/20 text-yellow-400';
-      case 'advanced': return 'bg-red-500/20 text-red-400';
-      default: return 'bg-gray-500/20 text-gray-400';
-    }
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/50 p-6 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading study materials...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/50 p-6">
@@ -323,248 +212,291 @@ export default function StudyPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-foreground mb-2">Study Session</h1>
-            <p className="text-muted-foreground">Focus, learn, and achieve your goals</p>
+            <h1 className="text-4xl font-bold text-foreground mb-2">AI-Powered Study</h1>
+            <p className="text-muted-foreground">Experience personalized learning with our AI tutor</p>
           </div>
           
-          <div className="flex items-center gap-4">
-            {session && (
-              <div className="flex items-center gap-2 px-4 py-2 glass rounded-lg border border-white/20">
-                <Clock className="w-4 h-4 text-electric-blue" />
-                <span className="font-mono text-lg font-semibold">
-                  {formatTime(studyTime)}
-                </span>
-              </div>
-            )}
-            
-            <Button variant="ghost" size="sm" className="glass border-white/20">
-              <Settings className="w-4 h-4" />
-            </Button>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="border-green-500/50 text-green-400">
+              <Sparkles className="w-3 h-3 mr-1" />
+              AI Enhanced
+            </Badge>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Main Study Area */}
-        <div className="xl:col-span-2 space-y-6">
-          {/* Topic Overview */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Subject Selection */}
+        <div className="space-y-6">
           <Card className="glass border-0">
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-electric-blue to-violet flex items-center justify-center">
-                    <BookOpen className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <CardTitle>{currentTopic.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{currentTopic.description}</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <Badge className={getDifficultyColor(currentTopic.difficulty)}>
-                    {currentTopic.difficulty}
-                  </Badge>
-                  <Badge variant="outline" className="border-white/20">
-                    {currentTopic.duration} min
-                  </Badge>
-                </div>
-              </div>
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5" />
+                Choose Your Subject
+              </CardTitle>
             </CardHeader>
             
-            <CardContent>
-              {/* Progress Bar */}
-              {session && (
-                <div className="mb-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium">Session Progress</span>
-                    <span className="text-sm text-muted-foreground">
-                      {Math.round(sessionProgress)}%
-                    </span>
-                  </div>
-                  <Progress value={sessionProgress} className="h-2" />
+            <CardContent className="space-y-4">
+              {subjects.length > 0 ? (
+                subjects.map((subject) => (
+                  <motion.div
+                    key={subject.id}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setSelectedSubject(subject)}
+                    className={cn(
+                      "p-4 rounded-lg border cursor-pointer transition-all",
+                      selectedSubject?.id === subject.id
+                        ? "bg-primary/20 border-primary/50"
+                        : "glass border-white/20 hover:bg-white/10"
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-lg ${subject.gradient} flex items-center justify-center`}>
+                        <span className="text-lg">{subject.icon}</span>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold">{subject.name}</h3>
+                        <p className="text-sm text-muted-foreground">{subject.description}</p>
+                      </div>
+                      {selectedSubject?.id === subject.id && (
+                        <div className="w-2 h-2 rounded-full bg-primary"></div>
+                      )}
+                    </div>
+                  </motion.div>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">No subjects found</p>
+                  <p className="text-sm text-muted-foreground">Create a subject to get started</p>
                 </div>
               )}
-              
-              {/* Concepts */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-3">Key Concepts</h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {currentTopic.concepts.map((concept) => (
-                    <motion.div
-                      key={concept}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => toggleConcept(concept)}
-                      className={cn(
-                        "p-3 rounded-lg border cursor-pointer transition-all",
-                        completedConcepts.includes(concept)
-                          ? "bg-green-500/20 border-green-500/50 text-green-400"
-                          : "glass border-white/20 hover:bg-white/10"
-                      )}
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className={cn(
-                          "w-4 h-4 rounded-full border-2 transition-all",
-                          completedConcepts.includes(concept)
-                            ? "bg-green-500 border-green-500"
-                            : "border-white/40"
-                        )} />
-                        <span className="text-sm font-medium">{concept}</span>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Study Controls */}
-              <div className="flex items-center justify-center gap-4">
-                {!session ? (
-                  <Button
-                    onClick={startStudySession}
-                    size="lg"
-                    className="bg-gradient-to-r from-electric-blue to-violet hover:from-electric-blue/80 hover:to-violet/80"
-                  >
-                    <Play className="w-5 h-5 mr-2" />
-                    Start Study Session
-                  </Button>
-                ) : (
-                  <>
-                    <Button
-                      onClick={isStudying ? pauseStudySession : resumeStudySession}
-                      size="lg"
-                      variant="outline"
-                      className="glass border-white/20"
-                    >
-                      {isStudying ? (
-                        <><Pause className="w-5 h-5 mr-2" />Pause</>
-                      ) : (
-                        <><Play className="w-5 h-5 mr-2" />Resume</>
-                      )}
-                    </Button>
-                    
-                    <Button
-                      onClick={endStudySession}
-                      size="lg"
-                      variant="destructive"
-                      className="bg-red-500/20 border-red-500/50 text-red-400 hover:bg-red-500/30"
-                    >
-                      <Square className="w-5 h-5 mr-2" />
-                      End Session
-                    </Button>
-                  </>
-                )}
-              </div>
             </CardContent>
           </Card>
 
-          {/* Interactive Whiteboard */}
-          <Card className="glass border-0">
-            <CardHeader>
-              <div className="flex items-center justify-between">
+          {/* Topic Selection */}
+          {selectedSubject && (
+            <Card className="glass border-0">
+              <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Brain className="w-5 h-5" />
-                  Interactive Whiteboard
+                  <Target className="w-5 h-5" />
+                  Select Topic (Optional)
                 </CardTitle>
-                
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsWhiteboardExpanded(!isWhiteboardExpanded)}
-                  className="glass border-white/20"
-                >
-                  {isWhiteboardExpanded ? (
-                    <Minimize2 className="w-4 h-4" />
-                  ) : (
-                    <Maximize2 className="w-4 h-4" />
-                  )}
-                </Button>
-              </div>
-            </CardHeader>
-            
-            <CardContent className="p-0">
-              <InteractiveWhiteboard 
-                className={cn(
-                  "transition-all duration-300",
-                  isWhiteboardExpanded ? "h-[600px]" : "h-[400px]"
+              </CardHeader>
+              
+              <CardContent className="space-y-4">
+                {topics.length > 0 ? (
+                  <>
+                    <div className="space-y-2">
+                      {topics.map((topic) => (
+                        <motion.div
+                          key={topic.id}
+                          whileHover={{ scale: 1.01 }}
+                          whileTap={{ scale: 0.99 }}
+                          onClick={() => setSelectedTopic(topic)}
+                          className={cn(
+                            "p-3 rounded-lg border cursor-pointer transition-all",
+                            selectedTopic?.id === topic.id
+                              ? "bg-blue-500/20 border-blue-500/50"
+                              : "glass border-white/20 hover:bg-white/5"
+                          )}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="font-medium">{topic.name}</h4>
+                              <div className="flex items-center gap-2 mt-1">
+                                {topic.completed && (
+                                  <Badge variant="outline" className="text-xs border-green-500/50 text-green-400">
+                                    Completed
+                                  </Badge>
+                                )}
+                                {topic.progress > 0 && !topic.completed && (
+                                  <Badge variant="outline" className="text-xs">
+                                    {topic.progress}% Progress
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                            {selectedTopic?.id === topic.id && (
+                              <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                            )}
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-6">
+                    <Target className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground">No topics available for this subject</p>
+                  </div>
                 )}
-                enablePhysics={currentTopic.difficulty === 'advanced'}
-              />
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
-        {/* Sidebar */}
+        {/* AI Tutor Options */}
         <div className="space-y-6">
-          {/* Voice Assistant */}
-          <VoiceAssistant className="h-fit" />
-          
+          <Card className="glass border-0">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Brain className="w-5 h-5" />
+                AI Tutor Sessions
+              </CardTitle>
+            </CardHeader>
+            
+            <CardContent className="space-y-4">
+              {/* General AI Tutoring */}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="p-6 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 cursor-pointer"
+                onClick={() => selectedSubject && startAITutorSession(selectedSubject.id)}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                    <Brain className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg mb-2">General AI Tutoring</h3>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Start a comprehensive learning session with our AI tutor
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        <MessageCircle className="w-3 h-3 mr-1" />
+                        Interactive Chat
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        <Zap className="w-3 h-3 mr-1" />
+                        Adaptive Learning
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        <Users className="w-3 h-3 mr-1" />
+                        Personalized
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+                
+                {selectedSubject && (
+                  <div className="mt-4 pt-4 border-t border-white/10">
+                    <Button 
+                      className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                      disabled={isStartingSession}
+                    >
+                      {isStartingSession ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                          Starting Session...
+                        </div>
+                      ) : (
+                        <>
+                          <Play className="w-4 h-4 mr-2" />
+                          Start AI Tutoring
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </motion.div>
+
+              {/* Topic-Specific Tutoring */}
+              {selectedTopic && (
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="p-6 rounded-lg bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 cursor-pointer"
+                  onClick={() => selectedSubject && startAITutorSession(selectedSubject.id, selectedTopic.id)}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
+                      <Target className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg mb-2">Topic-Focused Session</h3>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Deep dive into: <span className="font-medium text-foreground">{selectedTopic.name}</span>
+                      </p>
+                      <p className="text-xs text-muted-foreground mb-3">
+                        Targeted learning with assessments and interactive content
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <Badge variant="outline" className="text-xs">
+                          <Target className="w-3 h-3 mr-1" />
+                          Focused
+                        </Badge>
+                        <Badge variant="outline" className="text-xs">
+                          <Award className="w-3 h-3 mr-1" />
+                          Assessments
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t border-white/10">
+                    <Button 
+                      className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
+                      disabled={isStartingSession}
+                    >
+                      {isStartingSession ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                          Starting Session...
+                        </div>
+                      ) : (
+                        <>
+                          <ArrowRight className="w-4 h-4 mr-2" />
+                          Start Topic Session
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </motion.div>
+              )}
+
+              {!selectedSubject && (
+                <div className="text-center py-8">
+                  <Brain className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">Select a subject to start AI tutoring</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Study Stats */}
           <Card className="glass border-0">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Target className="w-5 h-5" />
-                Session Stats
+                <Award className="w-5 h-5" />
+                Your Progress
               </CardTitle>
             </CardHeader>
             
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Concepts Mastered</span>
-                <span className="font-semibold">
-                  {completedConcepts.length}/{currentTopic.concepts.length}
-                </span>
+                <span className="text-sm text-muted-foreground">Total Sessions</span>
+                <span className="font-semibold">{userProgress.totalSessions}</span>
               </div>
               
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Focus Score</span>
-                <span className="font-semibold text-green-400">
-                  {session ? Math.round(sessionProgress) : 0}%
-                </span>
+                <span className="text-sm text-muted-foreground">Current Streak</span>
+                <span className="font-semibold text-orange-400">{userProgress.streak} days</span>
               </div>
               
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Time Remaining</span>
-                <span className="font-semibold">
-                  {session ? formatTime(Math.max(0, (currentTopic.duration * 60) - studyTime)) : formatTime(currentTopic.duration * 60)}
-                </span>
+                <span className="text-sm text-muted-foreground">Experience Points</span>
+                <span className="font-semibold text-blue-400">{userProgress.xp} XP</span>
               </div>
               
-              {session && sessionProgress >= 80 && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="p-3 rounded-lg bg-green-500/20 border border-green-500/50 text-center"
-                >
-                  <Award className="w-6 h-6 text-green-400 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-green-400">Great Progress!</p>
-                  <p className="text-xs text-green-400/80">You&apos;re mastering this topic</p>
-                </motion.div>
-              )}
-            </CardContent>
-          </Card>
-          
-          {/* Quick Actions */}
-          <Card className="glass border-0">
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-            </CardHeader>
-            
-            <CardContent className="space-y-2">
-              <Button variant="ghost" size="sm" className="w-full justify-start glass border-white/20">
-                <Save className="w-4 h-4 mr-2" />
-                Save Progress
-              </Button>
-              
-              <Button variant="ghost" size="sm" className="w-full justify-start glass border-white/20">
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Reset Session
-              </Button>
-              
-              <Button variant="ghost" size="sm" className="w-full justify-start glass border-white/20">
-                <SkipForward className="w-4 h-4 mr-2" />
-                Next Topic
-              </Button>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Weekly Goal</span>
+                <span className="font-semibold">
+                  {userProgress.weeklyGoal.current}/{userProgress.weeklyGoal.target}
+                </span>
+              </div>
             </CardContent>
           </Card>
         </div>

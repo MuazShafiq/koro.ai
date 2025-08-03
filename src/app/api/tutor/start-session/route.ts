@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/utils/supabase/server';
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -108,7 +108,7 @@ Return a JSON object with:
 }`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-4o',
       messages: [
         {
           role: 'system',
@@ -123,11 +123,25 @@ Return a JSON object with:
       max_tokens: 1000
     });
 
+    // Helper function to extract JSON from markdown code blocks
+    const extractJsonFromMarkdown = (content: string): string => {
+      // Remove markdown code block formatting
+      const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
+      if (jsonMatch) {
+        return jsonMatch[1].trim();
+      }
+      // If no code blocks found, return original content
+      return content.trim();
+    };
+
     let lessonPlan;
     try {
-      lessonPlan = JSON.parse(completion.choices[0].message.content || '{}');
+      const rawContent = completion.choices[0].message.content || '{}';
+      const cleanedContent = extractJsonFromMarkdown(rawContent);
+      lessonPlan = JSON.parse(cleanedContent);
     } catch (parseError) {
       console.error('Failed to parse lesson plan JSON:', parseError);
+      console.error('Raw content:', completion.choices[0].message.content);
       return NextResponse.json(
         { error: 'Failed to generate lesson plan' },
         { status: 500 }
@@ -143,7 +157,7 @@ Return a JSON object with:
         topic_id: topicId,
         current_phase: 'assessment',
         lesson_plan: lessonPlan,
-        session_status: 'active'
+        status: 'active'
       })
       .select()
       .single();
@@ -170,3 +184,6 @@ Return a JSON object with:
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
+    );
+  }
+}

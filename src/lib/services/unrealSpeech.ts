@@ -22,7 +22,59 @@ const UNREAL_SPEECH_API_URL = 'https://api.v6.unrealspeech.com/stream';
 const API_KEY = process.env.UNREAL_SPEECH_API_KEY;
 
 /**
- * Convert text to speech using Unreal Speech API
+ * Convert a single text chunk to speech using Unreal Speech API
+ */
+async function convertChunkToSpeech(
+  text: string,
+  voiceId: string,
+  bitrate: string,
+  speed: string,
+  pitch: string,
+  codec: string
+): Promise<Buffer> {
+  const payload = {
+    Text: text.trim(),
+    VoiceId: voiceId,
+    Bitrate: bitrate,
+    Speed: speed,
+    Pitch: pitch,
+    Codec: codec,
+    Temperature: 0.25
+  };
+
+  const response = await fetch(UNREAL_SPEECH_API_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('Unreal Speech API error:', {
+      status: response.status,
+      statusText: response.statusText,
+      error: errorText
+    });
+    
+    if (response.status === 401) {
+      throw new Error('Unreal Speech API authentication failed. Please check your API key.');
+    } else if (response.status === 429) {
+      throw new Error('Unreal Speech API rate limit exceeded. Please try again later.');
+    } else if (response.status === 400) {
+      throw new Error('Invalid request to Unreal Speech API. Please check your parameters.');
+    } else {
+      throw new Error(`Unreal Speech API error: ${response.status} ${response.statusText}`);
+    }
+  }
+
+  return Buffer.from(await response.arrayBuffer());
+}
+
+/**
+ * Convert text to speech using Unreal Speech API with chunking support
  */
 export async function convertTextToSpeech(
   request: TTSRequest
@@ -30,7 +82,7 @@ export async function convertTextToSpeech(
   try {
     const {
       text,
-      voiceId = 'Scarlett', // Default voice
+      voiceId = 'Scarlett',
       bitrate = '192k',
       speed = '0',
       pitch = '1',
@@ -42,64 +94,57 @@ export async function convertTextToSpeech(
       throw new Error('Text content is required for TTS conversion');
     }
 
-    // Check text length (Unreal Speech has limits)
-    if (text.length > 500000) { // 500KB limit
-      throw new Error('Text content is too long for TTS conversion');
-    }
-
-    // Prepare request payload
-    const payload = {
-      Text: text.trim(),
-      VoiceId: voiceId,
-      Bitrate: bitrate,
-      Speed: speed,
-      Pitch: pitch,
-      Codec: codec,
-      Temperature: 0.25 // For more natural speech
-    };
+    // Clean text for better TTS output
+    const cleanedText = cleanTextForTTS(text);
 
     console.log('Converting text to speech with Unreal Speech API...');
-    
-    const response = await fetch(UNREAL_SPEECH_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload)
-    });
+    console.log(`Original text length: ${text.length}, Cleaned text length: ${cleanedText.length}`);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Unreal Speech API error:', {
-        status: response.status,
-        statusText: response.statusText,
-        error: errorText
-      });
+    // Split text into chunks if it exceeds 900 characters (safe limit under 1000)
+    const chunks = splitTextForTTS(cleanedText, 900);
+    console.log(`Split into ${chunks.length} chunks`);
+
+    const audioBuffers: Buffer[] = [];
+
+    // Process each chunk
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i];
+      console.log(`Processing chunk ${i + 1}/${chunks.length} (${chunk.length} characters)`);
       
-      if (response.status === 401) {
-        throw new Error('Unreal Speech API authentication failed. Please check your API key.');
-      } else if (response.status === 429) {
-        throw new Error('Unreal Speech API rate limit exceeded. Please try again later.');
-      } else if (response.status === 400) {
-        throw new Error('Invalid request to Unreal Speech API. Please check your parameters.');
-      } else {
-        throw new Error(`Unreal Speech API error: ${response.status} ${response.statusText}`);
+      try {
+        const chunkBuffer = await convertChunkToSpeech(
+          chunk,
+          voiceId,
+          bitrate,
+          speed,
+          pitch,
+          codec
+        );
+        
+        if (chunkBuffer.length === 0) {
+          throw new Error(`Received empty audio response for chunk ${i + 1}`);
+        }
+        
+        audioBuffers.push(chunkBuffer);
+        
+        // Add a small delay between requests to avoid rate limiting
+        if (i < chunks.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      } catch (error) {
+        console.error(`Error processing chunk ${i + 1}:`, error);
+        throw error;
       }
     }
 
-    // Get audio buffer from response
-    const audioBuffer = Buffer.from(await response.arrayBuffer());
+    // Combine all audio buffers
+    const combinedBuffer = Buffer.concat(audioBuffers);
     
-    if (audioBuffer.length === 0) {
-      throw new Error('Received empty audio response from Unreal Speech API');
-    }
-
-    console.log(`TTS conversion successful. Audio size: ${audioBuffer.length} bytes`);
+    console.log(`TTS conversion successful. Combined audio size: ${combinedBuffer.length} bytes`);
 
     return {
       success: true,
-      audioBuffer
+      audioBuffer: combinedBuffer
     };
   } catch (error) {
     console.error('Error in convertTextToSpeech:', error);

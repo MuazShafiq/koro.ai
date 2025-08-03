@@ -26,7 +26,7 @@ export interface GeneratedLesson {
 }
 
 /**
- * Generate lesson content using OpenAI GPT-3.5-turbo
+ * Generate lesson content using OpenAI GPT-4o
  */
 export async function generateLessonContent(
   request: LessonGenerationRequest
@@ -81,7 +81,7 @@ ${resourceContext || 'No specific resources provided - use your general knowledg
 **Important:** Respond ONLY with valid JSON. Do not include any text before or after the JSON object.`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-4o',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
@@ -141,7 +141,7 @@ export async function generateFollowUpQuestion(
 ): Promise<string> {
   try {
     const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-4o',
       messages: [
         {
           role: 'system',
