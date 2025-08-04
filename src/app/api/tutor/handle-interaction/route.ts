@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import OpenAI from 'openai';
+import { logger } from '@/lib/logger';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -8,9 +9,21 @@ const openai = new OpenAI({
 
 export async function POST(request: NextRequest) {
   try {
+    const timestamp = new Date().toISOString();
     const { sessionId, question, chunkId } = await request.json();
+    
+    logger.info('INTERACTION', 'New interaction request', {
+      sessionId,
+      questionLength: question?.length || 0,
+      hasChunkId: !!chunkId,
+      chunkId
+    });
 
     if (!sessionId || !question) {
+      logger.error('INTERACTION', 'Missing required fields', {
+        hasSessionId: !!sessionId,
+        hasQuestion: !!question
+      });
       return NextResponse.json(
         { error: 'Session ID and question are required' },
         { status: 400 }
@@ -20,15 +33,23 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
     
     // Get current user
+    logger.info('INTERACTION', 'Authenticating user');
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
+      logger.error('INTERACTION', 'Authentication failed', { error: authError });
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
+    
+    logger.info('INTERACTION', 'User authenticated', {
+      userId: user.id,
+      email: user.email
+    });
 
     // Get session data
+    logger.database('Fetching session data', { sessionId });
     const { data: session, error: sessionError } = await supabase
       .from('lesson_sessions')
       .select('*')
@@ -37,13 +58,27 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (sessionError || !session) {
+      logger.error('INTERACTION', 'Session not found', {
+        sessionId,
+        userId: user.id,
+        error: sessionError
+      });
       return NextResponse.json(
         { error: 'Session not found' },
         { status: 404 }
       );
     }
+    
+    logger.database('Session found', {
+      sessionId: session.id,
+      subjectId: session.subject_id,
+      topicId: session.topic_id,
+      currentPhase: session.current_phase,
+      hasLessonPlan: !!session.lesson_plan
+    });
 
     // Get resources for RAG context
+    logger.database('Fetching educational resources');
     const { data: resources, error: resourcesError } = await supabase
       .rpc('get_resources_by_topic', {
         subject_uuid: session.subject_id,
@@ -51,16 +86,22 @@ export async function POST(request: NextRequest) {
       });
 
     if (resourcesError) {
-      console.error('Error fetching resources:', resourcesError);
+      logger.error('INTERACTION', 'Error fetching resources', { error: resourcesError });
       return NextResponse.json(
         { error: 'Failed to fetch educational resources' },
         { status: 500 }
       );
     }
+    
+    logger.database('Resources fetched', {
+      resourcesCount: resources?.length || 0,
+      resourceTitles: resources?.map((r: any) => r.title) || []
+    });
 
     // Get current chunk context if provided
     let currentChunkContext = '';
     if (chunkId) {
+      logger.database('Fetching chunk context', { chunkId });
       const { data: chunk, error: chunkError } = await supabase
         .from('lesson_chunks')
         .select('script_content')
@@ -69,17 +110,35 @@ export async function POST(request: NextRequest) {
       
       if (!chunkError && chunk) {
         currentChunkContext = `Current lesson content: ${chunk.script_content}`;
+        logger.database('Chunk context loaded', {
+          chunkId,
+          contentLength: chunk.script_content?.length || 0
+        });
+      } else {
+        logger.warn('INTERACTION', 'Could not load chunk context', {
+          chunkId,
+          error: chunkError
+        });
       }
     }
 
     // Prepare context for AI response
+    logger.info('INTERACTION', 'Preparing context for AI response');
     const resourceContext = resources
       ?.map((r: any) => `Title: ${r.title}\nContent: ${r.content_text?.substring(0, 1000) || 'No content available'}`)
       .join('\n\n') || 'No resources available';
 
     const lessonContext = session.lesson_plan ? JSON.stringify(session.lesson_plan, null, 2) : 'No lesson plan available';
+    
+    logger.info('INTERACTION', 'Context prepared', {
+      resourceContextLength: resourceContext.length,
+      lessonContextLength: lessonContext.length,
+      hasCurrentChunk: !!currentChunkContext,
+      currentChunkLength: currentChunkContext.length
+    });
 
     // Generate AI response using RAG
+    logger.openai('Preparing prompt');
     const responsePrompt = `You are an AI tutor answering a student's question during a lesson.
 
 Lesson Context:
@@ -107,7 +166,10 @@ Return a JSON object with:
   "lesson_adaptation": "How this might affect the remaining lesson (if applicable)",
   "can_answer": true/false
 }`;
+    
+    logger.openai('Prompt prepared', { promptLength: responsePrompt.length });
 
+    logger.openai('Calling API for response generation');
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: [
@@ -122,6 +184,12 @@ Return a JSON object with:
       ],
       temperature: 0.7,
       max_tokens: 800
+    });
+    
+    logger.openai('Response received', {
+      model: completion.model,
+      usage: completion.usage,
+      finishReason: completion.choices[0].finish_reason
     });
 
     // Helper function to extract JSON from markdown code blocks
@@ -138,10 +206,27 @@ Return a JSON object with:
     let aiResponse;
     try {
       const rawContent = completion.choices[0].message.content || '{}';
+      logger.openai('Raw response received', {
+        length: rawContent.length,
+        preview: rawContent.substring(0, 200) + '...'
+      });
+      
       const cleanedContent = extractJsonFromMarkdown(rawContent);
+      logger.openai('Content cleaned', { cleanedLength: cleanedContent.length });
+      
       aiResponse = JSON.parse(cleanedContent);
+      logger.openai('Response parsed successfully', {
+        canAnswer: aiResponse.can_answer,
+        hasAnswer: !!aiResponse.answer,
+        answerLength: aiResponse.answer?.length || 0,
+        resourceUsed: aiResponse.resource_used
+      });
     } catch (parseError) {
-      console.error('Failed to parse AI response JSON:', parseError);
+      const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
+      logger.error('INTERACTION', 'Failed to parse AI response JSON', {
+        error: errorMessage,
+        rawContent: completion.choices[0].message.content
+      });
       return NextResponse.json(
         { error: 'Failed to generate response' },
         { status: 500 }
@@ -149,40 +234,50 @@ Return a JSON object with:
     }
 
     // Store the interaction in student_assessments
+    logger.database('Storing interaction');
+    const interactionData = {
+      session_id: sessionId,
+      question: question,
+      student_answer: '', // This is a question, not an answer
+      ai_evaluation: {
+        response: aiResponse.answer,
+        resource_used: aiResponse.resource_used,
+        can_answer: aiResponse.can_answer,
+        interaction_type: 'question'
+      },
+      assessment_type: 'interaction'
+    };
+    
     const { error: assessmentError } = await supabase
       .from('student_assessments')
-      .insert({
-        session_id: sessionId,
-        question: question,
-        student_answer: '', // This is a question, not an answer
-        ai_evaluation: {
-          response: aiResponse.answer,
-          resource_used: aiResponse.resource_used,
-          can_answer: aiResponse.can_answer,
-          interaction_type: 'question'
-        },
-        assessment_type: 'interaction'
-      });
+      .insert(interactionData);
 
     if (assessmentError) {
-      console.error('Error storing interaction:', assessmentError);
+      logger.error('INTERACTION', 'Error storing interaction', { error: assessmentError });
+    } else {
+      logger.database('Interaction stored successfully');
     }
 
     // Update chunk interaction if chunkId provided
     if (chunkId) {
+      logger.database('Updating chunk interaction', { chunkId });
+      const chunkInteractionData = {
+        student_interaction: {
+          question: question,
+          ai_response: aiResponse.answer,
+          timestamp: new Date().toISOString()
+        }
+      };
+      
       const { error: chunkUpdateError } = await supabase
         .from('lesson_chunks')
-        .update({
-          student_interaction: {
-            question: question,
-            ai_response: aiResponse.answer,
-            timestamp: new Date().toISOString()
-          }
-        })
+        .update(chunkInteractionData)
         .eq('id', chunkId);
 
       if (chunkUpdateError) {
-        console.error('Error updating chunk interaction:', chunkUpdateError);
+        logger.error('INTERACTION', 'Error updating chunk interaction', { error: chunkUpdateError });
+      } else {
+        logger.database('Chunk interaction updated successfully');
       }
     }
 
@@ -190,27 +285,40 @@ Return a JSON object with:
     let audioUrl = null;
     if (aiResponse.can_answer && aiResponse.answer) {
       try {
+        logger.info('INTERACTION', 'Generating audio with Unreal Speech');
+        const unrealSpeechPayload = {
+          Text: aiResponse.answer,
+          VoiceId: 'Scarlett',
+          Bitrate: '192k',
+          Speed: '0',
+          Pitch: '1',
+          Codec: 'libmp3lame',
+        };
+        
+        logger.info('INTERACTION', 'Unreal Speech payload prepared', {
+          textLength: unrealSpeechPayload.Text.length,
+          voiceId: unrealSpeechPayload.VoiceId,
+          bitrate: unrealSpeechPayload.Bitrate
+        });
+        
         const unrealSpeechResponse = await fetch('https://api.v6.unrealspeech.com/stream', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${process.env.UNREAL_SPEECH_API_KEY}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            Text: aiResponse.answer,
-            VoiceId: 'Scarlett',
-            Bitrate: '192k',
-            Speed: '0',
-            Pitch: '1',
-            Codec: 'libmp3lame',
-          }),
+          body: JSON.stringify(unrealSpeechPayload),
         });
 
+        logger.info('INTERACTION', 'Unreal Speech API response', { status: unrealSpeechResponse.status });
+        
         if (unrealSpeechResponse.ok) {
           const audioBuffer = await unrealSpeechResponse.arrayBuffer();
+          logger.info('INTERACTION', 'Audio generated', { sizeBytes: audioBuffer.byteLength });
           
           // Upload audio to Supabase Storage
           const fileName = `interaction-audio/${sessionId}/response-${Date.now()}.mp3`;
+          logger.info('INTERACTION', 'Uploading audio to Supabase', { fileName });
           
           const { data: uploadData, error: uploadError } = await supabase.storage
             .from('lessons')
@@ -225,14 +333,32 @@ Return a JSON object with:
               .getPublicUrl(fileName);
             
             audioUrl = urlData.publicUrl;
+            logger.info('INTERACTION', 'Audio uploaded successfully', { audioUrl });
+          } else {
+            logger.error('INTERACTION', 'Audio upload failed', { error: uploadError });
           }
+        } else {
+          logger.error('INTERACTION', 'Unreal Speech API failed', {
+            status: unrealSpeechResponse.status,
+            statusText: unrealSpeechResponse.statusText
+          });
         }
       } catch (audioError) {
-        console.error('Error generating response audio:', audioError);
+        const errorDetails = audioError instanceof Error ? {
+          message: audioError.message,
+          stack: audioError.stack
+        } : { message: String(audioError), stack: undefined };
+        
+        logger.error('INTERACTION', 'Error generating response audio', errorDetails);
       }
+    } else {
+      logger.warn('INTERACTION', 'Skipping audio generation', {
+        canAnswer: aiResponse.can_answer,
+        hasAnswer: !!aiResponse.answer
+      });
     }
 
-    return NextResponse.json({
+    const responseData = {
       answer: aiResponse.answer,
       canAnswer: aiResponse.can_answer,
       resourceUsed: aiResponse.resource_used,
@@ -240,10 +366,27 @@ Return a JSON object with:
       audioUrl: audioUrl,
       hasAudio: !!audioUrl,
       timestamp: new Date().toISOString()
+    };
+    
+    logger.info('INTERACTION', 'Success! Returning response', {
+      canAnswer: responseData.canAnswer,
+      hasAnswer: !!responseData.answer,
+      answerLength: responseData.answer?.length || 0,
+      hasAudio: responseData.hasAudio,
+      resourceUsed: responseData.resourceUsed
     });
+    
+    return NextResponse.json(responseData);
 
   } catch (error) {
-    console.error('Error in handle-interaction:', error);
+    const timestamp = new Date().toISOString();
+    const errorDetails = error instanceof Error ? {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    } : { message: String(error), stack: undefined, name: 'Unknown' };
+    
+    logger.error('INTERACTION', 'Fatal error', errorDetails);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

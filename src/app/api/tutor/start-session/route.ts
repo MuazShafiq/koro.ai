@@ -1,16 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import OpenAI from 'openai';
+import { logger } from '@/lib/logger';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function POST(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  logger.info('START-SESSION', 'Starting new lesson session', {}, requestId);
+  
   try {
     const { subjectId, topicId } = await request.json();
+    logger.info('START-SESSION', 'Request data', { subjectId, topicId }, requestId);
 
     if (!subjectId) {
+      logger.error('START-SESSION', 'Missing subject ID', {}, requestId);
       return NextResponse.json(
         { error: 'Subject ID is required' },
         { status: 400 }
@@ -20,15 +26,19 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
     
     // Get current user
+    logger.info('START-SESSION', 'Authenticating user', {}, requestId);
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
+      logger.error('START-SESSION', 'Authentication failed', { authError }, requestId);
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
+    logger.info('START-SESSION', 'User authenticated', { userId: user.id }, requestId);
 
     // Get subject and topic information
+    logger.database('Fetching subject data', { subjectId }, requestId);
     const { data: subject, error: subjectError } = await supabase
       .from('subjects')
       .select('name, description')
@@ -36,14 +46,17 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (subjectError || !subject) {
+      logger.error('START-SESSION', 'Subject not found', { subjectError }, requestId);
       return NextResponse.json(
         { error: 'Subject not found' },
         { status: 404 }
       );
     }
+    logger.database('Subject found', { name: subject.name, hasDescription: !!subject.description }, requestId);
 
     let topic = null;
     if (topicId) {
+      logger.database('Fetching topic data', { topicId }, requestId);
       const { data: topicData, error: topicError } = await supabase
         .from('topics')
         .select('name')
@@ -52,10 +65,16 @@ export async function POST(request: NextRequest) {
       
       if (!topicError && topicData) {
         topic = topicData;
+        logger.database('Topic found', { topicName: topic.name }, requestId);
+      } else {
+        logger.warn('START-SESSION', 'Topic not found or error', { topicError }, requestId);
       }
+    } else {
+      logger.info('START-SESSION', 'No topic specified, using general subject', {}, requestId);
     }
 
     // Get relevant resources using RAG
+    logger.database('Fetching resources', { subjectId, topicId }, requestId);
     const { data: resources, error: resourcesError } = await supabase
       .rpc('get_resources_by_topic', {
         subject_uuid: subjectId,
@@ -63,21 +82,32 @@ export async function POST(request: NextRequest) {
       });
 
     if (resourcesError) {
-      console.error('Error fetching resources:', resourcesError);
+      logger.error('START-SESSION', 'Error fetching resources', { resourcesError }, requestId);
       return NextResponse.json(
         { error: 'Failed to fetch educational resources' },
         { status: 500 }
       );
     }
+    logger.database('Resources fetched', {
+      count: resources?.length || 0,
+      titles: resources?.map((r: any) => r.title) || []
+    }, requestId);
 
     // Prepare context for AI lesson planning
+    logger.info('START-SESSION', 'Preparing lesson planning context', {}, requestId);
     const resourceContext = resources
       ?.map((r: any) => `Title: ${r.title}\nContent: ${r.content_text?.substring(0, 1000) || 'No content available'}`)
       .join('\n\n') || 'No resources available';
 
     const topicContext = topic ? `Topic: ${topic.name}` : 'General subject overview';
+    
+    logger.info('START-SESSION', 'Context prepared', {
+      resourceContextLength: resourceContext.length,
+      topicContext: topicContext
+    }, requestId);
 
     // Generate initial lesson plan using OpenAI
+    logger.openai('Preparing lesson planning', {}, requestId);
     const lessonPlanPrompt = `You are an AI tutor creating a personalized lesson plan.
 
 Subject: ${subject.name}
@@ -106,7 +136,10 @@ Return a JSON object with:
   ],
   "estimated_duration": "Duration in minutes"
 }`;
+    
+    logger.openai('Lesson plan prompt prepared', { promptLength: lessonPlanPrompt.length }, requestId);
 
+    logger.openai('Calling OpenAI for lesson planning', {}, requestId);
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: [
@@ -122,6 +155,12 @@ Return a JSON object with:
       temperature: 0.7,
       max_tokens: 1000
     });
+    
+    logger.openai('OpenAI response received', {
+      model: completion.model,
+      usage: completion.usage,
+      finishReason: completion.choices[0].finish_reason
+    }, requestId);
 
     // Helper function to extract JSON from markdown code blocks
     const extractJsonFromMarkdown = (content: string): string => {
@@ -137,11 +176,27 @@ Return a JSON object with:
     let lessonPlan;
     try {
       const rawContent = completion.choices[0].message.content || '{}';
+      logger.openai('Raw OpenAI response', {
+        length: rawContent.length,
+        preview: rawContent.substring(0, 200) + '...'
+      }, requestId);
+      
       const cleanedContent = extractJsonFromMarkdown(rawContent);
+      logger.openai('Cleaned content', { length: cleanedContent.length }, requestId);
+      
       lessonPlan = JSON.parse(cleanedContent);
+      logger.lesson('Lesson plan parsed successfully', {
+        hasOverview: !!lessonPlan.lesson_overview,
+        conceptsCount: lessonPlan.key_concepts?.length || 0,
+        questionsCount: lessonPlan.assessment_questions?.length || 0,
+        estimatedDuration: lessonPlan.estimated_duration
+      }, requestId);
     } catch (parseError) {
-      console.error('Failed to parse lesson plan JSON:', parseError);
-      console.error('Raw content:', completion.choices[0].message.content);
+      const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
+      logger.error('START-SESSION', 'Failed to parse lesson plan JSON', {
+        error: errorMessage,
+        rawContent: completion.choices[0].message.content
+      }, requestId);
       return NextResponse.json(
         { error: 'Failed to generate lesson plan' },
         { status: 500 }
@@ -149,38 +204,69 @@ Return a JSON object with:
     }
 
     // Create lesson session in database
+    logger.database('Creating lesson session in database', {}, requestId);
+    const sessionData = {
+      user_id: user.id,
+      subject_id: subjectId,
+      topic_id: topicId,
+      current_phase: 'assessment',
+      lesson_plan: lessonPlan,
+      status: 'active'
+    };
+    
+    logger.database('Session data to insert', {
+      user_id: sessionData.user_id,
+      subject_id: sessionData.subject_id,
+      topic_id: sessionData.topic_id,
+      current_phase: sessionData.current_phase,
+      hasLessonPlan: !!sessionData.lesson_plan,
+      status: sessionData.status
+    }, requestId);
+    
     const { data: session, error: sessionError } = await supabase
       .from('lesson_sessions')
-      .insert({
-        user_id: user.id,
-        subject_id: subjectId,
-        topic_id: topicId,
-        current_phase: 'assessment',
-        lesson_plan: lessonPlan,
-        status: 'active'
-      })
+      .insert(sessionData)
       .select()
       .single();
 
     if (sessionError) {
-      console.error('Error creating session:', sessionError);
+      logger.error('START-SESSION', 'Error creating session', { sessionError }, requestId);
       return NextResponse.json(
         { error: 'Failed to create lesson session' },
         { status: 500 }
       );
     }
+    
+    logger.database('Session created successfully', { sessionId: session.id }, requestId);
 
-    return NextResponse.json({
+    const responseData = {
       sessionId: session.id,
       subject: subject.name,
       topic: topic?.name || 'General',
       lessonOverview: lessonPlan.lesson_overview,
       assessmentQuestions: lessonPlan.assessment_questions,
       estimatedDuration: lessonPlan.estimated_duration
-    });
+    };
+    
+    logger.info('START-SESSION', 'Success! Returning response', {
+      sessionId: responseData.sessionId,
+      subject: responseData.subject,
+      topic: responseData.topic,
+      hasOverview: !!responseData.lessonOverview,
+      questionsCount: responseData.assessmentQuestions?.length || 0,
+      estimatedDuration: responseData.estimatedDuration
+    }, requestId);
+    
+    return NextResponse.json(responseData);
 
   } catch (error) {
-    console.error('Error in start-session:', error);
+    const errorDetails = error instanceof Error ? {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    } : { message: String(error), stack: undefined, name: 'Unknown' };
+    
+    logger.error('START-SESSION', 'Fatal error', { errorDetails }, requestId);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
