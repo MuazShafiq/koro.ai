@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Atom, Calculator, FlaskConical, Dna, Check } from 'lucide-react';
-import { useSupabase } from '@/utils/supabase/provider';
+import { useSupabase } from '../../utils/supabase/provider';
 import { toast } from 'sonner';
 
 interface SubjectSelectionModalProps {

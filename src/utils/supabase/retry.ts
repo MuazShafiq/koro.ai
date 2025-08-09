@@ -30,7 +30,7 @@ export async function withRetry<T>(
       
       // If this is a Supabase result object, check for errors
       if (result && typeof result === 'object' && 'error' in result) {
-        const supabaseResult = result as { data: unknown; error: unknown };
+        const supabaseResult = result as any;
         
         // Check if it's a retryable error
         if (supabaseResult.error && isRetryableError(supabaseResult.error)) {
@@ -92,7 +92,7 @@ export function isRetryableError(error: unknown): boolean {
   if (errorObj.code === 'TIMEOUT') return true;
   
   // Check for network-related error messages
-  const message = errorObj.message?.toLowerCase() || '';
+  const message = (typeof errorObj.message === 'string' ? errorObj.message : '').toLowerCase();
   if (message.includes('network')) return true;
   if (message.includes('timeout')) return true;
   if (message.includes('connection')) return true;

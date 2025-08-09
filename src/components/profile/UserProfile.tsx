@@ -7,8 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useSupabase } from '@/utils/supabase/provider';
-import { Database } from '@/utils/supabase/database.types';
+import { useSupabase } from '../../utils/supabase/provider';
+import { Database } from '../../utils/supabase/database.types';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 

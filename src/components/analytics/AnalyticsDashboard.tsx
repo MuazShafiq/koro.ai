@@ -40,9 +40,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
-import { useSupabase } from '@/utils/supabase/provider';
-import { Database } from '@/utils/supabase/database.types';
-import { analyticsService, UserAnalytics, WeeklyProgressData } from '@/utils/supabase/analytics';
+import { useSupabase } from '../../utils/supabase/provider';
+import { Database } from '../../utils/supabase/database.types';
+import { analyticsService, UserAnalytics, WeeklyProgressData } from '../../utils/supabase/analytics';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 type Subject = Database['public']['Tables']['subjects']['Row'];

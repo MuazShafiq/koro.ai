@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useSupabase } from '@/utils/supabase/provider';
+import { useSupabase } from '../../utils/supabase/provider';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Mail, Lock, User, MapPin, GraduationCap, BookOpen, Target } from 'lucide-react';
 

@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
       
       // If no subjects exist, this is likely a new user
       if (!existingSubjects || existingSubjects.length === 0) {
-        await initializeUserData(data.user.id);
+        await initializeUserData(data.user.id, supabase);
       }
     }
   }

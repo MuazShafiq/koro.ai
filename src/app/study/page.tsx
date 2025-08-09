@@ -20,7 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
-import { useSupabase } from '@/utils/supabase/provider';
+import { useSupabase } from '../../utils/supabase/provider';
 import { AITutorInterface } from '@/components/lesson/AITutorInterface';
 import { toast } from 'sonner';
 import { Database } from '@/utils/supabase/database.types';
