@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import OpenAI from 'openai';
 import { logger } from '@/lib/logger';
+import { convertTextToSpeech } from '@/lib/services/unrealSpeech';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -219,45 +220,25 @@ Return ONLY the script text, no JSON or formatting. The script should be ready f
       );
     }
 
-    // Generate audio using Unreal Speech API
-    logger.unrealSpeech('Starting audio generation', {}, requestId);
+    // Generate audio using Unreal Speech API with chunking support
+    logger.unrealSpeech('Starting audio generation with chunking', {
+      textLength: scriptContent.length
+    }, requestId);
     let audioUrl = null;
     try {
-      const unrealSpeechPayload = {
-        Text: scriptContent,
-        VoiceId: 'Scarlett',
-        Bitrate: '192k',
-        Speed: '0',
-        Pitch: '1',
-        Codec: 'libmp3lame',
-      };
-      
-      logger.unrealSpeech('Preparing request', {
-        textLength: scriptContent.length,
-        voiceId: unrealSpeechPayload.VoiceId,
-        hasApiKey: !!process.env.UNREAL_SPEECH_API_KEY
-      }, requestId);
-      
-      const unrealSpeechResponse = await fetch('https://api.v6.unrealspeech.com/stream', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${process.env.UNREAL_SPEECH_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(unrealSpeechPayload),
+      const ttsResponse = await convertTextToSpeech({
+        text: scriptContent,
+        voiceId: 'Scarlett',
+        bitrate: '192k',
+        speed: '0',
+        pitch: '1',
+        codec: 'libmp3lame'
       });
-
-      logger.unrealSpeech('API response received', {
-        status: unrealSpeechResponse.status,
-        statusText: unrealSpeechResponse.statusText,
-        headers: Object.fromEntries(unrealSpeechResponse.headers as any)
-      }, requestId);
       
-      if (unrealSpeechResponse.ok) {
-        logger.unrealSpeech('Processing audio buffer', {}, requestId);
-        const audioBuffer = await unrealSpeechResponse.arrayBuffer();
-        logger.unrealSpeech('Audio buffer processed', {
-          bufferSize: audioBuffer.byteLength
+      if (ttsResponse.success && ttsResponse.audioBuffer) {
+        logger.unrealSpeech('Audio generation successful', {
+          bufferSize: ttsResponse.audioBuffer.byteLength,
+          chunksProcessed: ttsResponse.chunksProcessed || 1
         }, requestId);
         
         // Upload audio to Supabase Storage
@@ -266,7 +247,7 @@ Return ONLY the script text, no JSON or formatting. The script should be ready f
         
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('lessons')
-          .upload(fileName, audioBuffer, {
+          .upload(fileName, ttsResponse.audioBuffer, {
             contentType: 'audio/mpeg',
             cacheControl: '3600'
           });
@@ -284,10 +265,8 @@ Return ONLY the script text, no JSON or formatting. The script should be ready f
           logger.storage('Audio URL generated', { audioUrl }, requestId);
         }
       } else {
-        const errorText = await unrealSpeechResponse.text();
-        logger.error('DELIVER-CHUNK', 'Unreal Speech API error', {
-          status: unrealSpeechResponse.status,
-          error: errorText
+        logger.error('DELIVER-CHUNK', 'Audio generation failed', {
+          error: ttsResponse.error
         }, requestId);
       }
     } catch (audioError) {

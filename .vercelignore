@@ -1,50 +1,76 @@
 # Dependencies
 node_modules
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
 # Build outputs
+.next
 build
 dist
-.next
 out
 
-# Development files
+# Development
 .git
 .trae
-.log
+logs
 *.log
+test-*.js
+create-test-user.js
+calculate-deployment-size.js
+temp_*
 
-# Environment files
+# Database
+*.sql
+supabase
+
+# Documentation
+*.md
+!README.md
+resources
+sidebar.md
+GIT_WORKFLOW_GUIDE.md
+git-workflow.bat
+
+# Config files
+tsconfig.json
+eslint.config.mjs
+postcss.config.mjs
+tailwind.config.js
+components.json
+next.config.ts
+
+# Environment
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# IDE files
+# IDE
 .vscode
 .idea
 *.swp
 *.swo
 
-# OS files
+# OS
 .DS_Store
 Thumbs.db
 
-# Temporary files
+# Temporary
 *.tmp
 *.temp
-
-# TypeScript build cache
+*.backup
+*.bak
 *.tsbuildinfo
 
-# Large files that shouldn't be deployed
+# Archives
 *.zip
 *.tar.gz
 *.rar
 
-# Backup files
-*-INTL-CON-*
-*.backup
-*.bak
+# Large assets (temporarily excluded)
+src/app/favicon.ico
+src/components/analytics
+src/components/whiteboard
+src/components/voice
+src/app/analytics

@@ -1,12 +1,12 @@
-import { createClient } from './server';
 import { Database } from './database.types';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Initialize default subjects and topics for a new user
  * @param userId The user's ID
+ * @param supabase The Supabase client instance
  */
-export async function initializeUserData(userId: string) {
-  const supabase = await createClient();
+export async function initializeUserData(userId: string, supabase: SupabaseClient<Database>) {
   
   // Default subjects with their topics
   const defaultSubjects = [
@@ -23,15 +23,27 @@ export async function initializeUserData(userId: string) {
       ]
     },
     {
+      name: 'Physics',
+      icon: '⚛️',
+      gradient: 'from-red-500 to-orange-500',
+      topics: [
+        'Kinematics',
+        'Dynamics',
+        'Thermodynamics',
+        'Electromagnetism',
+        'Optics'
+      ]
+    },
+    {
       name: 'Science',
       icon: '🔬',
       gradient: 'from-green-500 to-emerald-500',
       topics: [
-        'Physics',
         'Chemistry',
         'Biology',
         'Astronomy',
-        'Earth Science'
+        'Earth Science',
+        'Environmental Science'
       ]
     },
     {

@@ -25,6 +25,7 @@ import { AITutorInterface } from '@/components/lesson/AITutorInterface';
 import { toast } from 'sonner';
 import { Database } from '@/utils/supabase/database.types';
 
+
 type Subject = Database['public']['Tables']['subjects']['Row'];
 type Topic = Database['public']['Tables']['topics']['Row'];
 
@@ -99,7 +100,11 @@ export default function StudyPage() {
             setTopics(topicsData);
           }
         } else {
-          toast.error('No subjects found. Please create a subject first.');
+          // No subjects found - user needs to add subjects manually
+          console.log('No subjects found. User needs to add subjects through the dashboard.');
+          setSubjects([]);
+          setTopics([]);
+          setSelectedSubject(null);
         }
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -129,7 +134,28 @@ export default function StudyPage() {
       
       if (error) throw error;
       
-      setTopics(topicsData || []);
+      // Filter topics to only show those with available resources
+      const topicsWithResources = [];
+      if (topicsData) {
+        for (const topic of topicsData) {
+          try {
+            const { data: resources, error: resourceError } = await supabase
+              .rpc('get_resources_by_topic', {
+                subject_uuid: subjectId,
+                topic_uuid: topic.id
+              });
+            
+            // Only include topics that have resources
+            if (!resourceError && resources && resources.length > 0) {
+              topicsWithResources.push(topic);
+            }
+          } catch (resourceError) {
+            console.warn(`Failed to check resources for topic ${topic.name}:`, resourceError);
+          }
+        }
+      }
+      
+      setTopics(topicsWithResources);
       setSelectedTopic(null); // Reset topic selection
     } catch (error) {
       console.error('Error fetching topics:', error);
@@ -269,7 +295,7 @@ export default function StudyPage() {
                 <div className="text-center py-8">
                   <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                   <p className="text-muted-foreground">No subjects found</p>
-                  <p className="text-sm text-muted-foreground">Create a subject to get started</p>
+                  <p className="text-sm text-muted-foreground">Please visit the dashboard to add subjects first</p>
                 </div>
               )}
             </CardContent>

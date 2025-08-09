@@ -17,9 +17,12 @@ export async function middleware(request: NextRequest) {
   // Define public routes that don't require authentication
   const publicRoutes = ['/login', '/signup', '/auth'];
   const isPublicRoute = publicRoutes.includes(pathname) || pathname.startsWith('/auth/');
+  
+  // Allow API routes to handle their own authentication
+  const isApiRoute = pathname.startsWith('/api/');
 
-  // If the user is not authenticated and the route is not public, redirect to login
-  if (!session && !isPublicRoute) {
+  // If the user is not authenticated and the route is not public or API, redirect to login
+  if (!session && !isPublicRoute && !isApiRoute) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 

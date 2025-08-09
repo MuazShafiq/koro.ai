@@ -12,6 +12,7 @@ export interface TTSResponse {
   audioUrl?: string;
   audioBuffer?: Buffer;
   error?: string;
+  chunksProcessed?: number;
 }
 
 if (!process.env.UNREAL_SPEECH_API_KEY) {
@@ -100,8 +101,8 @@ export async function convertTextToSpeech(
     console.log('Converting text to speech with Unreal Speech API...');
     console.log(`Original text length: ${text.length}, Cleaned text length: ${cleanedText.length}`);
 
-    // Split text into chunks if it exceeds 900 characters (safe limit under 1000)
-    const chunks = splitTextForTTS(cleanedText, 900);
+    // Split text into chunks if it exceeds 950 characters (safe limit under 1000)
+    const chunks = splitTextForTTS(cleanedText, 950);
     console.log(`Split into ${chunks.length} chunks`);
 
     const audioBuffers: Buffer[] = [];
@@ -110,6 +111,11 @@ export async function convertTextToSpeech(
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i];
       console.log(`Processing chunk ${i + 1}/${chunks.length} (${chunk.length} characters)`);
+      
+      // Validate chunk size before API call
+      if (chunk.length > 1000) {
+        throw new Error(`Chunk ${i + 1} exceeds 1000 character limit: ${chunk.length} characters`);
+      }
       
       try {
         const chunkBuffer = await convertChunkToSpeech(
@@ -144,7 +150,8 @@ export async function convertTextToSpeech(
 
     return {
       success: true,
-      audioBuffer: combinedBuffer
+      audioBuffer: combinedBuffer,
+      chunksProcessed: chunks.length
     };
   } catch (error) {
     console.error('Error in convertTextToSpeech:', error);

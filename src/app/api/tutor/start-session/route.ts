@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { withAuthRetry, withDatabaseRetry } from '@/utils/supabase/retry';
 import OpenAI from 'openai';
 import { logger } from '@/lib/logger';
 
@@ -25,25 +26,43 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient();
     
-    // Get current user
+    // Get current user with retry logic for network issues
     logger.info('START-SESSION', 'Authenticating user', {}, requestId);
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    const authResult = await withAuthRetry(
+      supabase,
+      async (client) => await client.auth.getUser(),
+      { requestId, operation: 'user authentication' }
+    );
+    
+    const { user } = authResult.data;
+    const authError = authResult.error;
+    
     if (authError || !user) {
       logger.error('START-SESSION', 'Authentication failed', { authError }, requestId);
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Authentication failed. Please try again.' },
         { status: 401 }
       );
     }
+    
     logger.info('START-SESSION', 'User authenticated', { userId: user.id }, requestId);
 
-    // Get subject and topic information
+    // Get subject and topic information with retry logic
     logger.database('Fetching subject data', { subjectId }, requestId);
-    const { data: subject, error: subjectError } = await supabase
-      .from('subjects')
-      .select('name, description')
-      .eq('id', subjectId)
-      .single();
+    
+    const subjectResult = await withDatabaseRetry(
+      supabase,
+      async (client) => await client
+        .from('subjects')
+        .select('name, description')
+        .eq('id', subjectId)
+        .single(),
+      { requestId, operation: 'fetch subject data' }
+    );
+    
+    const subject = subjectResult.data;
+    const subjectError = subjectResult.error;
 
     if (subjectError || !subject) {
       logger.error('START-SESSION', 'Subject not found', { subjectError }, requestId);
@@ -73,25 +92,31 @@ export async function POST(request: NextRequest) {
       logger.info('START-SESSION', 'No topic specified, using general subject', {}, requestId);
     }
 
-    // Get relevant resources using RAG
-    logger.database('Fetching resources', { subjectId, topicId }, requestId);
-    const { data: resources, error: resourcesError } = await supabase
-      .rpc('get_resources_by_topic', {
-        subject_uuid: subjectId,
-        topic_uuid: topicId
-      });
+    // Get relevant resources using RAG (only if topic is specified)
+    let resources = [];
+    if (topicId) {
+      logger.database('Fetching resources', { subjectId, topicId }, requestId);
+      const { data: resourcesData, error: resourcesError } = await supabase
+        .rpc('get_resources_by_topic', {
+          subject_uuid: subjectId,
+          topic_uuid: topicId
+        });
 
-    if (resourcesError) {
-      logger.error('START-SESSION', 'Error fetching resources', { resourcesError }, requestId);
-      return NextResponse.json(
-        { error: 'Failed to fetch educational resources' },
-        { status: 500 }
-      );
+      if (resourcesError) {
+        logger.error('START-SESSION', 'Error fetching resources', { resourcesError }, requestId);
+        return NextResponse.json(
+          { error: 'Failed to fetch educational resources' },
+          { status: 500 }
+        );
+      }
+      resources = resourcesData || [];
+      logger.database('Resources fetched', {
+        count: resources.length,
+        titles: resources.map((r: any) => r.title)
+      }, requestId);
+    } else {
+      logger.database('No topic specified, skipping resource fetch', {}, requestId);
     }
-    logger.database('Resources fetched', {
-      count: resources?.length || 0,
-      titles: resources?.map((r: any) => r.title) || []
-    }, requestId);
 
     // Prepare context for AI lesson planning
     logger.info('START-SESSION', 'Preparing lesson planning context', {}, requestId);
@@ -203,7 +228,7 @@ Return a JSON object with:
       );
     }
 
-    // Create lesson session in database
+    // Create lesson session in database with retry logic
     logger.database('Creating lesson session in database', {}, requestId);
     const sessionData = {
       user_id: user.id,
@@ -223,16 +248,23 @@ Return a JSON object with:
       status: sessionData.status
     }, requestId);
     
-    const { data: session, error: sessionError } = await supabase
-      .from('lesson_sessions')
-      .insert(sessionData)
-      .select()
-      .single();
+    const sessionResult = await withDatabaseRetry(
+      supabase,
+      async (client) => await client
+        .from('lesson_sessions')
+        .insert(sessionData)
+        .select()
+        .single(),
+      { requestId, operation: 'create lesson session' }
+    );
+    
+    const session = sessionResult.data;
+    const sessionError = sessionResult.error;
 
     if (sessionError) {
       logger.error('START-SESSION', 'Error creating session', { sessionError }, requestId);
       return NextResponse.json(
-        { error: 'Failed to create lesson session' },
+        { error: 'Failed to create lesson session. Please try again.' },
         { status: 500 }
       );
     }
