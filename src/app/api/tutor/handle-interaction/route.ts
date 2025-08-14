@@ -296,7 +296,9 @@ Return a JSON object with:
           bitrate: '192k',
           speed: '0',
           pitch: '1',
-          codec: 'libmp3lame'
+          codec: 'libmp3lame',
+          contentType: 'interaction',
+          context: `interaction response for session ${sessionId}`
         });
         
         if (ttsResponse.success && ttsResponse.audioBuffer) {

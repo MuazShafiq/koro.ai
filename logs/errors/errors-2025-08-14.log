@@ -10,3 +10,559 @@
   "lessonPlanType": "object"
 }
 
+[2025-08-14T15:36:39.278Z] ERROR [SESSION-GET] Error parsing lesson plan
+{
+  "error": "\"[object Object]\" is not valid JSON",
+  "lessonPlanType": "object"
+}
+
+[2025-08-14T15:36:42.496Z] ERROR [SESSION-GET] Error parsing lesson plan
+{
+  "error": "\"[object Object]\" is not valid JSON",
+  "lessonPlanType": "object"
+}
+
+[2025-08-14T15:44:18.448Z] ERROR [07cfd844-729e-4c09-8908-022dbfc5c510] [ASSESSMENT] Some assessment storage errors
+{
+  "errorCount": 3,
+  "errors": [
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    }
+  ]
+}
+
+[2025-08-14T16:17:38.436Z] ERROR [6cbd5cb6-6a58-430d-bd2e-488267205377] [ASSESSMENT] Some assessment storage errors
+{
+  "errorCount": 3,
+  "errors": [
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    }
+  ]
+}
+
+[2025-08-14T17:33:55.874Z] ERROR [a7506710-35c2-4591-b4fa-82307ad6e91e] [ASSESSMENT] Some assessment storage errors
+{
+  "errorCount": 3,
+  "errors": [
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    }
+  ]
+}
+
+[2025-08-14T17:44:04.422Z] ERROR [09d22163-6358-44e8-b0f7-8da80d9ad046] [ASSESSMENT] Some assessment storage errors
+{
+  "errorCount": 3,
+  "errors": [
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    }
+  ]
+}
+
+[2025-08-14T17:44:44.398Z] ERROR [Error generating blackboard content] [object Object]
+
+[2025-08-14T17:49:35.763Z] ERROR [1bfc9c37-3f00-47c5-af8b-44dd09c4826f] [BLACKBOARD-GENERATE] Authentication failed
+{
+  "authError": {
+    "__isAuthError": true,
+    "name": "AuthSessionMissingError",
+    "status": 400
+  }
+}
+
+[2025-08-14T17:56:43.529Z] ERROR [INTERACTION] Error storing interaction
+{
+  "error": {
+    "code": "23514",
+    "details": null,
+    "hint": null,
+    "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+  }
+}
+
+[2025-08-14T17:56:43.952Z] ERROR [INTERACTION] Error updating chunk interaction
+{
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755193456560\""
+  }
+}
+
+[2025-08-14T17:57:15.695Z] ERROR [INTERACTION] Error storing interaction
+{
+  "error": {
+    "code": "23514",
+    "details": null,
+    "hint": null,
+    "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+  }
+}
+
+[2025-08-14T17:57:16.096Z] ERROR [INTERACTION] Error updating chunk interaction
+{
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755194190544\""
+  }
+}
+
+[2025-08-14T17:58:16.440Z] ERROR [INTERACTION] Error storing interaction
+{
+  "error": {
+    "code": "23514",
+    "details": null,
+    "hint": null,
+    "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+  }
+}
+
+[2025-08-14T17:58:16.821Z] ERROR [INTERACTION] Error updating chunk interaction
+{
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755194225370\""
+  }
+}
+
+[2025-08-14T18:05:13.134Z] ERROR [f6d158f1-1873-4e77-ba8d-eeef5af4a16e] [ASSESSMENT] Some assessment storage errors
+{
+  "errorCount": 3,
+  "errors": [
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    }
+  ]
+}
+
+[2025-08-14T18:06:26.323Z] ERROR [a5d9d307-5bfa-410c-8619-f530273b61ca] [BLACKBOARD-GENERATE] Error generating blackboard content
+{
+  "error": "Invalid JSON response from OpenAI",
+  "stack": "Error: Invalid JSON response from OpenAI\n    at POST (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\.next\\server\\chunks\\[root-of-the-server]__b99ae68b._.js:467:19)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async AppRouteRouteModule.do (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:38782)\n    at async AppRouteRouteModule.handle (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:45984)\n    at async responseGenerator (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\.next\\server\\chunks\\node_modules_next_3bcf656d._.js:14328:38)\n    at async AppRouteRouteModule.handleResponse (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:1:183725)\n    at async handleResponse (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\.next\\server\\chunks\\node_modules_next_3bcf656d._.js:14390:32)\n    at async handler (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\.next\\server\\chunks\\node_modules_next_3bcf656d._.js:14442:13)\n    at async doRender (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\base-server.js:1586:34)\n    at async DevServer.renderToResponseWithComponentsImpl (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\base-server.js:1928:13)\n    at async DevServer.renderPageComponent (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\base-server.js:2394:24)\n    at async DevServer.renderToResponseImpl (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\base-server.js:2434:32)\n    at async DevServer.pipeImpl (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\base-server.js:1034:25)\n    at async NextNodeServer.handleCatchallRenderRequest (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\next-server.js:393:17)\n    at async DevServer.handleRequestImpl (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\base-server.js:925:17)\n    at async D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:398:20\n    at async Span.traceAsyncFn (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n    at async DevServer.handleRequest (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:394:24)\n    at async invokeRender (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\lib\\router-server.js:239:21)\n    at async handleRequest (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\lib\\router-server.js:436:24)\n    at async requestHandlerImpl (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\lib\\router-server.js:464:13)\n    at async Server.requestListener (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\lib\\start-server.js:218:13)"
+}
+
+[2025-08-14T18:08:53.816Z] ERROR [3740b3f6-856c-4242-94d6-028c7e944a9e] [BLACKBOARD-GENERATE] Authentication failed
+{
+  "authError": {
+    "__isAuthError": true,
+    "name": "AuthSessionMissingError",
+    "status": 400
+  }
+}
+
+[2025-08-14T18:11:14.662Z] ERROR [c91f0d9d-7827-4c04-952f-465b593b6d88] [ASSESSMENT] Some assessment storage errors
+{
+  "errorCount": 3,
+  "errors": [
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    }
+  ]
+}
+
+[2025-08-14T18:12:21.215Z] ERROR [ba3e97cb-4d61-4dcc-ad71-a1f2035dc0a3] [BLACKBOARD-GENERATE] Error generating blackboard content
+{
+  "error": "Invalid JSON response from OpenAI",
+  "stack": "Error: Invalid JSON response from OpenAI\n    at POST (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\.next\\server\\chunks\\[root-of-the-server]__b99ae68b._.js:474:19)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async AppRouteRouteModule.do (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:38782)\n    at async AppRouteRouteModule.handle (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:45984)\n    at async responseGenerator (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\.next\\server\\chunks\\node_modules_next_3bcf656d._.js:14328:38)\n    at async AppRouteRouteModule.handleResponse (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:1:183725)\n    at async handleResponse (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\.next\\server\\chunks\\node_modules_next_3bcf656d._.js:14390:32)\n    at async handler (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\.next\\server\\chunks\\node_modules_next_3bcf656d._.js:14442:13)\n    at async doRender (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\base-server.js:1586:34)\n    at async DevServer.renderToResponseWithComponentsImpl (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\base-server.js:1928:13)\n    at async DevServer.renderPageComponent (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\base-server.js:2394:24)\n    at async DevServer.renderToResponseImpl (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\base-server.js:2434:32)\n    at async DevServer.pipeImpl (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\base-server.js:1034:25)\n    at async NextNodeServer.handleCatchallRenderRequest (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\next-server.js:393:17)\n    at async DevServer.handleRequestImpl (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\base-server.js:925:17)\n    at async D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:398:20\n    at async Span.traceAsyncFn (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n    at async DevServer.handleRequest (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:394:24)\n    at async invokeRender (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\lib\\router-server.js:239:21)\n    at async handleRequest (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\lib\\router-server.js:436:24)\n    at async requestHandlerImpl (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\lib\\router-server.js:464:13)\n    at async Server.requestListener (D:\\OneDrive - Higher Education Commission\\Personal Data\\Teaching\\koro.ai\\node_modules\\next\\dist\\server\\lib\\start-server.js:218:13)"
+}
+
+[2025-08-14T18:23:58.736Z] ERROR [6a03c746-293f-44bd-abf0-2e6d665258cd] [ASSESSMENT] Some assessment storage errors
+{
+  "errorCount": 2,
+  "errors": [
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    }
+  ]
+}
+
+[2025-08-14T18:26:36.280Z] ERROR [INTERACTION] Error storing interaction
+{
+  "error": {
+    "code": "23514",
+    "details": null,
+    "hint": null,
+    "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+  }
+}
+
+[2025-08-14T18:26:36.666Z] ERROR [INTERACTION] Error updating chunk interaction
+{
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755195850032\""
+  }
+}
+
+[2025-08-14T18:27:25.204Z] ERROR [INTERACTION] Error storing interaction
+{
+  "error": {
+    "code": "23514",
+    "details": null,
+    "hint": null,
+    "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+  }
+}
+
+[2025-08-14T18:27:25.832Z] ERROR [INTERACTION] Error updating chunk interaction
+{
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755195986398\""
+  }
+}
+
+[2025-08-14T18:28:01.141Z] ERROR [INTERACTION] Error storing interaction
+{
+  "error": {
+    "code": "23514",
+    "details": null,
+    "hint": null,
+    "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+  }
+}
+
+[2025-08-14T18:28:01.547Z] ERROR [INTERACTION] Error updating chunk interaction
+{
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755196029183\""
+  }
+}
+
+[2025-08-14T18:37:03.529Z] ERROR [3743be5c-91c4-44fe-94f7-cac6ccd7da63] [ASSESSMENT] Some assessment storage errors
+{
+  "errorCount": 3,
+  "errors": [
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    {
+      "error": {
+        "code": "23514",
+        "details": null,
+        "hint": null,
+        "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+      },
+      "data": null,
+      "count": null,
+      "status": 400,
+      "statusText": "Bad Request"
+    }
+  ]
+}
+
+[2025-08-14T18:39:49.965Z] ERROR [INTERACTION] Error storing interaction
+{
+  "error": {
+    "code": "23514",
+    "details": null,
+    "hint": null,
+    "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+  }
+}
+
+[2025-08-14T18:39:50.485Z] ERROR [INTERACTION] Error updating chunk interaction
+{
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755196634080\""
+  }
+}
+
+[2025-08-14T18:40:27.903Z] ERROR [INTERACTION] Error storing interaction
+{
+  "error": {
+    "code": "23514",
+    "details": null,
+    "hint": null,
+    "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+  }
+}
+
+[2025-08-14T18:40:28.357Z] ERROR [INTERACTION] Error updating chunk interaction
+{
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755196776884\""
+  }
+}
+
+[2025-08-14T18:41:07.580Z] ERROR [INTERACTION] Error storing interaction
+{
+  "error": {
+    "code": "23514",
+    "details": null,
+    "hint": null,
+    "message": "new row for relation \"student_assessments\" violates check constraint \"student_assessments_assessment_type_check\""
+  }
+}
+
+[2025-08-14T18:41:07.986Z] ERROR [INTERACTION] Error updating chunk interaction
+{
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755196818865\""
+  }
+}
+

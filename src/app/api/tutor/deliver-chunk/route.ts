@@ -232,7 +232,9 @@ Return ONLY the script text, no JSON or formatting. The script should be ready f
         bitrate: '192k',
         speed: '0',
         pitch: '1',
-        codec: 'libmp3lame'
+        codec: 'libmp3lame',
+        contentType: 'lesson',
+        context: `lesson chunk ${chunkIndex} for session ${sessionId}`
       });
       
       if (ttsResponse.success && ttsResponse.audioBuffer) {

@@ -1,3 +1,5 @@
+import { enhanceTextForVoice, detectContentType, type ContentType } from './voiceEnhancer';
+
 export interface TTSRequest {
   text: string;
   voiceId?: string;
@@ -5,6 +7,8 @@ export interface TTSRequest {
   speed?: string;
   pitch?: string;
   codec?: string;
+  contentType?: ContentType;
+  context?: string;
 }
 
 export interface TTSResponse {
@@ -13,13 +17,15 @@ export interface TTSResponse {
   audioBuffer?: Buffer;
   error?: string;
   chunksProcessed?: number;
+  enhancedText?: string;
+  estimatedDuration?: number;
 }
 
 if (!process.env.UNREAL_SPEECH_API_KEY) {
   throw new Error('UNREAL_SPEECH_API_KEY environment variable is required');
 }
 
-const UNREAL_SPEECH_API_URL = 'https://api.v6.unrealspeech.com/stream';
+const UNREAL_SPEECH_API_URL = 'https://api.v7.unrealspeech.com/stream';
 const API_KEY = process.env.UNREAL_SPEECH_API_KEY;
 
 /**
@@ -87,7 +93,9 @@ export async function convertTextToSpeech(
       bitrate = '192k',
       speed = '0',
       pitch = '1',
-      codec = 'libmp3lame'
+      codec = 'libmp3lame',
+      contentType,
+      context
     } = request;
 
     // Validate input
@@ -95,15 +103,27 @@ export async function convertTextToSpeech(
       throw new Error('Text content is required for TTS conversion');
     }
 
-    // Clean text for better TTS output
+    // Detect content type if not provided
+    // const detectedContentType = contentType || detectContentType(text, context);
+     
+    // Enhance text for voice using the voice enhancer (TEMPORARILY DISABLED)
+    // const enhancementResult = enhanceTextForVoice(text, detectedContentType);
+    // const enhancedText = enhancementResult.enhancedText;
+
+    // Clean text for better TTS output (using original text instead of enhanced)
     const cleanedText = cleanTextForTTS(text);
 
     console.log('Converting text to speech with Unreal Speech API...');
     console.log(`Original text length: ${text.length}, Cleaned text length: ${cleanedText.length}`);
+    // console.log(`Content type: ${detectedContentType}`);
 
     // Split text into chunks if it exceeds 950 characters (safe limit under 1000)
     const chunks = splitTextForTTS(cleanedText, 950);
     console.log(`Split into ${chunks.length} chunks`);
+
+    // Use estimated duration from enhancement result (TEMPORARILY DISABLED)
+    // const estimatedDuration = enhancementResult.estimatedDuration;
+    const estimatedDuration = estimateAudioDuration(text);
 
     const audioBuffers: Buffer[] = [];
 
@@ -151,7 +171,9 @@ export async function convertTextToSpeech(
     return {
       success: true,
       audioBuffer: combinedBuffer,
-      chunksProcessed: chunks.length
+      chunksProcessed: chunks.length,
+      // enhancedText: enhancedText, // TEMPORARILY DISABLED
+      estimatedDuration: estimatedDuration
     };
   } catch (error) {
     console.error('Error in convertTextToSpeech:', error);

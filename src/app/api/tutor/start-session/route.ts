@@ -3,6 +3,8 @@ import { createClient } from '@/utils/supabase/server';
 import { withAuthRetry, withDatabaseRetry } from '@/utils/supabase/retry';
 import OpenAI from 'openai';
 import { logger } from '@/lib/logger';
+import { convertTextToSpeech } from '@/lib/services/unrealSpeech';
+import tutorVoiceSOP from '@/lib/tutor-voice-sop.json';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -228,6 +230,86 @@ Return a JSON object with:
       );
     }
 
+    // Generate welcome message audio
+    logger.info('START-SESSION', 'Generating welcome message audio', {}, requestId);
+    let welcomeAudioUrl = null;
+    try {
+      const welcomeScript = `Hi there! Welcome to your personalized ${subject.name} lesson${topic ? ` on ${topic.name}` : ''}. I'm excited to help you learn today! Let's start with a quick assessment to understand your current knowledge level.`;
+      
+      const voiceSettings = tutorVoiceSOP.voice_delivery_instructions.voice_parameters.unreal_speech_settings;
+      const ttsResponse = await convertTextToSpeech({
+        text: welcomeScript,
+        voiceId: voiceSettings.voiceId,
+        bitrate: voiceSettings.bitrate,
+        speed: voiceSettings.speed,
+        pitch: voiceSettings.pitch,
+        codec: voiceSettings.codec,
+        contentType: 'welcome',
+        context: `welcome message for ${subject.name}${topic ? ` lesson on ${topic.name}` : ''}`
+      });
+      
+      if (ttsResponse.success && ttsResponse.audioBuffer) {
+        // Upload welcome audio to Supabase Storage
+        const fileName = `session-audio/welcome-${requestId}-${Date.now()}.mp3`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('lessons')
+          .upload(fileName, ttsResponse.audioBuffer, {
+            contentType: 'audio/mpeg',
+            cacheControl: '3600'
+          });
+
+        if (!uploadError) {
+          const { data: urlData } = supabase.storage
+            .from('lessons')
+            .getPublicUrl(uploadData.path);
+          welcomeAudioUrl = urlData.publicUrl;
+          logger.info('START-SESSION', 'Welcome audio generated successfully', { fileName }, requestId);
+        }
+      }
+    } catch (error) {
+      logger.error('START-SESSION', 'Failed to generate welcome audio', { error }, requestId);
+    }
+
+    // Generate audio for assessment questions
+    logger.info('START-SESSION', 'Generating assessment question audio', {}, requestId);
+    const assessmentQuestions = lessonPlan.assessment_questions || [];
+    for (let i = 0; i < assessmentQuestions.length; i++) {
+      try {
+        const question = assessmentQuestions[i];
+        const voiceSettings = tutorVoiceSOP.voice_delivery_instructions.voice_parameters.unreal_speech_settings;
+        const ttsResponse = await convertTextToSpeech({
+          text: question.question,
+          voiceId: voiceSettings.voiceId,
+          bitrate: voiceSettings.bitrate,
+          speed: voiceSettings.speed,
+          pitch: voiceSettings.pitch,
+          codec: voiceSettings.codec,
+          contentType: 'assessment',
+          context: `assessment question ${i + 1} for ${subject.name}${topic ? ` lesson on ${topic.name}` : ''}`
+        });
+        
+        if (ttsResponse.success && ttsResponse.audioBuffer) {
+          const fileName = `session-audio/assessment-${requestId}-q${i + 1}-${Date.now()}.mp3`;
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('lessons')
+            .upload(fileName, ttsResponse.audioBuffer, {
+              contentType: 'audio/mpeg',
+              cacheControl: '3600'
+            });
+
+          if (!uploadError) {
+            const { data: urlData } = supabase.storage
+              .from('lessons')
+              .getPublicUrl(uploadData.path);
+            question.audioUrl = urlData.publicUrl;
+            logger.info('START-SESSION', `Assessment question ${i + 1} audio generated`, { fileName }, requestId);
+          }
+        }
+      } catch (error) {
+        logger.error('START-SESSION', `Failed to generate audio for question ${i + 1}`, { error }, requestId);
+      }
+    }
+
     // Create lesson session in database with retry logic
     logger.database('Creating lesson session in database', {}, requestId);
     const sessionData = {
@@ -277,7 +359,8 @@ Return a JSON object with:
       topic: topic?.name || 'General',
       lessonOverview: lessonPlan.lesson_overview,
       assessmentQuestions: lessonPlan.assessment_questions,
-      estimatedDuration: lessonPlan.estimated_duration
+      estimatedDuration: lessonPlan.estimated_duration,
+      welcomeAudioUrl
     };
     
     logger.info('START-SESSION', 'Success! Returning response', {

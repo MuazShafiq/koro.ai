@@ -34,6 +34,7 @@ interface AITutorSession {
   subject: Subject;
   topic: Topic | null;
   isActive: boolean;
+  sessionData?: any; // Store the full session data from API
 }
 
 interface StudyOption {
@@ -190,7 +191,8 @@ export default function StudyPage() {
         sessionId: sessionData.sessionId,
         subject: selectedSubject,
         topic: selectedTopic,
-        isActive: true
+        isActive: true,
+        sessionData: sessionData // Store the full session data
       });
       
       toast.success('AI Tutor session started!');
@@ -216,6 +218,7 @@ export default function StudyPage() {
         sessionId={aiSession.sessionId}
         subject={aiSession.subject}
         topic={aiSession.topic}
+        sessionData={aiSession.sessionData}
         onEndSession={endAITutorSession}
       />
     );

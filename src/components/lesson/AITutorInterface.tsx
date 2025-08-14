@@ -47,12 +47,24 @@ interface Message {
 interface AssessmentQuestion {
   question: string;
   purpose: string;
+  audioUrl?: string;
+}
+
+interface SessionData {
+  sessionId: string;
+  subject: string;
+  topic: string;
+  lessonOverview: string;
+  assessmentQuestions: AssessmentQuestion[];
+  estimatedDuration: number;
+  welcomeAudioUrl?: string;
 }
 
 interface AITutorInterfaceProps {
   sessionId: string;
   subject: Subject;
   topic: Topic | null;
+  sessionData?: SessionData;
   onEndSession: () => void;
 }
 
@@ -60,6 +72,7 @@ export function AITutorInterface({
   sessionId, 
   subject, 
   topic, 
+  sessionData,
   onEndSession 
 }: AITutorInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -99,34 +112,47 @@ export function AITutorInterface({
 
   const initializeSession = async () => {
     try {
-      // Get session data to check current phase
-      const response = await fetch(`/api/tutor/session/${sessionId}`);
-      if (response.ok) {
-        const sessionData = await response.json();
+      // Use sessionData prop if available, otherwise fetch from API
+      let sessionInfo = sessionData;
+      
+      if (!sessionInfo) {
+        const response = await fetch(`/api/tutor/session/${sessionId}`);
+        if (response.ok) {
+          sessionInfo = await response.json();
+        }
+      }
+      
+      if (sessionInfo && sessionInfo.assessmentQuestions) {
+        setAssessmentQuestions(sessionInfo.assessmentQuestions);
+        setCurrentPhase('assessment');
         
-        if (sessionData.assessmentQuestions) {
-          setAssessmentQuestions(sessionData.assessmentQuestions);
-          setCurrentPhase('assessment');
-          
-          // Add welcome message
-          const welcomeMessage: Message = {
-            id: Date.now().toString(),
+        // Add welcome message with audio
+        const welcomeMessage: Message = {
+          id: Date.now().toString(),
+          type: 'ai',
+          content: `Welcome to your ${subject.name} tutoring session${topic ? ` on ${topic.name}` : ''}! Let's start with a few questions to understand your current knowledge level.`,
+          timestamp: new Date(),
+          audioUrl: sessionInfo.welcomeAudioUrl
+        };
+        setMessages([welcomeMessage]);
+        
+        // Auto-play welcome audio
+        if (sessionInfo.welcomeAudioUrl) {
+          setTimeout(() => {
+            playAudio(sessionInfo.welcomeAudioUrl!);
+          }, 500);
+        }
+        
+        // Add first assessment question with audio
+        if (sessionInfo.assessmentQuestions.length > 0) {
+          const firstQuestion: Message = {
+            id: (Date.now() + 1).toString(),
             type: 'ai',
-            content: `Welcome to your ${subject.name} tutoring session${topic ? ` on ${topic.name}` : ''}! Let's start with a few questions to understand your current knowledge level.`,
-            timestamp: new Date()
+            content: sessionInfo.assessmentQuestions[0].question,
+            timestamp: new Date(),
+            audioUrl: sessionInfo.assessmentQuestions[0].audioUrl
           };
-          setMessages([welcomeMessage]);
-          
-          // Add first assessment question
-          if (sessionData.assessmentQuestions.length > 0) {
-            const firstQuestion: Message = {
-              id: (Date.now() + 1).toString(),
-              type: 'ai',
-              content: sessionData.assessmentQuestions[0].question,
-              timestamp: new Date()
-            };
-            setMessages(prev => [...prev, firstQuestion]);
-          }
+          setMessages(prev => [...prev, firstQuestion]);
         }
       }
     } catch (error) {
@@ -178,9 +204,17 @@ export function AITutorInterface({
         id: Date.now().toString(),
         type: 'ai',
         content: assessmentQuestions[nextIndex].question,
-        timestamp: new Date()
+        timestamp: new Date(),
+        audioUrl: assessmentQuestions[nextIndex].audioUrl
       };
       setMessages(prev => [...prev, nextQuestion]);
+      
+      // Auto-play next question audio
+      if (assessmentQuestions[nextIndex].audioUrl) {
+        setTimeout(() => {
+          playAudio(assessmentQuestions[nextIndex].audioUrl!);
+        }, 1000);
+      }
     } else {
       // All questions answered, submit assessment
       await submitAssessment(newAnswers);
@@ -234,6 +268,30 @@ export function AITutorInterface({
     }
   };
 
+  const generateBlackboardContent = async (script: string) => {
+    try {
+      const response = await fetch('/api/blackboard/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ script })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate blackboard content');
+      }
+
+      const blackboardData = await response.json();
+      return blackboardData;
+    } catch (error) {
+      console.error('Error generating blackboard content:', error);
+      // Fallback to original content if blackboard generation fails
+      return { blackboard: [{ type: 'text', label: 'Lesson Content', content: script }] };
+    }
+  };
+
   const deliverNextChunk = async (chunkIndex: number) => {
     try {
       const response = await fetch('/api/tutor/deliver-chunk', {
@@ -253,8 +311,9 @@ export function AITutorInterface({
 
       const chunk = await response.json();
       
-      // Update blackboard with lesson content
-      setBlackboardContent(chunk.content);
+      // Generate intelligent blackboard content using GPT-4o
+      const blackboardData = await generateBlackboardContent(chunk.content);
+      setBlackboardContent(JSON.stringify(blackboardData.blackboard, null, 2));
       
       // Add lesson content as message
       const lessonMessage: Message = {
