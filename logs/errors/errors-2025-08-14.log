@@ -1,0 +1,12 @@
+[2025-08-14T14:15:28.351Z] ERROR [SESSION-GET] Error parsing lesson plan
+{
+  "error": "\"[object Object]\" is not valid JSON",
+  "lessonPlanType": "object"
+}
+
+[2025-08-14T14:15:28.979Z] ERROR [SESSION-GET] Error parsing lesson plan
+{
+  "error": "\"[object Object]\" is not valid JSON",
+  "lessonPlanType": "object"
+}
+

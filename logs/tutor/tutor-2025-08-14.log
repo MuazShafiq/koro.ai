@@ -1,0 +1,205 @@
+[2025-08-14T14:14:39.299Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-14T14:14:39.450Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [START-SESSION] Request data
+{
+  "subjectId": "504c7125-0f0b-45fb-b2ed-7ce7890cbf0d",
+  "topicId": "0cbf9207-a45e-4676-a4bc-53415213c775"
+}
+
+[2025-08-14T14:14:39.895Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [START-SESSION] Authenticating user
+{}
+
+[2025-08-14T14:14:42.157Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [START-SESSION] User authenticated
+{
+  "userId": "f9087ec2-2eb0-422b-b73b-01535ef9858c"
+}
+
+[2025-08-14T14:14:42.161Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [Database] Fetching subject data
+{
+  "subjectId": "504c7125-0f0b-45fb-b2ed-7ce7890cbf0d"
+}
+
+[2025-08-14T14:14:42.636Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-14T14:14:42.640Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [Database] Fetching topic data
+{
+  "topicId": "0cbf9207-a45e-4676-a4bc-53415213c775"
+}
+
+[2025-08-14T14:14:43.413Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-14T14:14:43.534Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [Database] Fetching resources
+{
+  "subjectId": "504c7125-0f0b-45fb-b2ed-7ce7890cbf0d",
+  "topicId": "0cbf9207-a45e-4676-a4bc-53415213c775"
+}
+
+[2025-08-14T14:14:43.998Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-14T14:14:44.003Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-14T14:14:44.353Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-14T14:14:52.817Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [Lesson] Lesson plan parsed successfully
+{
+  "hasOverview": true,
+  "conceptsCount": 3,
+  "questionsCount": 3,
+  "estimatedDuration": "15 minutes"
+}
+
+[2025-08-14T14:14:52.832Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [Database] Creating lesson session in database
+{}
+
+[2025-08-14T14:14:52.835Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [Database] Session data to insert
+{
+  "user_id": "f9087ec2-2eb0-422b-b73b-01535ef9858c",
+  "subject_id": "504c7125-0f0b-45fb-b2ed-7ce7890cbf0d",
+  "topic_id": "0cbf9207-a45e-4676-a4bc-53415213c775",
+  "current_phase": "assessment",
+  "hasLessonPlan": true,
+  "status": "active"
+}
+
+[2025-08-14T14:14:54.017Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [Database] Session created successfully
+{
+  "sessionId": "a5f5af7d-66f2-4297-801f-f69d710542bb"
+}
+
+[2025-08-14T14:14:54.083Z] INFO [e21e5595-a9ce-49dc-b118-289862957153] [START-SESSION] Success! Returning response
+{
+  "sessionId": "a5f5af7d-66f2-4297-801f-f69d710542bb",
+  "subject": "Physics",
+  "topic": "Kinematics",
+  "hasOverview": true,
+  "questionsCount": 3,
+  "estimatedDuration": "15 minutes"
+}
+
+[2025-08-14T14:15:26.910Z] INFO [SESSION-GET] Fetching session data
+{
+  "sessionId": "a5f5af7d-66f2-4297-801f-f69d710542bb"
+}
+
+[2025-08-14T14:15:26.915Z] INFO [SESSION-GET] Fetching session data
+{
+  "sessionId": "a5f5af7d-66f2-4297-801f-f69d710542bb"
+}
+
+[2025-08-14T14:15:26.947Z] INFO [SESSION-GET] Authenticating user
+
+[2025-08-14T14:15:27.013Z] INFO [SESSION-GET] Authenticating user
+
+[2025-08-14T14:15:27.874Z] INFO [SESSION-GET] User authenticated
+{
+  "userId": "f9087ec2-2eb0-422b-b73b-01535ef9858c",
+  "email": "farjadimtiaz21@gmail.com"
+}
+
+[2025-08-14T14:15:27.876Z] INFO [Database] Fetching session with related data
+
+[2025-08-14T14:15:28.266Z] INFO [SESSION-GET] User authenticated
+{
+  "userId": "f9087ec2-2eb0-422b-b73b-01535ef9858c",
+  "email": "farjadimtiaz21@gmail.com"
+}
+
+[2025-08-14T14:15:28.275Z] INFO [Database] Fetching session with related data
+
+[2025-08-14T14:15:28.347Z] INFO [Database] Session found
+{
+  "sessionId": "a5f5af7d-66f2-4297-801f-f69d710542bb",
+  "subjectName": "Physics",
+  "topicName": "Kinematics",
+  "currentPhase": "assessment",
+  "status": "active",
+  "hasLessonPlan": true
+}
+
+[2025-08-14T14:15:28.349Z] INFO [SESSION-GET] Parsing lesson plan
+
+[2025-08-14T14:15:28.448Z] INFO [Database] Fetching lesson chunks
+
+[2025-08-14T14:15:28.781Z] INFO [Database] Session found
+{
+  "sessionId": "a5f5af7d-66f2-4297-801f-f69d710542bb",
+  "subjectName": "Physics",
+  "topicName": "Kinematics",
+  "currentPhase": "assessment",
+  "status": "active",
+  "hasLessonPlan": true
+}
+
+[2025-08-14T14:15:28.784Z] INFO [SESSION-GET] Parsing lesson plan
+
+[2025-08-14T14:15:29.061Z] INFO [Database] Fetching lesson chunks
+
+[2025-08-14T14:15:29.141Z] INFO [Database] Chunks fetched
+{
+  "chunksCount": 0,
+  "chunkIndexes": []
+}
+
+[2025-08-14T14:15:29.231Z] INFO [Database] Fetching student assessments
+
+[2025-08-14T14:15:29.546Z] INFO [Database] Assessments fetched
+{
+  "assessmentsCount": 0,
+  "assessmentTypes": []
+}
+
+[2025-08-14T14:15:29.547Z] INFO [SESSION-GET] Success! Returning session data
+{
+  "sessionId": "a5f5af7d-66f2-4297-801f-f69d710542bb",
+  "currentPhase": "assessment",
+  "currentChunkIndex": 0,
+  "status": "active",
+  "chunksCount": 0,
+  "assessmentsCount": 0,
+  "hasLessonPlan": false
+}
+
+[2025-08-14T14:15:29.596Z] INFO [Database] Chunks fetched
+{
+  "chunksCount": 0,
+  "chunkIndexes": []
+}
+
+[2025-08-14T14:15:29.597Z] INFO [Database] Fetching student assessments
+
+[2025-08-14T14:15:30.124Z] INFO [Database] Assessments fetched
+{
+  "assessmentsCount": 0,
+  "assessmentTypes": []
+}
+
+[2025-08-14T14:15:30.148Z] INFO [SESSION-GET] Success! Returning session data
+{
+  "sessionId": "a5f5af7d-66f2-4297-801f-f69d710542bb",
+  "currentPhase": "assessment",
+  "currentChunkIndex": 0,
+  "status": "active",
+  "chunksCount": 0,
+  "assessmentsCount": 0,
+  "hasLessonPlan": false
+}
+

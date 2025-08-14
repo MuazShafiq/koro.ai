@@ -79,27 +79,34 @@ export function BentoGridItem({
       
       {/* Floating particles effect */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(3)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-primary/30 rounded-full"
-            initial={{ 
-              x: Math.random() * 100 + '%',
-              y: '100%',
-              opacity: 0
-            }}
-            animate={{
-              y: '-10%',
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-              ease: 'easeOut'
-            }}
-          />
-        ))}
+        {[...Array(3)].map((_, i) => {
+          // Use deterministic values based on index to prevent hydration mismatch
+          const positions = [25, 60, 85];
+          const durations = [3, 4, 5];
+          const delays = [0, 0.7, 1.4];
+          
+          return (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-primary/30 rounded-full"
+              initial={{ 
+                x: positions[i] + '%',
+                y: '100%',
+                opacity: 0
+              }}
+              animate={{
+                y: '-20%',
+                opacity: [0, 0.6, 0],
+              }}
+              transition={{
+                duration: durations[i],
+                repeat: Infinity,
+                delay: delays[i],
+                ease: 'easeOut'
+              }}
+            />
+          );
+        })}
       </div>
     </motion.div>
   );

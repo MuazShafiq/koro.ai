@@ -374,8 +374,8 @@ export default function StudyPage() {
             </CardHeader>
             
             <CardContent className="space-y-4">
-              {/* General AI Tutoring */}
-              <motion.div
+              {/* General AI Tutoring - Hidden for now, keeping only topic-focused sessions */}
+              {/* <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="p-6 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 cursor-pointer"
@@ -427,7 +427,7 @@ export default function StudyPage() {
                     </Button>
                   </div>
                 )}
-              </motion.div>
+              </motion.div> */}
 
               {/* Topic-Specific Tutoring */}
               {selectedTopic && (
