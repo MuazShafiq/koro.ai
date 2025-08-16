@@ -178,13 +178,14 @@ Example output format:
       
       blackboardData = JSON.parse(cleanedContent);
     } catch (parseError) {
-      logger.error(`[BLACKBOARD-GENERATE] [${user.id}] Failed to parse OpenAI response as JSON`, {
+      logger.error('BLACKBOARD-GENERATE', 'Failed to parse OpenAI response as JSON', {
+        userId: user.id,
         error: parseError instanceof Error ? parseError.message : String(parseError),
         stack: parseError instanceof Error ? parseError.stack : undefined,
         rawContent: responseContent,
         contentLength: responseContent.length,
         contentPreview: responseContent.substring(0, 500)
-      });
+      }, requestId);
       throw new Error('Invalid JSON response from OpenAI');
     }
 

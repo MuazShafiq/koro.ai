@@ -1,8 +1,10 @@
 # TODO:
 
-- [x] analyze-current-tts: Analyze current TTS implementation in unrealSpeech.ts to understand how text is processed (priority: High)
-- [x] create-voice-enhancer: Create a new voice text enhancer function that applies SOP speaking style guidelines (priority: High)
-- [x] implement-speech-enhancements: Implement speech enhancements like strategic pauses, emphasis markers, and intonation cues (priority: High)
-- [x] apply-content-structure: Apply content structure rules for different message types (welcome, assessment, lesson chunks) (priority: High)
-- [x] integrate-enhancer: Integrate the voice enhancer into the TTS conversion process (priority: Medium)
-- [x] test-voice-improvements: Test the enhanced voice delivery to ensure it sounds more natural and engaging (priority: Medium)
+- [x] ai-tutor-1: Create progress tracking API endpoint for real-time monitoring of concepts, equations, and resource coverage (priority: High)
+- [x] ai-tutor-2: Implement progress service to track concepts delivered vs planned from RAG resources (priority: High)
+- [x] ai-tutor-3: Update lesson delivery system to utilize existing lesson_progress table (priority: High)
+- [x] ai-tutor-4: Create equation extraction service to identify and track mathematical content from RAG (priority: High)
+- [x] ai-tutor-5: Implement session completion validation with minimum coverage thresholds (priority: Medium)
+- [x] ai-tutor-6: Update start-session API to initialize comprehensive progress tracking (priority: Medium)
+- [x] ai-tutor-7: Modify deliver-chunk API to update progress tracking in real-time (priority: Medium)
+- [x] ai-tutor-8: Create progress dashboard component for monitoring lesson coverage (priority: Low)

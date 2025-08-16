@@ -4,6 +4,8 @@ import { withAuthRetry, withDatabaseRetry } from '@/utils/supabase/retry';
 import OpenAI from 'openai';
 import { logger } from '@/lib/logger';
 import { convertTextToSpeech } from '@/lib/services/unrealSpeech';
+import { progressService } from '@/lib/services/progressService';
+import { equationExtractor } from '@/lib/services/equationExtractor';
 import tutorVoiceSOP from '@/lib/tutor-voice-sop.json';
 
 const openai = new OpenAI({
@@ -382,6 +384,86 @@ ${resourceContext || 'No specific resources provided - use your general knowledg
     
     logger.database('Session created successfully', { sessionId: session.id }, requestId);
 
+    // Initialize comprehensive progress tracking
+    logger.info('START-SESSION', 'Initializing progress tracking', { sessionId: session.id }, requestId);
+    try {
+      // Create lesson plan from resources and lesson plan
+      const resourcesText = resources.map((r: any) => r.content_text || '').join('\n\n');
+      const lessonPlanText = JSON.stringify(lessonPlan);
+      const combinedContent = `${resourcesText}\n\n${lessonPlanText}`;
+      
+      // Extract equations from resources and lesson plan
+      const extractedEquations = await equationExtractor.extractEquations(combinedContent);
+      logger.info('START-SESSION', 'Equations extracted', {
+        equationsCount: extractedEquations.equations.length,
+        totalFound: extractedEquations.totalFound
+      }, requestId);
+      
+      // Analyze RAG content for progress tracking
+      const ragAnalysis = await progressService.analyzeRAGContent(combinedContent, subject.name);
+      
+      // Create comprehensive lesson plan with progress tracking
+      const progressLessonPlan = await progressService.createLessonPlan(
+        session.id,
+        ragAnalysis
+      );
+      
+      logger.info('START-SESSION', 'Progress lesson plan created', {
+        conceptsCount: progressLessonPlan.plannedConcepts.length,
+        equationsCount: progressLessonPlan.plannedEquations.length,
+        resourceSections: progressLessonPlan.plannedResourceSections.length
+      }, requestId);
+      
+      // Initialize progress records for all planned concepts
+      for (const conceptName of progressLessonPlan.plannedConcepts) {
+        try {
+          await progressService.addConceptProgress(
+            session.id,
+            conceptName
+          );
+        } catch (conceptError) {
+          logger.warn('START-SESSION', 'Failed to add concept progress', {
+            conceptName,
+            error: conceptError
+          }, requestId);
+        }
+      }
+      
+      // Update session with initial progress summary
+      const initialProgress = await progressService.getProgressSummary(session.id);
+      await supabase
+        .from('lesson_sessions')
+        .update({
+          concepts_covered: 0,
+          total_concepts: initialProgress.totalConcepts,
+          equations_covered: 0,
+          resource_coverage: 0,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', session.id);
+      
+      logger.info('START-SESSION', 'Progress tracking initialized successfully', {
+        sessionId: session.id,
+        totalConcepts: initialProgress.totalConcepts,
+        totalEquations: extractedEquations.equations.length
+      }, requestId);
+      
+    } catch (progressError) {
+      logger.error('START-SESSION', 'Failed to initialize progress tracking', {
+        sessionId: session.id,
+        error: progressError
+      }, requestId);
+      // Continue without failing the session creation
+    }
+
+    // Get initial progress summary for response
+    let progressSummary = null;
+    try {
+      progressSummary = await progressService.getProgressSummary(session.id);
+    } catch (progressError) {
+      logger.warn('START-SESSION', 'Failed to get initial progress summary', { progressError }, requestId);
+    }
+    
     const responseData = {
       sessionId: session.id,
       subject: subject.name,
@@ -390,7 +472,13 @@ ${resourceContext || 'No specific resources provided - use your general knowledg
       lessonChunks: lessonPlan.lesson_chunks,
       assessmentQuestions: lessonPlan.assessment_questions,
       estimatedDuration: lessonPlan.estimated_duration,
-      welcomeAudioUrl
+      welcomeAudioUrl,
+      progressTracking: {
+        initialized: !!progressSummary,
+        totalConcepts: progressSummary?.totalConcepts || 0,
+        totalEquations: progressSummary?.equationsCount || 0,
+        resourceSections: progressSummary?.resourceSectionsCovered || 0
+      }
     };
     
     logger.info('START-SESSION', 'Success! Returning response', {

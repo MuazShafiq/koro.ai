@@ -3,6 +3,7 @@ import { createClient } from '@/utils/supabase/server';
 import OpenAI from 'openai';
 import { logger } from '@/lib/logger';
 import { convertTextToSpeech } from '@/lib/services/unrealSpeech';
+import { progressService } from '@/lib/services/progressService';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -220,6 +221,52 @@ Return ONLY the script text, no JSON or formatting. The script should be ready f
       );
     }
 
+    // Extract concepts and equations from the generated content for progress tracking
+    logger.info('DELIVER-CHUNK', 'Extracting concepts for progress tracking', {}, requestId);
+    let conceptsToTrack: string[] = [];
+    let equationsToTrack: string[] = [];
+    
+    try {
+      // Extract key concepts from the chunk content
+      const conceptMatches = targetChunk.content?.match(/(?:understand|learn|concept|definition|theorem|principle)[:\s]+([^.!?\n]{10,100})/gi) || [];
+      conceptsToTrack = conceptMatches.map((match: string) =>
+        match.replace(/^(?:understand|learn|concept|definition|theorem|principle)[:\s]+/i, '').trim()
+      ).filter((concept: string) => concept.length > 5 && concept.length < 150);
+      
+      // Add chunk title as a concept if it's meaningful
+      if (targetChunk.title && targetChunk.title.length > 5) {
+        conceptsToTrack.unshift(targetChunk.title);
+      }
+      
+      // Extract equations from script content
+      const equationPatterns = [
+        /\$\$([^$]+)\$\$/g, // LaTeX display math
+        /\$([^$]+)\$/g,   // LaTeX inline math
+        /(?:^|\s)((?:[a-zA-Z]\s*[=<>≤≥≠±∓×÷]|[=<>≤≥≠±∓×÷]\s*[a-zA-Z])[^.!?\n]*)/gm // Mathematical expressions
+      ];
+      
+      equationPatterns.forEach(pattern => {
+        const matches = scriptContent.match(pattern);
+        if (matches) {
+          matches.forEach(match => {
+            const cleaned = match.replace(/[\$\\\[\]\(\)]/g, '').trim();
+            if (cleaned.length > 2 && cleaned.length < 100) {
+              equationsToTrack.push(cleaned);
+            }
+          });
+        }
+      });
+      
+      logger.info('DELIVER-CHUNK', 'Concepts extracted for tracking', {
+        conceptsCount: conceptsToTrack.length,
+        equationsCount: equationsToTrack.length,
+        concepts: conceptsToTrack.slice(0, 3) // Log first 3 for debugging
+      }, requestId);
+    } catch (extractionError) {
+      logger.warn('DELIVER-CHUNK', 'Failed to extract concepts', { extractionError }, requestId);
+      // Continue without concept tracking if extraction fails
+    }
+
     // Generate audio using Unreal Speech API with chunking support
     logger.unrealSpeech('Starting audio generation with chunking', {
       textLength: scriptContent.length
@@ -317,6 +364,51 @@ Return ONLY the script text, no JSON or formatting. The script should be ready f
     
     logger.database('Chunk stored successfully', { chunkId: chunk.id }, requestId);
 
+    // Track progress for delivered concepts
+    logger.info('DELIVER-CHUNK', 'Tracking concept progress', {
+      conceptsToTrack: conceptsToTrack.length,
+      sessionId
+    }, requestId);
+    
+    try {
+      // Add each concept to progress tracking
+      for (const concept of conceptsToTrack) {
+        const progressId = await progressService.addConceptProgress(
+          sessionId,
+          concept,
+          targetChunk.title || `Chunk ${chunkIndex}`,
+          equationsToTrack.length > 0 ? equationsToTrack : undefined
+        );
+        
+        // Mark as delivered immediately since we're delivering the chunk
+        await progressService.markConceptDelivered(progressId, 0.8); // Default engagement score
+        
+        logger.info('DELIVER-CHUNK', 'Concept progress tracked', {
+          concept: concept.substring(0, 50),
+          progressId
+        }, requestId);
+      }
+      
+      // If no specific concepts were extracted, track the chunk itself
+      if (conceptsToTrack.length === 0 && targetChunk.title) {
+        const progressId = await progressService.addConceptProgress(
+          sessionId,
+          targetChunk.title,
+          `Chunk ${chunkIndex}`,
+          equationsToTrack.length > 0 ? equationsToTrack : undefined
+        );
+        await progressService.markConceptDelivered(progressId, 0.8);
+        
+        logger.info('DELIVER-CHUNK', 'Chunk title tracked as concept', {
+          title: targetChunk.title,
+          progressId
+        }, requestId);
+      }
+    } catch (progressError) {
+      logger.error('DELIVER-CHUNK', 'Failed to track concept progress', { progressError }, requestId);
+      // Continue without failing the entire request
+    }
+
     // Update session current chunk index
     logger.database('Updating session current chunk index', { chunkIndex }, requestId);
     const { error: updateError } = await supabase
@@ -330,6 +422,19 @@ Return ONLY the script text, no JSON or formatting. The script should be ready f
       logger.database('Session updated successfully', {}, requestId);
     }
 
+    // Get updated progress summary for response
+    let progressSummary = null;
+    try {
+      progressSummary = await progressService.getProgressSummary(sessionId);
+      logger.info('DELIVER-CHUNK', 'Progress summary retrieved', {
+        progressPercentage: progressSummary.progressPercentage,
+        deliveredConcepts: progressSummary.deliveredConcepts,
+        totalConcepts: progressSummary.totalConcepts
+      }, requestId);
+    } catch (progressError) {
+      logger.warn('DELIVER-CHUNK', 'Failed to get progress summary', { progressError }, requestId);
+    }
+
     const responseData = {
       chunkId: chunk.id,
       content: scriptContent,
@@ -337,7 +442,15 @@ Return ONLY the script text, no JSON or formatting. The script should be ready f
       chunkIndex: chunkIndex,
       hasAudio: !!audioUrl,
       totalChunks: lessonPlan?.lesson_chunks?.length || 1,
-      isLastChunk: chunkIndex >= (lessonPlan?.lesson_chunks?.length || 1) - 1
+      isLastChunk: chunkIndex >= (lessonPlan?.lesson_chunks?.length || 1) - 1,
+      conceptsTracked: conceptsToTrack.length,
+      equationsTracked: equationsToTrack.length,
+      progressSummary: progressSummary ? {
+        progressPercentage: progressSummary.progressPercentage,
+        deliveredConcepts: progressSummary.deliveredConcepts,
+        totalConcepts: progressSummary.totalConcepts,
+        equationsCount: progressSummary.equationsCount
+      } : null
     };
     
     logger.info('DELIVER-CHUNK', 'Chunk delivered successfully', {

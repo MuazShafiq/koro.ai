@@ -163,3 +163,1133 @@
   "itemCount": 2
 }
 
+[2025-08-16T12:11:45.901Z] INFO [bd172882-d7d4-47d9-a692-ba42c92cde47] [OpenAI] Preparing lesson planning
+{}
+
+[2025-08-16T12:11:45.901Z] INFO [bd172882-d7d4-47d9-a692-ba42c92cde47] [OpenAI] Lesson plan prompt prepared
+{
+  "promptLength": 2068
+}
+
+[2025-08-16T12:11:45.901Z] INFO [bd172882-d7d4-47d9-a692-ba42c92cde47] [OpenAI] Calling OpenAI for lesson planning
+{}
+
+[2025-08-16T12:11:53.877Z] INFO [bd172882-d7d4-47d9-a692-ba42c92cde47] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 517,
+    "completion_tokens": 506,
+    "total_tokens": 1023,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:11:53.877Z] INFO [bd172882-d7d4-47d9-a692-ba42c92cde47] [OpenAI] Raw OpenAI response
+{
+  "length": 2169,
+  "preview": "```json\n{\n  \"lesson_overview\": \"In this lesson, we will explore the fundamentals of kinematics, focusing on understanding position, velocity, acceleration, and the motion equations with practical exam..."
+}
+
+[2025-08-16T12:11:53.878Z] INFO [bd172882-d7d4-47d9-a692-ba42c92cde47] [OpenAI] Cleaned content
+{
+  "length": 2157
+}
+
+[2025-08-16T12:12:45.795Z] INFO [6a04ffa4-e829-41b0-942c-a3cd2475db16] [OpenAI] Preparing evaluation
+{}
+
+[2025-08-16T12:12:45.795Z] INFO [6a04ffa4-e829-41b0-942c-a3cd2475db16] [OpenAI] Calling API for evaluation
+{
+  "promptLength": 4212
+}
+
+[2025-08-16T12:12:55.488Z] INFO [6a04ffa4-e829-41b0-942c-a3cd2475db16] [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 1074,
+    "completion_tokens": 337,
+    "total_tokens": 1411,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:13:00.166Z] INFO [e8833b89-6409-435b-bc2b-17ba298b3bb2] [OpenAI] Preparing script generation
+{}
+
+[2025-08-16T12:13:00.167Z] INFO [e8833b89-6409-435b-bc2b-17ba298b3bb2] [OpenAI] Script prompt prepared
+{
+  "promptLength": 2216
+}
+
+[2025-08-16T12:13:00.167Z] INFO [e8833b89-6409-435b-bc2b-17ba298b3bb2] [OpenAI] Calling OpenAI API
+{}
+
+[2025-08-16T12:13:04.335Z] INFO [e8833b89-6409-435b-bc2b-17ba298b3bb2] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 500,
+    "completion_tokens": 255,
+    "total_tokens": 755,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:13:04.336Z] INFO [e8833b89-6409-435b-bc2b-17ba298b3bb2] [OpenAI] Script generated
+{
+  "length": 1352,
+  "preview": "Welcome to our exploration of some key concepts in kinematics: velocity and acceleration. Let's dive..."
+}
+
+[2025-08-16T12:13:25.793Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 1352
+}
+
+[2025-08-16T12:13:27.539Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 2
+}
+
+[2025-08-16T12:14:08.110Z] INFO [OpenAI] Preparing prompt
+
+[2025-08-16T12:14:08.110Z] INFO [OpenAI] Prompt prepared
+{
+  "promptLength": 2201
+}
+
+[2025-08-16T12:14:08.110Z] INFO [OpenAI] Calling API for response generation
+
+[2025-08-16T12:14:11.086Z] INFO [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 505,
+    "completion_tokens": 118,
+    "total_tokens": 623,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:14:11.087Z] INFO [OpenAI] Raw response received
+{
+  "length": 574,
+  "preview": "```json\n{\n  \"answer\": \"Great! Let's continue with our lesson on motion equations. We'll now explore the basic motion equations that describe how objects move. These equations help us understand the re..."
+}
+
+[2025-08-16T12:14:11.088Z] INFO [OpenAI] Content cleaned
+{
+  "cleanedLength": 562
+}
+
+[2025-08-16T12:14:11.089Z] INFO [OpenAI] Response parsed successfully
+{
+  "canAnswer": true,
+  "hasAnswer": true,
+  "answerLength": 313,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T12:14:35.841Z] INFO [OpenAI] Preparing prompt
+
+[2025-08-16T12:14:35.841Z] INFO [OpenAI] Prompt prepared
+{
+  "promptLength": 2194
+}
+
+[2025-08-16T12:14:35.842Z] INFO [OpenAI] Calling API for response generation
+
+[2025-08-16T12:14:38.602Z] INFO [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 504,
+    "completion_tokens": 106,
+    "total_tokens": 610,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:14:38.603Z] INFO [OpenAI] Raw response received
+{
+  "length": 505,
+  "preview": "```json\n{\n  \"answer\": \"It seems like you're ready to move forward in our lesson on kinematics. Remember, we're focusing on understanding the key concepts of velocity and acceleration, and then we'll d..."
+}
+
+[2025-08-16T12:14:38.603Z] INFO [OpenAI] Content cleaned
+{
+  "cleanedLength": 493
+}
+
+[2025-08-16T12:14:38.603Z] INFO [OpenAI] Response parsed successfully
+{
+  "canAnswer": true,
+  "hasAnswer": true,
+  "answerLength": 286,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T12:15:22.897Z] INFO [OpenAI] Preparing prompt
+
+[2025-08-16T12:15:22.897Z] INFO [OpenAI] Prompt prepared
+{
+  "promptLength": 2260
+}
+
+[2025-08-16T12:15:22.898Z] INFO [OpenAI] Calling API for response generation
+
+[2025-08-16T12:15:27.049Z] INFO [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 517,
+    "completion_tokens": 173,
+    "total_tokens": 690,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:15:27.049Z] INFO [OpenAI] Raw response received
+{
+  "length": 807,
+  "preview": "```json\n{\n  \"answer\": \"Great! Let's dive into motion equations. In kinematics, motion equations help us describe the motion of objects. The basic equations relate displacement, initial velocity, final..."
+}
+
+[2025-08-16T12:15:27.050Z] INFO [OpenAI] Content cleaned
+{
+  "cleanedLength": 795
+}
+
+[2025-08-16T12:15:27.051Z] INFO [OpenAI] Response parsed successfully
+{
+  "canAnswer": true,
+  "hasAnswer": true,
+  "answerLength": 502,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T12:20:13.993Z] INFO [0fc22899-7ef8-4edf-ab15-46dc48572b4e] [OpenAI] Preparing lesson planning
+{}
+
+[2025-08-16T12:20:13.993Z] INFO [0fc22899-7ef8-4edf-ab15-46dc48572b4e] [OpenAI] Lesson plan prompt prepared
+{
+  "promptLength": 2068
+}
+
+[2025-08-16T12:20:13.993Z] INFO [0fc22899-7ef8-4edf-ab15-46dc48572b4e] [OpenAI] Calling OpenAI for lesson planning
+{}
+
+[2025-08-16T12:20:18.966Z] INFO [0fc22899-7ef8-4edf-ab15-46dc48572b4e] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 517,
+    "completion_tokens": 548,
+    "total_tokens": 1065,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:20:18.967Z] INFO [0fc22899-7ef8-4edf-ab15-46dc48572b4e] [OpenAI] Raw OpenAI response
+{
+  "length": 2487,
+  "preview": "```json\n{\n  \"lesson_overview\": \"This lesson covers the fundamental concepts of kinematics, including position, velocity, and acceleration, as well as motion equations. Students will learn through inte..."
+}
+
+[2025-08-16T12:20:18.967Z] INFO [0fc22899-7ef8-4edf-ab15-46dc48572b4e] [OpenAI] Cleaned content
+{
+  "length": 2475
+}
+
+[2025-08-16T12:21:04.082Z] INFO [e35aadda-0ac4-4374-920a-14862f56835c] [OpenAI] Preparing evaluation
+{}
+
+[2025-08-16T12:21:04.083Z] INFO [e35aadda-0ac4-4374-920a-14862f56835c] [OpenAI] Calling API for evaluation
+{
+  "promptLength": 4394
+}
+
+[2025-08-16T12:21:09.713Z] INFO [e35aadda-0ac4-4374-920a-14862f56835c] [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 1094,
+    "completion_tokens": 401,
+    "total_tokens": 1495,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:21:13.713Z] INFO [16866b56-a271-46b3-99a3-42e5ef8961ca] [OpenAI] Preparing script generation
+{}
+
+[2025-08-16T12:21:13.713Z] INFO [16866b56-a271-46b3-99a3-42e5ef8961ca] [OpenAI] Script prompt prepared
+{
+  "promptLength": 2643
+}
+
+[2025-08-16T12:21:13.714Z] INFO [16866b56-a271-46b3-99a3-42e5ef8961ca] [OpenAI] Calling OpenAI API
+{}
+
+[2025-08-16T12:21:19.327Z] INFO [16866b56-a271-46b3-99a3-42e5ef8961ca] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 574,
+    "completion_tokens": 305,
+    "total_tokens": 879,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:21:19.328Z] INFO [16866b56-a271-46b3-99a3-42e5ef8961ca] [OpenAI] Script generated
+{
+  "length": 1485,
+  "preview": "Welcome to our introduction to kinematics! Today, we'll explore some fundamental concepts that help ..."
+}
+
+[2025-08-16T12:21:27.258Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 1485
+}
+
+[2025-08-16T12:21:29.614Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 4
+}
+
+[2025-08-16T12:21:42.957Z] INFO [OpenAI] Preparing prompt
+
+[2025-08-16T12:21:42.958Z] INFO [OpenAI] Prompt prepared
+{
+  "promptLength": 2534
+}
+
+[2025-08-16T12:21:42.958Z] INFO [OpenAI] Calling API for response generation
+
+[2025-08-16T12:21:45.664Z] INFO [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 561,
+    "completion_tokens": 140,
+    "total_tokens": 701,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:21:45.665Z] INFO [OpenAI] Raw response received
+{
+  "length": 690,
+  "preview": "```json\n{\n  \"answer\": \"It seems like you might be looking to explore more about the kinematics concepts. In this lesson, we introduced key terms such as position, velocity, and acceleration. If you ha..."
+}
+
+[2025-08-16T12:21:45.665Z] INFO [OpenAI] Content cleaned
+{
+  "cleanedLength": 678
+}
+
+[2025-08-16T12:21:45.666Z] INFO [OpenAI] Response parsed successfully
+{
+  "canAnswer": true,
+  "hasAnswer": true,
+  "answerLength": 383,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T12:21:50.169Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 383
+}
+
+[2025-08-16T12:22:22.774Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 3
+}
+
+[2025-08-16T12:22:59.047Z] INFO [OpenAI] Preparing prompt
+
+[2025-08-16T12:22:59.047Z] INFO [OpenAI] Prompt prepared
+{
+  "promptLength": 2561
+}
+
+[2025-08-16T12:22:59.047Z] INFO [OpenAI] Calling API for response generation
+
+[2025-08-16T12:23:02.818Z] INFO [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 565,
+    "completion_tokens": 222,
+    "total_tokens": 787,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:23:02.819Z] INFO [OpenAI] Raw response received
+{
+  "length": 1064,
+  "preview": "```json\n{\n  \"answer\": \"Motion equations are an essential part of kinematics, which is the study of motion without considering its causes. In our current lesson, we've been focusing on position, veloci..."
+}
+
+[2025-08-16T12:23:02.820Z] INFO [OpenAI] Content cleaned
+{
+  "cleanedLength": 1052
+}
+
+[2025-08-16T12:23:02.820Z] INFO [OpenAI] Response parsed successfully
+{
+  "canAnswer": true,
+  "hasAnswer": true,
+  "answerLength": 773,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T12:23:07.863Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 773
+}
+
+[2025-08-16T12:23:10.079Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 3
+}
+
+[2025-08-16T12:28:40.978Z] INFO [e15df115-777c-45e6-a18f-84ffe26b19c3] [OpenAI] Preparing lesson planning
+{}
+
+[2025-08-16T12:28:40.978Z] INFO [e15df115-777c-45e6-a18f-84ffe26b19c3] [OpenAI] Lesson plan prompt prepared
+{
+  "promptLength": 2068
+}
+
+[2025-08-16T12:28:40.979Z] INFO [e15df115-777c-45e6-a18f-84ffe26b19c3] [OpenAI] Calling OpenAI for lesson planning
+{}
+
+[2025-08-16T12:28:46.531Z] INFO [e15df115-777c-45e6-a18f-84ffe26b19c3] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 517,
+    "completion_tokens": 557,
+    "total_tokens": 1074,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:28:46.532Z] INFO [e15df115-777c-45e6-a18f-84ffe26b19c3] [OpenAI] Raw OpenAI response
+{
+  "length": 2493,
+  "preview": "```json\n{\n  \"lesson_overview\": \"This lesson will cover the fundamental concepts of kinematics including position, velocity, acceleration, and motion equations, with a focus on practical understanding ..."
+}
+
+[2025-08-16T12:28:46.532Z] INFO [e15df115-777c-45e6-a18f-84ffe26b19c3] [OpenAI] Cleaned content
+{
+  "length": 2481
+}
+
+[2025-08-16T12:31:52.318Z] INFO [88eb6080-c956-4d71-8a88-de3bfa50edd9] [OpenAI] Preparing lesson planning
+{}
+
+[2025-08-16T12:31:52.318Z] INFO [88eb6080-c956-4d71-8a88-de3bfa50edd9] [OpenAI] Lesson plan prompt prepared
+{
+  "promptLength": 2068
+}
+
+[2025-08-16T12:31:52.318Z] INFO [88eb6080-c956-4d71-8a88-de3bfa50edd9] [OpenAI] Calling OpenAI for lesson planning
+{}
+
+[2025-08-16T12:31:57.046Z] INFO [88eb6080-c956-4d71-8a88-de3bfa50edd9] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 517,
+    "completion_tokens": 528,
+    "total_tokens": 1045,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:31:57.047Z] INFO [88eb6080-c956-4d71-8a88-de3bfa50edd9] [OpenAI] Raw OpenAI response
+{
+  "length": 2318,
+  "preview": "```json\n{\n  \"lesson_overview\": \"This lesson covers the fundamental concepts of kinematics including position, velocity, acceleration, and motion equations, emphasizing practical understanding and real..."
+}
+
+[2025-08-16T12:31:57.048Z] INFO [88eb6080-c956-4d71-8a88-de3bfa50edd9] [OpenAI] Cleaned content
+{
+  "length": 2306
+}
+
+[2025-08-16T12:32:42.878Z] INFO [513df2ef-30c5-4988-904d-d3d823631156] [OpenAI] Preparing evaluation
+{}
+
+[2025-08-16T12:32:42.878Z] INFO [513df2ef-30c5-4988-904d-d3d823631156] [OpenAI] Calling API for evaluation
+{
+  "promptLength": 4429
+}
+
+[2025-08-16T12:32:46.759Z] INFO [513df2ef-30c5-4988-904d-d3d823631156] [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 1104,
+    "completion_tokens": 356,
+    "total_tokens": 1460,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:32:50.848Z] INFO [c9d3170f-44c2-4e6e-916d-8e49c0398665] [OpenAI] Preparing script generation
+{}
+
+[2025-08-16T12:32:50.848Z] INFO [c9d3170f-44c2-4e6e-916d-8e49c0398665] [OpenAI] Script prompt prepared
+{
+  "promptLength": 2358
+}
+
+[2025-08-16T12:32:50.848Z] INFO [c9d3170f-44c2-4e6e-916d-8e49c0398665] [OpenAI] Calling OpenAI API
+{}
+
+[2025-08-16T12:32:54.099Z] INFO [c9d3170f-44c2-4e6e-916d-8e49c0398665] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 520,
+    "completion_tokens": 218,
+    "total_tokens": 738,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:32:54.099Z] INFO [c9d3170f-44c2-4e6e-916d-8e49c0398665] [OpenAI] Script generated
+{
+  "length": 1118,
+  "preview": "Welcome to our introduction to kinematics. Today, we're going to explore three important concepts: p..."
+}
+
+[2025-08-16T12:33:00.743Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 1118
+}
+
+[2025-08-16T12:33:02.392Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 3
+}
+
+[2025-08-16T12:34:50.986Z] INFO [5b969b3e-6601-4196-81e2-9b1af19f0c4f] [OpenAI] Preparing lesson planning
+{}
+
+[2025-08-16T12:34:50.986Z] INFO [5b969b3e-6601-4196-81e2-9b1af19f0c4f] [OpenAI] Lesson plan prompt prepared
+{
+  "promptLength": 2068
+}
+
+[2025-08-16T12:34:50.987Z] INFO [5b969b3e-6601-4196-81e2-9b1af19f0c4f] [OpenAI] Calling OpenAI for lesson planning
+{}
+
+[2025-08-16T12:34:56.123Z] INFO [5b969b3e-6601-4196-81e2-9b1af19f0c4f] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 517,
+    "completion_tokens": 575,
+    "total_tokens": 1092,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:34:56.124Z] INFO [5b969b3e-6601-4196-81e2-9b1af19f0c4f] [OpenAI] Raw OpenAI response
+{
+  "length": 2538,
+  "preview": "```json\n{\n  \"lesson_overview\": \"This lesson covers the basics of kinematics, focusing on understanding position, velocity, acceleration, and the motion equations with practical examples.\",\n  \"key_conc..."
+}
+
+[2025-08-16T12:34:56.124Z] INFO [5b969b3e-6601-4196-81e2-9b1af19f0c4f] [OpenAI] Cleaned content
+{
+  "length": 2526
+}
+
+[2025-08-16T12:35:05.861Z] INFO [5d924e95-5699-44a8-a00b-a148a5efabf3] [OpenAI] Preparing lesson planning
+{}
+
+[2025-08-16T12:35:05.862Z] INFO [5d924e95-5699-44a8-a00b-a148a5efabf3] [OpenAI] Lesson plan prompt prepared
+{
+  "promptLength": 2068
+}
+
+[2025-08-16T12:35:05.862Z] INFO [5d924e95-5699-44a8-a00b-a148a5efabf3] [OpenAI] Calling OpenAI for lesson planning
+{}
+
+[2025-08-16T12:35:44.089Z] INFO [5d924e95-5699-44a8-a00b-a148a5efabf3] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 517,
+    "completion_tokens": 571,
+    "total_tokens": 1088,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:35:44.090Z] INFO [5d924e95-5699-44a8-a00b-a148a5efabf3] [OpenAI] Raw OpenAI response
+{
+  "length": 2524,
+  "preview": "```json\n{\n  \"lesson_overview\": \"This lesson will cover the fundamental concepts of kinematics, focusing on position, velocity, acceleration, and the equations of motion. Students will learn how to app..."
+}
+
+[2025-08-16T12:35:44.090Z] INFO [5d924e95-5699-44a8-a00b-a148a5efabf3] [OpenAI] Cleaned content
+{
+  "length": 2512
+}
+
+[2025-08-16T12:36:29.752Z] INFO [ae213b76-17c5-4758-a3df-a46cfe526504] [OpenAI] Preparing evaluation
+{}
+
+[2025-08-16T12:36:29.752Z] INFO [ae213b76-17c5-4758-a3df-a46cfe526504] [OpenAI] Calling API for evaluation
+{
+  "promptLength": 4642
+}
+
+[2025-08-16T12:36:34.710Z] INFO [ae213b76-17c5-4758-a3df-a46cfe526504] [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 1171,
+    "completion_tokens": 379,
+    "total_tokens": 1550,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:36:38.821Z] INFO [7149c45e-086d-4730-b900-e4a00ec81b1e] [OpenAI] Preparing script generation
+{}
+
+[2025-08-16T12:36:38.821Z] INFO [7149c45e-086d-4730-b900-e4a00ec81b1e] [OpenAI] Script prompt prepared
+{
+  "promptLength": 2561
+}
+
+[2025-08-16T12:36:38.822Z] INFO [7149c45e-086d-4730-b900-e4a00ec81b1e] [OpenAI] Calling OpenAI API
+{}
+
+[2025-08-16T12:36:43.544Z] INFO [7149c45e-086d-4730-b900-e4a00ec81b1e] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 549,
+    "completion_tokens": 303,
+    "total_tokens": 852,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:36:43.544Z] INFO [7149c45e-086d-4730-b900-e4a00ec81b1e] [OpenAI] Script generated
+{
+  "length": 1537,
+  "preview": "Welcome to our introduction on basic kinematic concepts. Today, we'll explore the foundation of unde..."
+}
+
+[2025-08-16T12:36:51.098Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 1537
+}
+
+[2025-08-16T12:36:52.740Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 3
+}
+
+[2025-08-16T12:36:52.760Z] INFO [OpenAI] Preparing prompt
+
+[2025-08-16T12:36:52.760Z] INFO [OpenAI] Prompt prepared
+{
+  "promptLength": 2470
+}
+
+[2025-08-16T12:36:52.760Z] INFO [OpenAI] Calling API for response generation
+
+[2025-08-16T12:36:55.419Z] INFO [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 546,
+    "completion_tokens": 129,
+    "total_tokens": 675,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:36:55.420Z] INFO [OpenAI] Raw response received
+{
+  "length": 618,
+  "preview": "```json\n{\n  \"answer\": \"It seems like your question might be incomplete or unclear. If you're asking about any of the key concepts like position, velocity, or acceleration, I can help you with those. F..."
+}
+
+[2025-08-16T12:36:55.420Z] INFO [OpenAI] Content cleaned
+{
+  "cleanedLength": 606
+}
+
+[2025-08-16T12:36:55.421Z] INFO [OpenAI] Response parsed successfully
+{
+  "canAnswer": false,
+  "hasAnswer": true,
+  "answerLength": 382,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T12:36:56.226Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 382
+}
+
+[2025-08-16T12:36:57.354Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 1
+}
+
+[2025-08-16T12:47:01.730Z] INFO [2fce7df5-e475-4932-a4b7-3e7ff103d851] [OpenAI] Preparing lesson planning
+{}
+
+[2025-08-16T12:47:01.730Z] INFO [2fce7df5-e475-4932-a4b7-3e7ff103d851] [OpenAI] Lesson plan prompt prepared
+{
+  "promptLength": 2068
+}
+
+[2025-08-16T12:47:01.730Z] INFO [2fce7df5-e475-4932-a4b7-3e7ff103d851] [OpenAI] Calling OpenAI for lesson planning
+{}
+
+[2025-08-16T12:49:52.048Z] INFO [8d8a8487-f8da-422e-97ca-1cd40f14861d] [OpenAI] Preparing lesson planning
+{}
+
+[2025-08-16T12:49:52.048Z] INFO [8d8a8487-f8da-422e-97ca-1cd40f14861d] [OpenAI] Lesson plan prompt prepared
+{
+  "promptLength": 2068
+}
+
+[2025-08-16T12:49:52.049Z] INFO [8d8a8487-f8da-422e-97ca-1cd40f14861d] [OpenAI] Calling OpenAI for lesson planning
+{}
+
+[2025-08-16T12:49:57.389Z] INFO [8d8a8487-f8da-422e-97ca-1cd40f14861d] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 517,
+    "completion_tokens": 517,
+    "total_tokens": 1034,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:49:57.390Z] INFO [8d8a8487-f8da-422e-97ca-1cd40f14861d] [OpenAI] Raw OpenAI response
+{
+  "length": 2355,
+  "preview": "```json\n{\n  \"lesson_overview\": \"This lesson introduces students to the fundamental concepts of kinematics, focusing on understanding position, velocity, acceleration, and the equations of motion throu..."
+}
+
+[2025-08-16T12:49:57.391Z] INFO [8d8a8487-f8da-422e-97ca-1cd40f14861d] [OpenAI] Cleaned content
+{
+  "length": 2343
+}
+
+[2025-08-16T12:51:16.802Z] INFO [2fce7df5-e475-4932-a4b7-3e7ff103d851] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 517,
+    "completion_tokens": 580,
+    "total_tokens": 1097,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:51:16.803Z] INFO [2fce7df5-e475-4932-a4b7-3e7ff103d851] [OpenAI] Raw OpenAI response
+{
+  "length": 2626,
+  "preview": "```json\n{\n  \"lesson_overview\": \"This lesson will cover the fundamental concepts of kinematics, including position, velocity, acceleration, and the equations of motion. The goal is to build a solid und..."
+}
+
+[2025-08-16T12:51:16.803Z] INFO [2fce7df5-e475-4932-a4b7-3e7ff103d851] [OpenAI] Cleaned content
+{
+  "length": 2614
+}
+
+[2025-08-16T12:52:32.497Z] INFO [e6449fee-d079-498c-bb93-ceb46c83d041] [OpenAI] Preparing evaluation
+{}
+
+[2025-08-16T12:52:32.497Z] INFO [e6449fee-d079-498c-bb93-ceb46c83d041] [OpenAI] Calling API for evaluation
+{
+  "promptLength": 4476
+}
+
+[2025-08-16T12:52:40.800Z] INFO [e6449fee-d079-498c-bb93-ceb46c83d041] [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 1118,
+    "completion_tokens": 424,
+    "total_tokens": 1542,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:52:44.837Z] INFO [f56ac665-a7cb-40ef-95ed-2be8f90b19e4] [OpenAI] Preparing script generation
+{}
+
+[2025-08-16T12:52:44.838Z] INFO [f56ac665-a7cb-40ef-95ed-2be8f90b19e4] [OpenAI] Script prompt prepared
+{
+  "promptLength": 2702
+}
+
+[2025-08-16T12:52:44.838Z] INFO [f56ac665-a7cb-40ef-95ed-2be8f90b19e4] [OpenAI] Calling OpenAI API
+{}
+
+[2025-08-16T12:52:49.663Z] INFO [f56ac665-a7cb-40ef-95ed-2be8f90b19e4] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 582,
+    "completion_tokens": 345,
+    "total_tokens": 927,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:52:49.664Z] INFO [f56ac665-a7cb-40ef-95ed-2be8f90b19e4] [OpenAI] Script generated
+{
+  "length": 1662,
+  "preview": "Hello, and welcome to our lesson on kinematics! Today, we'll dive into the basic concepts of positio..."
+}
+
+[2025-08-16T12:52:58.953Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 1662
+}
+
+[2025-08-16T12:53:00.837Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 3
+}
+
+[2025-08-16T12:53:22.495Z] INFO [OpenAI] Preparing prompt
+
+[2025-08-16T12:53:22.496Z] INFO [OpenAI] Prompt prepared
+{
+  "promptLength": 2619
+}
+
+[2025-08-16T12:53:22.496Z] INFO [OpenAI] Calling API for response generation
+
+[2025-08-16T12:53:26.570Z] INFO [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 576,
+    "completion_tokens": 214,
+    "total_tokens": 790,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T12:53:26.570Z] INFO [OpenAI] Raw response received
+{
+  "length": 941,
+  "preview": "```json\n{\n  \"answer\": \"Let's dive into the simple motion equations. These equations help us describe the motion of objects using position, velocity, and acceleration. One of the fundamental equations ..."
+}
+
+[2025-08-16T12:53:26.571Z] INFO [OpenAI] Content cleaned
+{
+  "cleanedLength": 929
+}
+
+[2025-08-16T12:53:26.572Z] INFO [OpenAI] Response parsed successfully
+{
+  "canAnswer": true,
+  "hasAnswer": true,
+  "answerLength": 658,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T12:53:31.505Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 658
+}
+
+[2025-08-16T12:53:33.394Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 2
+}
+

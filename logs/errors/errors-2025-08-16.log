@@ -1,0 +1,130 @@
+[2025-08-16T12:12:05.267Z] ERROR [a142c2e2-7e1a-45d9-8c48-9e7098c2f113] [PROGRESS-SERVICE] Failed to add concept progress
+{
+  "error": {
+    "code": "42803",
+    "details": null,
+    "hint": null,
+    "message": "aggregate function calls cannot be nested"
+  }
+}
+
+[2025-08-16T12:12:05.268Z] ERROR [a142c2e2-7e1a-45d9-8c48-9e7098c2f113] [PROGRESS-SERVICE] Failed to add concept progress
+{
+  "error": {
+    "code": "42803",
+    "details": null,
+    "hint": null,
+    "message": "aggregate function calls cannot be nested"
+  }
+}
+
+[2025-08-16T12:14:11.509Z] ERROR [INTERACTION] Error updating chunk interaction
+{
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755346376777\""
+  }
+}
+
+[2025-08-16T12:14:39.094Z] ERROR [INTERACTION] Error updating chunk interaction
+{
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755346446719\""
+  }
+}
+
+[2025-08-16T12:15:27.739Z] ERROR [INTERACTION] Error updating chunk interaction
+{
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755346474607\""
+  }
+}
+
+[2025-08-16T12:21:46.176Z] ERROR [INTERACTION] Error updating chunk interaction
+{
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755346870692\""
+  }
+}
+
+[2025-08-16T12:23:03.231Z] ERROR [INTERACTION] Error updating chunk interaction
+{
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755346901696\""
+  }
+}
+
+[2025-08-16T12:28:54.129Z] ERROR [4b1d6ec4-9e01-4137-9601-37bd22b1af45] [PROGRESS-SERVICE] Failed to add concept progress
+{
+  "error": {
+    "code": "42803",
+    "details": null,
+    "hint": null,
+    "message": "aggregate function calls cannot be nested"
+  }
+}
+
+[2025-08-16T12:28:54.130Z] ERROR [4b1d6ec4-9e01-4137-9601-37bd22b1af45] [PROGRESS-SERVICE] Failed to add concept progress
+{
+  "error": {
+    "code": "42803",
+    "details": null,
+    "hint": null,
+    "message": "aggregate function calls cannot be nested"
+  }
+}
+
+[2025-08-16T12:36:55.935Z] ERROR [INTERACTION] Error updating chunk interaction
+{
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755347788227\""
+  }
+}
+
+[2025-08-16T12:51:28.045Z] ERROR [9fbcc8c0-2fcb-467c-9e2f-8df4c7a6fa09] [PROGRESS-SERVICE] Failed to add concept progress
+{
+  "error": {
+    "code": "42803",
+    "details": null,
+    "hint": null,
+    "message": "aggregate function calls cannot be nested"
+  }
+}
+
+[2025-08-16T12:51:28.046Z] ERROR [9fbcc8c0-2fcb-467c-9e2f-8df4c7a6fa09] [PROGRESS-SERVICE] Failed to add concept progress
+{
+  "error": {
+    "code": "42803",
+    "details": null,
+    "hint": null,
+    "message": "aggregate function calls cannot be nested"
+  }
+}
+
+[2025-08-16T12:53:27.739Z] ERROR [INTERACTION] Error updating chunk interaction
+{
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755348761793\""
+  }
+}
+

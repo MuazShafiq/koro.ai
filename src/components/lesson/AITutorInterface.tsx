@@ -398,6 +398,10 @@ export function AITutorInterface({
 
       const result = await response.json();
       
+      // Generate blackboard content for the AI response
+      const blackboardData = await generateBlackboardContent(result.answer);
+      setBlackboardContent(JSON.stringify(blackboardData.blackboard, null, 2));
+      
       const aiResponse: Message = {
         id: Date.now().toString(),
         type: 'ai',
@@ -456,9 +460,9 @@ export function AITutorInterface({
   };
 
   return (
-    <div className="h-screen flex flex-col bg-background">
+    <div className="h-screen bg-background flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b">
+      <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
         <div className="flex items-center space-x-3">
           <Button
             variant="ghost"
@@ -488,16 +492,16 @@ export function AITutorInterface({
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex">
+      <div className="flex-1 flex overflow-hidden">
         {/* Blackboard */}
-        <div className="flex-1 p-4">
+        <div className="flex-1 p-4 overflow-hidden">
           <Blackboard content={blackboardContent} />
         </div>
 
         {/* Right Panel */}
-        <div className="w-96 border-l flex flex-col">
+        <div className="w-96 border-l flex flex-col h-full overflow-hidden">
           {/* Audio Waveform */}
-          <div className="p-4 border-b">
+          <div className="p-4 border-b flex-shrink-0">
             <AudioWaveform 
               audioRef={audioRef}
               isPlaying={isPlaying}
@@ -536,7 +540,7 @@ export function AITutorInterface({
           </div>
 
           {/* Chat Area */}
-          <div className="flex-1 flex flex-col">
+          <div className="flex-1 flex flex-col overflow-hidden">
             <ScrollArea className="flex-1 p-4">
               <div className="space-y-4">
                 {messages.map((message) => (
@@ -560,7 +564,7 @@ export function AITutorInterface({
             </ScrollArea>
 
             {/* Input Area */}
-            <div className="p-4 border-t">
+            <div className="p-4 border-t flex-shrink-0">
               <div className="flex space-x-2">
                 <Input
                   value={inputValue}
