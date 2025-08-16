@@ -8428,3 +8428,27 @@
   "deliveredConcepts": 0
 }
 
+[2025-08-16T19:12:29.147Z] INFO [ce8c5dae-d036-42c0-a145-a2f8662e7470] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T19:12:30.883Z] INFO [ce8c5dae-d036-42c0-a145-a2f8662e7470] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T19:12:39.158Z] INFO [bdabc755-aaa1-4089-8bb0-3172d73e5d5c] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T19:12:40.527Z] INFO [bdabc755-aaa1-4089-8bb0-3172d73e5d5c] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
