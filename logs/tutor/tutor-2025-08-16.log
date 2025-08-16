@@ -1,0 +1,566 @@
+[2025-08-16T11:37:52.664Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T11:37:52.668Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T11:37:52.673Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T11:37:53.411Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T11:37:53.413Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-16T11:37:54.142Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-16T11:37:54.142Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T11:37:54.460Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-16T11:37:54.461Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T11:37:54.713Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T11:37:54.715Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-16T11:37:54.716Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-16T11:38:00.819Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [Lesson] Lesson plan parsed successfully
+{
+  "hasOverview": true,
+  "conceptsCount": 3,
+  "questionsCount": 3,
+  "chunksCount": 3,
+  "estimatedDuration": "15-20 minutes"
+}
+
+[2025-08-16T11:38:00.820Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [START-SESSION] Generating welcome message audio
+{}
+
+[2025-08-16T11:38:04.468Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [START-SESSION] Welcome audio generated successfully
+{
+  "fileName": "session-audio/welcome-31162333-ce0e-4343-b8a4-8c89b0b8eb5e-1755344282858.mp3"
+}
+
+[2025-08-16T11:38:04.469Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [START-SESSION] Generating assessment question audio
+{}
+
+[2025-08-16T11:38:05.485Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [START-SESSION] Assessment question 1 audio generated
+{
+  "fileName": "session-audio/assessment-31162333-ce0e-4343-b8a4-8c89b0b8eb5e-q1-1755344284993.mp3"
+}
+
+[2025-08-16T11:38:06.532Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [START-SESSION] Assessment question 2 audio generated
+{
+  "fileName": "session-audio/assessment-31162333-ce0e-4343-b8a4-8c89b0b8eb5e-q2-1755344286001.mp3"
+}
+
+[2025-08-16T11:38:07.722Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [START-SESSION] Assessment question 3 audio generated
+{
+  "fileName": "session-audio/assessment-31162333-ce0e-4343-b8a4-8c89b0b8eb5e-q3-1755344287092.mp3"
+}
+
+[2025-08-16T11:38:07.723Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [Database] Creating lesson session in database
+{}
+
+[2025-08-16T11:38:07.724Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [Database] Session data to insert
+{
+  "user_id": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "subject_id": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topic_id": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "current_phase": "assessment",
+  "hasLessonPlan": true,
+  "status": "active"
+}
+
+[2025-08-16T11:38:08.002Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [Database] Session created successfully
+{
+  "sessionId": "22eb9c0a-c0db-4405-8448-4fc2bcbff429"
+}
+
+[2025-08-16T11:38:08.003Z] INFO [31162333-ce0e-4343-b8a4-8c89b0b8eb5e] [START-SESSION] Success! Returning response
+{
+  "sessionId": "22eb9c0a-c0db-4405-8448-4fc2bcbff429",
+  "subject": "Physics",
+  "topic": "Kinematics",
+  "hasOverview": true,
+  "questionsCount": 3,
+  "estimatedDuration": "15-20 minutes"
+}
+
+[2025-08-16T11:39:16.279Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T11:39:16.280Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T11:39:16.282Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T11:39:16.761Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T11:39:16.776Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-16T11:39:17.017Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-16T11:39:17.018Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T11:39:17.299Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-16T11:39:17.300Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T11:39:17.528Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T11:39:17.528Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-16T11:39:17.529Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-16T11:39:22.971Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [Lesson] Lesson plan parsed successfully
+{
+  "hasOverview": true,
+  "conceptsCount": 3,
+  "questionsCount": 3,
+  "chunksCount": 3,
+  "estimatedDuration": "15-20 minutes"
+}
+
+[2025-08-16T11:39:22.972Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [START-SESSION] Generating welcome message audio
+{}
+
+[2025-08-16T11:39:26.516Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [START-SESSION] Welcome audio generated successfully
+{
+  "fileName": "session-audio/welcome-9b3f424e-ecba-4245-9f81-0ef631350ec2-1755344364883.mp3"
+}
+
+[2025-08-16T11:39:26.517Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [START-SESSION] Generating assessment question audio
+{}
+
+[2025-08-16T11:39:27.585Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [START-SESSION] Assessment question 1 audio generated
+{
+  "fileName": "session-audio/assessment-9b3f424e-ecba-4245-9f81-0ef631350ec2-q1-1755344367035.mp3"
+}
+
+[2025-08-16T11:39:28.711Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [START-SESSION] Assessment question 2 audio generated
+{
+  "fileName": "session-audio/assessment-9b3f424e-ecba-4245-9f81-0ef631350ec2-q2-1755344368107.mp3"
+}
+
+[2025-08-16T11:39:29.998Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [START-SESSION] Assessment question 3 audio generated
+{
+  "fileName": "session-audio/assessment-9b3f424e-ecba-4245-9f81-0ef631350ec2-q3-1755344369295.mp3"
+}
+
+[2025-08-16T11:39:29.998Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [Database] Creating lesson session in database
+{}
+
+[2025-08-16T11:39:29.999Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [Database] Session data to insert
+{
+  "user_id": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "subject_id": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topic_id": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "current_phase": "assessment",
+  "hasLessonPlan": true,
+  "status": "active"
+}
+
+[2025-08-16T11:39:30.306Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [Database] Session created successfully
+{
+  "sessionId": "409cc23e-db4b-4d66-b1a3-84015fbded62"
+}
+
+[2025-08-16T11:39:30.307Z] INFO [9b3f424e-ecba-4245-9f81-0ef631350ec2] [START-SESSION] Success! Returning response
+{
+  "sessionId": "409cc23e-db4b-4d66-b1a3-84015fbded62",
+  "subject": "Physics",
+  "topic": "Kinematics",
+  "hasOverview": true,
+  "questionsCount": 3,
+  "estimatedDuration": "15-20 minutes"
+}
+
+[2025-08-16T11:40:39.892Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [ASSESSMENT] Request received
+{
+  "sessionId": "409cc23e-db4b-4d66-b1a3-84015fbded62",
+  "answersCount": 3,
+  "isArray": true
+}
+
+[2025-08-16T11:40:39.893Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [ASSESSMENT] Authenticating user
+{}
+
+[2025-08-16T11:40:40.553Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [ASSESSMENT] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T11:40:40.554Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] Fetching session data
+{
+  "sessionId": "409cc23e-db4b-4d66-b1a3-84015fbded62"
+}
+
+[2025-08-16T11:40:40.799Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] Session found
+{
+  "id": "409cc23e-db4b-4d66-b1a3-84015fbded62",
+  "phase": "assessment",
+  "hasLessonPlan": true
+}
+
+[2025-08-16T11:40:40.800Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T11:40:41.063Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T11:40:41.064Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] Storing student assessments
+{
+  "assessmentCount": 3
+}
+
+[2025-08-16T11:40:41.064Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] Storing assessment 1
+{
+  "questionPreview": "What is the primary difference between velocity an...",
+  "answerLength": 3
+}
+
+[2025-08-16T11:40:41.067Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] Storing assessment 2
+{
+  "questionPreview": "If an object starts from rest and accelerates at 5...",
+  "answerLength": 3
+}
+
+[2025-08-16T11:40:41.067Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] Storing assessment 3
+{
+  "questionPreview": "True or False: Acceleration can be negative....",
+  "answerLength": 4
+}
+
+[2025-08-16T11:40:41.681Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] All assessments stored
+{}
+
+[2025-08-16T11:40:41.682Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [ASSESSMENT] Preparing evaluation context
+{}
+
+[2025-08-16T11:40:41.684Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [ASSESSMENT] Context prepared
+{
+  "resourceContextLength": 156,
+  "answersContextLength": 235,
+  "answersCount": 3
+}
+
+[2025-08-16T11:40:48.127Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [ASSESSMENT] Parsing evaluation results
+{
+  "length": 1930,
+  "preview": "```json\n{\n  \"student_evaluation\": {\n    \"understanding_level\": \"beginner\",\n    \"strengths\": [\"basic understanding of acceleration\"],\n    \"areas_for_focus\": [\"velocity vs speed\", \"motion equations\"],\n ..."
+}
+
+[2025-08-16T11:40:48.128Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [ASSESSMENT] Content cleaned
+{
+  "cleanedLength": 1918
+}
+
+[2025-08-16T11:40:48.129Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [ASSESSMENT] Evaluation parsed successfully
+{
+  "hasStudentEvaluation": true,
+  "understandingLevel": "beginner",
+  "hasRefinedPlan": true,
+  "chunksCount": 4
+}
+
+[2025-08-16T11:40:48.130Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] Updating session with refined lesson plan
+{}
+
+[2025-08-16T11:40:48.130Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] Session update data prepared
+{
+  "newPhase": "delivery",
+  "hasRefinedPlan": true,
+  "responsesCount": 3
+}
+
+[2025-08-16T11:40:48.552Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] Session updated successfully
+{}
+
+[2025-08-16T11:40:48.553Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] Storing AI evaluations
+{}
+
+[2025-08-16T11:40:48.554Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] Updating evaluation for question 1
+{}
+
+[2025-08-16T11:40:48.554Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] Updating evaluation for question 2
+{}
+
+[2025-08-16T11:40:48.555Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] Updating evaluation for question 3
+{}
+
+[2025-08-16T11:40:49.010Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [Database] All evaluations updated successfully
+{}
+
+[2025-08-16T11:40:49.012Z] INFO [0ed900c3-31b2-43ad-b6d0-b366962a6570] [ASSESSMENT] Assessment completed successfully
+{
+  "sessionId": "409cc23e-db4b-4d66-b1a3-84015fbded62",
+  "understandingLevel": "beginner",
+  "hasRefinedPlan": true,
+  "chunksCount": 4,
+  "nextPhase": "delivery",
+  "processingTime": 9120
+}
+
+[2025-08-16T11:40:51.273Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [DELIVER-CHUNK] Starting chunk delivery
+{}
+
+[2025-08-16T11:40:51.273Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [DELIVER-CHUNK] Request received
+{
+  "sessionId": "409cc23e-db4b-4d66-b1a3-84015fbded62",
+  "chunkIndex": 0
+}
+
+[2025-08-16T11:40:51.275Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [Auth] Authenticating user
+{}
+
+[2025-08-16T11:40:51.553Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [Auth] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T11:40:51.554Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [Database] Fetching session data
+{
+  "sessionId": "409cc23e-db4b-4d66-b1a3-84015fbded62"
+}
+
+[2025-08-16T11:40:51.920Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [Database] Session found
+{
+  "id": "409cc23e-db4b-4d66-b1a3-84015fbded62",
+  "phase": "delivery",
+  "status": "active",
+  "hasLessonPlan": true
+}
+
+[2025-08-16T11:40:51.921Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [Database] Checking for existing chunk
+{
+  "chunkIndex": 0
+}
+
+[2025-08-16T11:40:52.432Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [DELIVER-CHUNK] No existing chunk found, creating new one
+{}
+
+[2025-08-16T11:40:52.434Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T11:40:52.653Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T11:40:52.654Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [DELIVER-CHUNK] Preparing resource context
+{}
+
+[2025-08-16T11:40:52.655Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [DELIVER-CHUNK] Resource context prepared
+{
+  "contextLength": 156
+}
+
+[2025-08-16T11:40:52.655Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [DELIVER-CHUNK] Analyzing lesson plan structure
+{
+  "hasLessonPlan": true,
+  "hasLessonChunks": true,
+  "totalChunks": 4,
+  "requestedChunkIndex": 0
+}
+
+[2025-08-16T11:40:52.656Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [DELIVER-CHUNK] Target chunk found
+{
+  "hasContent": false
+}
+
+[2025-08-16T11:41:03.389Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [UnrealSpeech] Starting audio generation with chunking
+{
+  "textLength": 1284
+}
+
+[2025-08-16T11:41:07.588Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [UnrealSpeech] Audio generation successful
+{
+  "bufferSize": 1925837,
+  "chunksProcessed": 2
+}
+
+[2025-08-16T11:41:07.588Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [Storage] Uploading to Supabase storage
+{
+  "fileName": "lesson-audio/409cc23e-db4b-4d66-b1a3-84015fbded62/chunk-0-1755344467588.mp3"
+}
+
+[2025-08-16T11:41:10.564Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [Storage] Audio uploaded successfully
+{
+  "path": "lesson-audio/409cc23e-db4b-4d66-b1a3-84015fbded62/chunk-0-1755344467588.mp3"
+}
+
+[2025-08-16T11:41:10.564Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [Storage] Audio URL generated
+{
+  "audioUrl": "https://sqlxxvrpmzxjyehbpeuw.supabase.co/storage/v1/object/public/lessons/lesson-audio/409cc23e-db4b-4d66-b1a3-84015fbded62/chunk-0-1755344467588.mp3"
+}
+
+[2025-08-16T11:41:10.564Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [Database] Storing chunk in database
+{}
+
+[2025-08-16T11:41:10.566Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [Database] Chunk data prepared
+{
+  "session_id": "409cc23e-db4b-4d66-b1a3-84015fbded62",
+  "chunk_index": 0,
+  "hasScript": true,
+  "scriptLength": 1284,
+  "hasAudio": true,
+  "chunk_type": "lesson"
+}
+
+[2025-08-16T11:41:10.863Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [Database] Chunk stored successfully
+{
+  "chunkId": "9e2f0b80-678a-4480-a190-adcb81be8f76"
+}
+
+[2025-08-16T11:41:10.864Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [Database] Updating session current chunk index
+{
+  "chunkIndex": 0
+}
+
+[2025-08-16T11:41:11.125Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [Database] Session updated successfully
+{}
+
+[2025-08-16T11:41:11.126Z] INFO [58ef3ad6-36f5-4f57-b59a-c13192e9e632] [DELIVER-CHUNK] Chunk delivered successfully
+{
+  "chunkId": "9e2f0b80-678a-4480-a190-adcb81be8f76",
+  "contentLength": 1284,
+  "hasAudio": true,
+  "chunkIndex": 0,
+  "totalChunks": 4,
+  "isLastChunk": false,
+  "processingTime": 19853
+}
+
+[2025-08-16T11:41:11.386Z] INFO [5f4ad4f0-92fe-464a-a3a5-4469922180f4] [BLACKBOARD-GENERATE] Starting blackboard content generation
+{}
+
+[2025-08-16T11:41:11.641Z] INFO [5f4ad4f0-92fe-464a-a3a5-4469922180f4] [BLACKBOARD-GENERATE] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T11:41:11.644Z] INFO [5f4ad4f0-92fe-464a-a3a5-4469922180f4] [BLACKBOARD-GENERATE] Calling OpenAI API
+{
+  "model": "gpt-4o",
+  "hasApiKey": true,
+  "scriptLength": 1284
+}
+
+[2025-08-16T11:41:13.573Z] INFO [5f4ad4f0-92fe-464a-a3a5-4469922180f4] [BLACKBOARD-GENERATE] OpenAI API call successful
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 842,
+    "completion_tokens": 86,
+    "total_tokens": 928,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T11:41:13.574Z] INFO [5f4ad4f0-92fe-464a-a3a5-4469922180f4] [BLACKBOARD-GENERATE] Raw OpenAI response for user b50bca67-bbc6-485b-a9a7-6c0574dca179
+{
+  "content": "```json\n{\n  \"blackboard\": [\n    {\n      \"type\": \"definition\",\n      \"label\": \"Position\",\n      \"content\": \"Position is where something is in relation to a specific reference point.\"\n    },\n    {\n      \"type\": \"definition\",\n      \"label\": \"Reference Point\",\n      \"content\": \"A fixed point used to describe the position of an object.\"\n    }\n  ]\n}\n```",
+  "contentLength": 349,
+  "contentType": "string"
+}
+
+[2025-08-16T11:41:13.575Z] INFO [5f4ad4f0-92fe-464a-a3a5-4469922180f4] [BLACKBOARD-GENERATE] Removed markdown code blocks from response
+{
+  "originalLength": 349,
+  "cleanedLength": 337
+}
+

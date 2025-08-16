@@ -150,7 +150,7 @@ export default function SignupForm() {
                   type="text"
                   value={formData.fullName}
                   onChange={(e) => handleInputChange('fullName', e.target.value)}
-                  className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400"
+                  className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400"
                   placeholder="Enter your full name"
                   required
                 />
@@ -166,7 +166,7 @@ export default function SignupForm() {
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400"
+                  className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400"
                   placeholder="Enter your email"
                   required
                 />
@@ -183,7 +183,7 @@ export default function SignupForm() {
                     type={showPassword ? 'text' : 'password'}
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
-                    className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400 pr-12"
+                    className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 pr-12"
                     placeholder="Create a password"
                     required
                   />
@@ -207,8 +207,8 @@ export default function SignupForm() {
                     id="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={formData.confirmPassword}
-                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                    className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400 pr-12"
+                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                  className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 pr-12"
                     placeholder="Confirm your password"
                     required
                   />
@@ -244,7 +244,7 @@ export default function SignupForm() {
                     type="number"
                     value={formData.age}
                     onChange={(e) => handleInputChange('age', e.target.value)}
-                    className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400"
+                    className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400"
                     placeholder="Your age"
                     min="1"
                     max="120"
@@ -260,8 +260,8 @@ export default function SignupForm() {
                     id="location"
                     type="text"
                     value={formData.location}
-                    onChange={(e) => handleInputChange('location', e.target.value)}
-                    className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400"
+                  onChange={(e) => handleInputChange('location', e.target.value)}
+                  className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400"
                     placeholder="City, Country"
                   />
                 </div>
@@ -277,7 +277,7 @@ export default function SignupForm() {
                   type="text"
                   value={formData.school}
                   onChange={(e) => handleInputChange('school', e.target.value)}
-                  className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400"
+                  className="h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400"
                   placeholder="Your school or institution"
                 />
               </div>
@@ -287,7 +287,7 @@ export default function SignupForm() {
                   Grade Level
                 </Label>
                 <Select value={formData.gradeLevel} onValueChange={(value) => handleInputChange('gradeLevel', value)}>
-                  <SelectTrigger className="h-12 bg-gray-800 border-gray-600 text-white focus:border-purple-400 focus:ring-purple-400">
+                  <SelectTrigger className="h-12 bg-gray-800 border-gray-600 text-white focus:border-purple-400">
                     <SelectValue placeholder="Select your grade level" />
                   </SelectTrigger>
                   <SelectContent>
@@ -331,7 +331,7 @@ export default function SignupForm() {
                   id="learningGoals"
                   value={formData.learningGoals}
                   onChange={(e) => handleInputChange('learningGoals', e.target.value)}
-                  className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400 resize-none"
+                  className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 resize-none"
                   placeholder="What do you hope to achieve with your learning?"
                   rows={3}
                 />
@@ -345,7 +345,7 @@ export default function SignupForm() {
                   id="bio"
                   value={formData.bio}
                   onChange={(e) => handleInputChange('bio', e.target.value)}
-                  className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400 resize-none"
+                  className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 resize-none"
                   placeholder="Tell us a bit about yourself..."
                   rows={3}
                 />

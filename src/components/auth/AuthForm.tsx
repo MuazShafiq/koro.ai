@@ -50,7 +50,7 @@ export function AuthForm() {
     <Card className="backdrop-blur-sm bg-gray-900/90 border border-gray-700 shadow-2xl">
       <form onSubmit={handleSignIn}>
         <CardContent className="space-y-6 p-8">
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label htmlFor="email" className="text-sm font-medium text-gray-200">
               Email Address
             </Label>
@@ -62,13 +62,13 @@ export function AuthForm() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400"
+                className="pl-10 h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400"
                 required
               />
             </div>
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label htmlFor="password" className="text-sm font-medium text-gray-200">
               Password
             </Label>
@@ -80,7 +80,7 @@ export function AuthForm() {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 pr-10 h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400 focus:ring-purple-400"
+                className="pl-10 pr-10 h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400"
                 required
               />
               <button
@@ -100,7 +100,7 @@ export function AuthForm() {
           )}
         </CardContent>
         
-        <CardFooter className="p-8 pt-0 space-y-4">
+        <CardFooter className="flex flex-col p-8 pt-0 space-y-4">
           <Button 
             type="submit" 
             className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-[1.02]" 
