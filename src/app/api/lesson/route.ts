@@ -168,7 +168,9 @@ export async function POST(request: NextRequest) {
         // Convert to speech
         const ttsResult = await convertTextToSpeech({
           text: cleanedText,
-          voiceId: 'Scarlett' // Default voice
+          voiceId: 'Scarlett', // Default voice
+          contentType: 'lesson',
+          context: `lesson content for ${subjectName} - ${topicName}`
         });
 
         if (!ttsResult.success || !ttsResult.audioBuffer) {

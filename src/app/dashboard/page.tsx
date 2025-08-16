@@ -330,8 +330,8 @@ export default function DashboardPage() {
               AI Tutor - Your Subjects
             </h2>
             <BentoGrid className="max-w-4xl mx-auto">
-              {/* AI Tutor Feature Card */}
-              <BentoGridItem className="group cursor-pointer hover:shadow-xl transition-all duration-300" size="wide">
+              {/* AI Tutor Feature Card - Hidden for now */}
+              {/* <BentoGridItem className="group cursor-pointer hover:shadow-xl transition-all duration-300" size="wide">
                 <motion.div
                   className="relative h-48 p-6 bg-gradient-to-br from-purple-500/10 via-blue-500/10 to-indigo-500/10 rounded-xl border border-purple-200/30 overflow-hidden"
                   whileHover={{ y: -2 }}
@@ -340,14 +340,10 @@ export default function DashboardPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {/* Subtle background gradient */}
                   <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-xl" />
                   
-                  {/* Content */}
                   <div className="relative z-10 h-full flex gap-4">
-                    {/* Left Section - Header and Description */}
                     <div className="flex-1 flex flex-col justify-between min-w-0">
-                      {/* Header */}
                       <div className="flex items-center gap-4 mb-4">
                         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-lg flex-shrink-0">
                           <Brain className="w-6 h-6 text-white" />
@@ -358,14 +354,12 @@ export default function DashboardPage() {
                         </div>
                       </div>
                       
-                      {/* Description */}
                       <div className="mb-4">
                         <p className="text-sm text-muted-foreground leading-relaxed">
                           Get personalized lessons with AI-generated content, audio narration, and adaptive learning paths tailored to your subjects.
                         </p>
                       </div>
                       
-                      {/* Features */}
                       <div className="p-3 bg-white/5 rounded-lg border border-white/10">
                         <div className="flex items-center gap-2 mb-1">
                           <Sparkles className="w-4 h-4 text-purple-500" />
@@ -375,7 +369,6 @@ export default function DashboardPage() {
                       </div>
                     </div>
 
-                    {/* Right Section - Stats */}
                     <div className="flex flex-col gap-3 min-w-[140px]">
                       <div className="p-3 rounded-lg bg-white/5 border border-white/10">
                         <div className="flex items-center gap-2 mb-2">
@@ -401,7 +394,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 </motion.div>
-              </BentoGridItem>
+              </BentoGridItem> */}
               
               {/* Render user's selected subjects */}
               {subjects.map((subject, index) => (

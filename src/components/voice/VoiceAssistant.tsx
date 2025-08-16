@@ -19,10 +19,12 @@ const Waveform: React.FC<WaveformProps> = ({ isActive, amplitude }) => {
   return (
     <div className="flex items-center justify-center gap-1 h-16">
       {bars.map((bar) => {
-        const height = isActive 
-          ? Math.random() * amplitude * 40 + 10
+        // Use deterministic values based on bar index and amplitude to prevent hydration mismatch
+        const baseHeight = isActive 
+          ? (bar % 3 + 1) * amplitude * 15 + 10
           : 4;
         const delay = bar * 0.1;
+        const duration = 0.5 + (bar % 4) * 0.125; // Deterministic duration based on bar index
         
         return (
           <motion.div
@@ -32,10 +34,10 @@ const Waveform: React.FC<WaveformProps> = ({ isActive, amplitude }) => {
               width: '3px',
             }}
             animate={{
-              height: isActive ? [height, height * 0.3, height] : 4,
+              height: isActive ? [baseHeight, baseHeight * 0.3, baseHeight] : 4,
             }}
             transition={{
-              duration: 0.5 + Math.random() * 0.5,
+              duration: duration,
               repeat: isActive ? Infinity : 0,
               delay: delay,
               ease: 'easeInOut',

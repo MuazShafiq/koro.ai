@@ -230,27 +230,34 @@ export function PerformanceCard({
       
       {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(2)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-primary/30 rounded-full"
-            initial={{ 
-              x: Math.random() * 100 + '%',
-              y: '100%',
-              opacity: 0
-            }}
-            animate={{
-              y: '-10%',
-              opacity: [0, 0.6, 0],
-            }}
-            transition={{
-              duration: 5 + Math.random() * 2,
-              repeat: Infinity,
-              delay: Math.random() * 4,
-              ease: 'easeOut'
-            }}
-          />
-        ))}
+        {[...Array(2)].map((_, i) => {
+          // Use deterministic values based on index to prevent hydration mismatch
+          const positions = [30, 70];
+          const durations = [5, 6];
+          const delays = [0, 2];
+          
+          return (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-primary/30 rounded-full"
+              initial={{ 
+                x: positions[i] + '%',
+                y: '100%',
+                opacity: 0
+              }}
+              animate={{
+                y: '-15%',
+                opacity: [0, 0.5, 0],
+              }}
+              transition={{
+                duration: durations[i],
+                repeat: Infinity,
+                delay: delays[i],
+                ease: 'easeOut'
+              }}
+            />
+          );
+        })}
       </div>
     </motion.div>
   );

@@ -3,8 +3,18 @@
 import { useEffect, useRef, useState, ReactElement } from 'react';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
 import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
+import { BookOpen, Calculator, Image, List, FileText, Lightbulb } from 'lucide-react';
+
+interface BlackboardItem {
+  type: 'text' | 'equation' | 'diagram' | 'step-by-step' | 'definition' | 'example';
+  label: string;
+  content?: string;
+  description?: string;
+  steps?: string[];
+}
 
 interface BlackboardProps {
   content: string;
@@ -13,12 +23,23 @@ interface BlackboardProps {
 export function Blackboard({ content }: BlackboardProps) {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const [processedContent, setProcessedContent] = useState<ReactElement[]>([]);
+  const [blackboardItems, setBlackboardItems] = useState<BlackboardItem[]>([]);
 
   useEffect(() => {
     if (content) {
-      const processed = processContent(content);
-      setProcessedContent(processed);
+      try {
+        // Try to parse as structured blackboard data
+        const parsedContent = JSON.parse(content);
+        if (Array.isArray(parsedContent)) {
+          setBlackboardItems(parsedContent);
+        } else {
+          // Fallback to plain text
+          setBlackboardItems([{ type: 'text', label: 'Lesson Content', content }]);
+        }
+      } catch (error) {
+        // Fallback to plain text if JSON parsing fails
+        setBlackboardItems([{ type: 'text', label: 'Lesson Content', content }]);
+      }
       
       // Auto-scroll to bottom when content updates
       setTimeout(() => {
@@ -32,104 +53,104 @@ export function Blackboard({ content }: BlackboardProps) {
     }
   }, [content]);
 
-  const processContent = (text: string): ReactElement[] => {
-    if (!text) return [];
+  const getItemIcon = (type: string) => {
+    switch (type) {
+      case 'equation': return <Calculator className="w-4 h-4" />;
+      case 'diagram': return <Image className="w-4 h-4" />;
+      case 'step-by-step': return <List className="w-4 h-4" />;
+      case 'definition': return <BookOpen className="w-4 h-4" />;
+      case 'example': return <Lightbulb className="w-4 h-4" />;
+      default: return <FileText className="w-4 h-4" />;
+    }
+  };
 
-    const elements: ReactElement[] = [];
-    const lines = text.split('\n');
+  const getItemColor = (type: string) => {
+    switch (type) {
+      case 'equation': return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
+      case 'diagram': return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
+      case 'step-by-step': return 'bg-orange-500/20 text-orange-300 border-orange-500/30';
+      case 'definition': return 'bg-green-500/20 text-green-300 border-green-500/30';
+      case 'example': return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
+      default: return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
+    }
+  };
+
+  const renderMathContent = (content: string) => {
+    // Check if content contains LaTeX
+    const blockMathRegex = /\$\$([^$]+)\$\$/g;
+    const inlineMathRegex = /\$([^$]+)\$/g;
     
-    lines.forEach((line, lineIndex) => {
-      if (!line.trim()) {
-        elements.push(<div key={`empty-${lineIndex}`} className="h-4" />);
-        return;
-      }
+    if (blockMathRegex.test(content)) {
+      const parts = content.split(blockMathRegex);
+      return parts.map((part, index) => {
+        if (index % 2 === 0) {
+          return part ? <span key={index} className="text-green-300">{part}</span> : null;
+        } else {
+          try {
+            return <BlockMath key={index} math={part} />;
+          } catch (error) {
+            return <span key={index} className="text-red-400">[Math Error: {part}]</span>;
+          }
+        }
+      });
+    } else if (inlineMathRegex.test(content)) {
+      const parts = content.split(inlineMathRegex);
+      return parts.map((part, index) => {
+        if (index % 2 === 0) {
+          return part ? <span key={index} className="text-green-300">{part}</span> : null;
+        } else {
+          try {
+            return <InlineMath key={index} math={part} />;
+          } catch (error) {
+            return <span key={index} className="text-red-400">[Math Error: {part}]</span>;
+          }
+        }
+      });
+    } else {
+      return <span className="text-green-300">{content}</span>;
+    }
+  };
 
-      // Check if line contains LaTeX (block math)
-      const blockMathRegex = /\$\$([^$]+)\$\$/g;
-      const inlineMathRegex = /\$([^$]+)\$/g;
-      
-      if (blockMathRegex.test(line)) {
-        // Handle block math
-        const parts = line.split(blockMathRegex);
-        const lineElements: ReactElement[] = [];
+  const renderBlackboardItem = (item: BlackboardItem, index: number) => {
+    return (
+      <div key={index} className="mb-6 p-4 rounded-lg bg-slate-800/30 border border-slate-600/30">
+        <div className="flex items-center gap-2 mb-3">
+          <Badge className={`${getItemColor(item.type)} border`}>
+            {getItemIcon(item.type)}
+            <span className="ml-1 capitalize">{item.type.replace('-', ' ')}</span>
+          </Badge>
+          <h3 className="text-lg font-semibold text-green-200">{item.label}</h3>
+        </div>
         
-        parts.forEach((part, partIndex) => {
-          if (partIndex % 2 === 0) {
-            // Regular text
-            if (part.trim()) {
-              lineElements.push(
-                <span key={`text-${lineIndex}-${partIndex}`} className="text-green-300">
-                  {part}
-                </span>
-              );
-            }
-          } else {
-            // Block math
-            try {
-              lineElements.push(
-                <div key={`block-math-${lineIndex}-${partIndex}`} className="my-4 flex justify-center">
-                  <BlockMath math={part} />
-                </div>
-              );
-            } catch (error) {
-              console.error('LaTeX rendering error:', error);
-              lineElements.push(
-                <span key={`error-${lineIndex}-${partIndex}`} className="text-red-400">
-                  [Math Error: {part}]
-                </span>
-              );
-            }
-          }
-        });
-        
-        elements.push(
-          <div key={`line-${lineIndex}`} className="mb-2">
-            {lineElements}
-          </div>
-        );
-      } else {
-        // Handle inline math and regular text
-        const parts = line.split(inlineMathRegex);
-        const lineElements: ReactElement[] = [];
-        
-        parts.forEach((part, partIndex) => {
-          if (partIndex % 2 === 0) {
-            // Regular text
-            if (part.trim()) {
-              lineElements.push(
-                <span key={`text-${lineIndex}-${partIndex}`} className="text-green-300">
-                  {part}
-                </span>
-              );
-            }
-          } else {
-            // Inline math
-            try {
-              lineElements.push(
-                <InlineMath key={`inline-math-${lineIndex}-${partIndex}`} math={part} />
-              );
-            } catch (error) {
-              console.error('LaTeX rendering error:', error);
-              lineElements.push(
-                <span key={`error-${lineIndex}-${partIndex}`} className="text-red-400">
-                  [Math Error: {part}]
-                </span>
-              );
-            }
-          }
-        });
-        
-        elements.push(
-          <div key={`line-${lineIndex}`} className="mb-2 leading-relaxed">
-            {lineElements.length > 0 ? lineElements : (
-              <span className="text-green-300">{line}</span>
+        {item.content && (
+          <div className="text-base leading-relaxed mb-2">
+            {item.type === 'equation' ? (
+              <div className="flex justify-center my-4">
+                {renderMathContent(item.content)}
+              </div>
+            ) : (
+              renderMathContent(item.content)
             )}
           </div>
-        );
-      }
-    });
-
-    return elements;
+        )}
+        
+        {item.description && (
+          <div className="text-sm text-green-200/80 italic border-l-2 border-green-500/30 pl-3">
+            {item.description}
+          </div>
+        )}
+        
+        {item.steps && (
+          <ol className="list-decimal list-inside space-y-2 mt-3">
+            {item.steps.map((step, stepIndex) => (
+              <li key={stepIndex} className="text-green-300">
+                {step}
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -159,19 +180,21 @@ export function Blackboard({ content }: BlackboardProps) {
               `
             }}
           >
-            {processedContent.length > 0 ? (
-              <div className="space-y-1">
-                {processedContent}
-              </div>
-            ) : (
-              <div className="flex items-center justify-center h-full text-slate-500">
-                <div className="text-center">
-                  <div className="text-4xl mb-4">📚</div>
-                  <p className="text-lg">Waiting for lesson content...</p>
-                  <p className="text-sm mt-2">The AI will start writing here soon</p>
+            <div className="space-y-2">
+              {blackboardItems.length > 0 ? (
+                blackboardItems.map((item, index) => renderBlackboardItem(item, index))
+              ) : content ? (
+                // Fallback to plain text rendering for non-structured content
+                <div className="font-mono text-sm text-green-300 whitespace-pre-wrap">
+                  {content}
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="text-center text-slate-400 mt-8">
+                  <div className="text-4xl mb-2">📝</div>
+                  <p>Blackboard content will appear here during the lesson</p>
+                </div>
+              )}
+            </div>
             
             {/* Chalk dust effect */}
             <div className="absolute inset-0 pointer-events-none">

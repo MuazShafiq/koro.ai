@@ -177,8 +177,8 @@ export default function AITutorPage() {
       </div>
 
       <div className="grid gap-6">
-        {/* Start General Session */}
-        <Card className="p-6">
+        {/* Start General Session - Hidden for now, keeping only topic-focused sessions */}
+        {/* <Card className="p-6">
           <div className="flex items-center space-x-4 mb-4">
             <div className="p-3 rounded-lg bg-primary/10">
               <Brain className="h-6 w-6 text-primary" />
@@ -204,7 +204,7 @@ export default function AITutorPage() {
               'Start AI Tutor Session'
             )}
           </Button>
-        </Card>
+        </Card> */}
 
         {/* Topic-Specific Sessions */}
         {topics.length > 0 && (

@@ -311,27 +311,34 @@ export function KoroSidebar({ className }: SidebarProps) {
       
       {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-primary/20 rounded-full"
-            initial={{ 
-              x: Math.random() * 100 + '%',
-              y: '100%',
-              opacity: 0
-            }}
-            animate={{
-              y: '-10%',
-              opacity: [0, 0.4, 0],
-            }}
-            transition={{
-              duration: 8 + Math.random() * 4,
-              repeat: Infinity,
-              delay: Math.random() * 5,
-              ease: 'easeOut'
-            }}
-          />
-        ))}
+        {[...Array(5)].map((_, i) => {
+          // Use deterministic values based on index to prevent hydration mismatch
+          const positions = [15.15, 41.04, 61.82, 57.37, 80.77];
+          const durations = [8, 9, 10, 11, 12];
+          const delays = [0, 1, 2, 3, 4];
+          
+          return (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-primary/20 rounded-full"
+              initial={{ 
+                x: positions[i] + '%',
+                y: '100%',
+                opacity: 0
+              }}
+              animate={{
+                y: '-10%',
+                opacity: [0, 0.4, 0],
+              }}
+              transition={{
+                duration: durations[i],
+                repeat: Infinity,
+                delay: delays[i],
+                ease: 'easeOut'
+              }}
+            />
+          );
+        })}
       </div>
     </motion.div>
   );
