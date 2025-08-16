@@ -178,6 +178,14 @@ Generate a 2-3 minute spoken script for this lesson chunk that:
 5. Ends with a transition or question to maintain engagement
 6. Uses simple language suitable for text-to-speech
 
+**IMPORTANT - Reduce Confirmations:**
+- Avoid asking "Does this make sense?" or "Do you understand?" after explanations
+- Don't use phrases like "Are you following along?" or "Is this clear?"
+- Instead of confirmations, use natural transitions like "Now let's explore..." or "This leads us to..."
+- Be confident and direct in explanations
+- Only ask questions when they serve a pedagogical purpose (checking specific understanding or encouraging thinking)
+- Keep the flow conversational but avoid excessive checking for comprehension
+
 Return ONLY the script text, no JSON or formatting. The script should be ready for direct text-to-speech conversion.`;
     
     logger.openai('Script prompt prepared', {

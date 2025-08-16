@@ -7,6 +7,7 @@ import { convertTextToSpeech } from '@/lib/services/unrealSpeech';
 import { progressService } from '@/lib/services/progressService';
 import { equationExtractor } from '@/lib/services/equationExtractor';
 import tutorVoiceSOP from '@/lib/tutor-voice-sop.json';
+import { MasterLessonPlanService } from '@/lib/services/masterLessonPlanService';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -135,131 +136,77 @@ export async function POST(request: NextRequest) {
       topicContext: topicContext
     }, requestId);
 
-    // Generate initial lesson plan using OpenAI
-    logger.openai('Preparing lesson planning', {}, requestId);
+    // Get or create master lesson plan
+    logger.info('START-SESSION', 'Getting master lesson plan', {}, requestId);
+    const masterLessonPlanService = new MasterLessonPlanService();
     const topicName = topic?.name || 'General Overview';
-     const subjectName = subject.name;
-     
-     const prompt = `You are an expert AI tutor creating a personalized lesson plan. Generate a comprehensive lesson plan for the topic "${topicName}" in ${subjectName}.
-
-**Available Educational Resources:**
-${resourceContext || 'No specific resources provided - use your general knowledge.'}
-
-**Requirements:**
-- Use ONLY the provided educational resources above as your knowledge base
-- Structure the lesson for interactive, conversational learning
-- Include 2-3 assessment questions to gauge understanding
-- Break the lesson into 2-3 detailed chunks, each 2-3 minutes long
-- Focus on practical understanding and real-world applications
-- Ensure content is engaging and age-appropriate
-- Include mathematical equations and formulas from the resources when applicable
-
-**Response Format (JSON only):**
-{
-  "lesson_overview": "Brief overview of what will be covered",
-  "key_concepts": ["concept1", "concept2", "concept3"],
-  "lesson_chunks": [
-    {
-      "chunk_index": 1,
-      "title": "Introduction to [Topic]",
-      "content_outline": "Detailed outline of what this chunk covers",
-      "key_points": ["point1", "point2", "point3"],
-      "duration_minutes": 2,
-      "chunk_type": "lesson"
-    },
-    {
-      "chunk_index": 2,
-      "title": "Core Concepts and Examples",
-      "content_outline": "Detailed outline including equations and examples",
-      "key_points": ["point1", "point2", "point3"],
-      "duration_minutes": 3,
-      "chunk_type": "lesson"
-    },
-    {
-      "chunk_index": 3,
-      "title": "Practice and Application",
-      "content_outline": "Detailed outline of practice problems and applications",
-      "key_points": ["point1", "point2", "point3"],
-      "duration_minutes": 2,
-      "chunk_type": "lesson"
-    }
-  ],
-  "assessment_questions": [
-    {
-      "question": "Question text",
-      "type": "multiple_choice" | "open_ended" | "true_false",
-      "options": ["option1", "option2", "option3", "option4"] // only for multiple_choice
-    }
-  ],
-  "estimated_duration": "15-20 minutes"
-}`;
+    const subjectName = subject.name;
     
-    logger.openai('Lesson plan prompt prepared', { promptLength: prompt.length }, requestId);
-
-    logger.openai('Calling OpenAI for lesson planning', {}, requestId);
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an expert AI tutor. Always respond with valid JSON only. Use only the provided educational resources for content.'
-        },
-        {
-          role: 'user',
-          content: prompt
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 3000
-    });
-    
-    logger.openai('OpenAI response received', {
-      model: completion.model,
-      usage: completion.usage,
-      finishReason: completion.choices[0].finish_reason
-    }, requestId);
-
-    // Helper function to extract JSON from markdown code blocks
-    const extractJsonFromMarkdown = (content: string): string => {
-      // Remove markdown code block formatting
-      const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
-      if (jsonMatch) {
-        return jsonMatch[1].trim();
-      }
-      // If no code blocks found, return original content
-      return content.trim();
-    };
-
-    let lessonPlan;
+    let masterPlan;
     try {
-      const rawContent = completion.choices[0].message.content || '{}';
-      logger.openai('Raw OpenAI response', {
-        length: rawContent.length,
-        preview: rawContent.substring(0, 200) + '...'
-      }, requestId);
+      masterPlan = await masterLessonPlanService.getOrCreateMasterPlan(
+        subjectId,
+        topicId,
+        topicName,
+        subjectName,
+        resourceContext
+      );
       
-      const cleanedContent = extractJsonFromMarkdown(rawContent);
-      logger.openai('Cleaned content', { length: cleanedContent.length }, requestId);
-      
-      lessonPlan = JSON.parse(cleanedContent);
-      logger.lesson('Lesson plan parsed successfully', {
-        hasOverview: !!lessonPlan.lesson_overview,
-        conceptsCount: lessonPlan.key_concepts?.length || 0,
-        questionsCount: lessonPlan.assessment_questions?.length || 0,
-        chunksCount: lessonPlan.lesson_chunks?.length || 0,
-        estimatedDuration: lessonPlan.estimated_duration
+      logger.lesson('Master lesson plan retrieved', {
+        planId: masterPlan.id,
+        chunksCount: masterPlan.chunkStructure.length,
+        conceptsCount: masterPlan.learningObjectives.length,
+        estimatedDuration: masterPlan.estimatedDurationMinutes
       }, requestId);
-    } catch (parseError) {
-      const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
-      logger.error('START-SESSION', 'Failed to parse lesson plan JSON', {
-        error: errorMessage,
-        rawContent: completion.choices[0].message.content
-      }, requestId);
+    } catch (error) {
+      logger.error('START-SESSION', 'Failed to get master lesson plan', { error }, requestId);
       return NextResponse.json(
-        { error: 'Failed to generate lesson plan' },
+        { error: 'Failed to create lesson plan' },
         { status: 500 }
       );
     }
+    
+    // Convert master lesson plan to enhanced lesson plan format with core fundamentals focus
+    const lessonPlan = {
+      lesson_overview: masterPlan.description,
+      // Prioritize core concepts by importance and prerequisites
+      key_concepts: masterPlan.coreConcepts
+        .sort((a, b) => {
+          // Sort by importance: core > supporting > enrichment
+          const importanceOrder = { 'core': 0, 'supporting': 1, 'enrichment': 2 };
+          return importanceOrder[a.importance] - importanceOrder[b.importance];
+        })
+        .map(concept => concept.name),
+      // Enhanced lesson chunks with concept mapping and prerequisites
+      lesson_chunks: masterPlan.chunkStructure.map(chunk => {
+        const chunkConcepts = chunk.key_concepts || [];
+        
+        return {
+          chunk_index: chunk.chunk_number,
+          title: chunk.title,
+          content_outline: chunk.content_outline,
+          key_points: chunkConcepts,
+          duration_minutes: chunk.estimated_duration_minutes,
+          chunk_type: 'lesson',
+          core_concepts: chunkConcepts,
+          prerequisites: chunk.prerequisites || [],
+          learning_objectives: chunk.learning_objectives || []
+        };
+      }),
+      // Enhanced assessment with concept-specific questions
+      assessment_questions: (masterPlan.assessmentCriteria || []).map((question, index) => ({
+        id: `q${index + 1}`,
+        question: question.question || question,
+        type: 'understanding_check',
+        concepts_tested: masterPlan.coreConcepts.slice(0, 3).map(c => c.name)
+      })),
+      estimated_duration: `${masterPlan.estimatedDurationMinutes} minutes`,
+      // Additional metadata for better lesson delivery
+      core_fundamentals: masterPlan.coreConcepts.filter(c => c.importance === 'core'),
+      concept_hierarchy: masterPlan.conceptHierarchy || {},
+      knowledge_checkpoints: masterPlan.knowledgeCheckpoints || [],
+      practical_applications: masterPlan.practicalApplications || []
+    };
 
     // Generate welcome message audio
     logger.info('START-SESSION', 'Generating welcome message audio', {}, requestId);

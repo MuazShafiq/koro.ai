@@ -1293,3 +1293,785 @@
   "itemCount": 2
 }
 
+[2025-08-16T13:11:48.063Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [OpenAI] Preparing lesson planning
+{}
+
+[2025-08-16T13:11:48.064Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [OpenAI] Lesson plan prompt prepared
+{
+  "promptLength": 2068
+}
+
+[2025-08-16T13:11:48.064Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [OpenAI] Calling OpenAI for lesson planning
+{}
+
+[2025-08-16T13:11:56.880Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 517,
+    "completion_tokens": 614,
+    "total_tokens": 1131,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T13:11:56.880Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [OpenAI] Raw OpenAI response
+{
+  "length": 2771,
+  "preview": "```json\n{\n  \"lesson_overview\": \"This lesson will introduce fundamental concepts of kinematics, focusing on understanding position, velocity, acceleration, and motion equations. Students will learn how..."
+}
+
+[2025-08-16T13:11:56.881Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [OpenAI] Cleaned content
+{
+  "length": 2759
+}
+
+[2025-08-16T13:12:52.957Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [OpenAI] Preparing evaluation
+{}
+
+[2025-08-16T13:12:52.958Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [OpenAI] Calling API for evaluation
+{
+  "promptLength": 4822
+}
+
+[2025-08-16T13:13:00.471Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 1198,
+    "completion_tokens": 409,
+    "total_tokens": 1607,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T13:13:05.048Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [OpenAI] Preparing script generation
+{}
+
+[2025-08-16T13:13:05.049Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [OpenAI] Script prompt prepared
+{
+  "promptLength": 2695
+}
+
+[2025-08-16T13:13:05.049Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [OpenAI] Calling OpenAI API
+{}
+
+[2025-08-16T13:13:11.908Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 577,
+    "completion_tokens": 285,
+    "total_tokens": 862,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T13:13:11.909Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [OpenAI] Script generated
+{
+  "length": 1425,
+  "preview": "Welcome to our introduction to kinematics! Today, we'll explore three fundamental concepts: position..."
+}
+
+[2025-08-16T13:13:19.758Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 1425
+}
+
+[2025-08-16T13:13:21.673Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 3
+}
+
+[2025-08-16T13:14:16.469Z] INFO [OpenAI] Preparing prompt
+
+[2025-08-16T13:14:16.470Z] INFO [OpenAI] Prompt prepared
+{
+  "promptLength": 2657
+}
+
+[2025-08-16T13:14:16.470Z] INFO [OpenAI] Calling API for response generation
+
+[2025-08-16T13:14:20.055Z] INFO [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 580,
+    "completion_tokens": 113,
+    "total_tokens": 693,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T13:14:20.056Z] INFO [OpenAI] Raw response received
+{
+  "length": 564,
+  "preview": "```json\n{\n  \"answer\": \"Great to hear that you're clear on the concepts! Let's proceed to the next part of the lesson, which covers interactive examples and motion equations. If you have any questions ..."
+}
+
+[2025-08-16T13:14:20.057Z] INFO [OpenAI] Content cleaned
+{
+  "cleanedLength": 552
+}
+
+[2025-08-16T13:14:20.057Z] INFO [OpenAI] Response parsed successfully
+{
+  "canAnswer": true,
+  "hasAnswer": true,
+  "answerLength": 236,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T13:14:24.404Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 236
+}
+
+[2025-08-16T13:14:25.792Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 0
+}
+
+[2025-08-16T13:14:51.585Z] INFO [OpenAI] Preparing prompt
+
+[2025-08-16T13:14:51.585Z] INFO [OpenAI] Prompt prepared
+{
+  "promptLength": 2636
+}
+
+[2025-08-16T13:14:51.585Z] INFO [OpenAI] Calling API for response generation
+
+[2025-08-16T13:14:54.437Z] INFO [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 575,
+    "completion_tokens": 161,
+    "total_tokens": 736,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T13:14:54.437Z] INFO [OpenAI] Raw response received
+{
+  "length": 775,
+  "preview": "```json\n{\n  \"answer\": \"It seems like there might have been a typo in your question. If you meant to ask about any specific concept from our current lesson on kinematics, such as position, velocity, or..."
+}
+
+[2025-08-16T13:14:54.438Z] INFO [OpenAI] Content cleaned
+{
+  "cleanedLength": 763
+}
+
+[2025-08-16T13:14:54.438Z] INFO [OpenAI] Response parsed successfully
+{
+  "canAnswer": false,
+  "hasAnswer": true,
+  "answerLength": 474,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T13:14:55.244Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 474
+}
+
+[2025-08-16T13:14:56.133Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 0
+}
+
+[2025-08-16T13:15:11.805Z] INFO [OpenAI] Preparing prompt
+
+[2025-08-16T13:15:11.805Z] INFO [OpenAI] Prompt prepared
+{
+  "promptLength": 2655
+}
+
+[2025-08-16T13:15:11.806Z] INFO [OpenAI] Calling API for response generation
+
+[2025-08-16T13:15:14.865Z] INFO [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 578,
+    "completion_tokens": 132,
+    "total_tokens": 710,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T13:15:14.866Z] INFO [OpenAI] Raw response received
+{
+  "length": 689,
+  "preview": "```json\n{\n  \"answer\": \"Great! Let's proceed with the lesson. We are currently focusing on understanding the fundamental concepts of kinematics, which include position, velocity, and acceleration. Thes..."
+}
+
+[2025-08-16T13:15:14.866Z] INFO [OpenAI] Content cleaned
+{
+  "cleanedLength": 677
+}
+
+[2025-08-16T13:15:14.866Z] INFO [OpenAI] Response parsed successfully
+{
+  "canAnswer": true,
+  "hasAnswer": true,
+  "answerLength": 501,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T13:15:19.312Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 501
+}
+
+[2025-08-16T13:15:21.890Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 4
+}
+
+[2025-08-16T13:34:27.996Z] INFO [3490b13d-95a0-4c9a-954c-f91c8bdfb76c] [OpenAI] Generating master lesson plan
+{}
+
+[2025-08-16T13:34:40.630Z] INFO [3490b13d-95a0-4c9a-954c-f91c8bdfb76c] [OpenAI] Master plan generation completed
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 973,
+    "completion_tokens": 1547,
+    "total_tokens": 2520,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T13:35:05.085Z] INFO [cd8593e5-67c5-4104-81e5-40347f31eb1e] [OpenAI] Generating master lesson plan
+{}
+
+[2025-08-16T13:35:06.524Z] INFO [57afe028-ba45-487d-a4c8-becd0ec240c9] [OpenAI] Generating master lesson plan
+{}
+
+[2025-08-16T13:35:16.943Z] INFO [cd8593e5-67c5-4104-81e5-40347f31eb1e] [OpenAI] Master plan generation completed
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 973,
+    "completion_tokens": 1480,
+    "total_tokens": 2453,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T13:35:19.055Z] INFO [57afe028-ba45-487d-a4c8-becd0ec240c9] [OpenAI] Master plan generation completed
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 973,
+    "completion_tokens": 1540,
+    "total_tokens": 2513,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T13:37:15.047Z] INFO [74d6965c-cc4c-4a56-9193-51c8fcac3896] [OpenAI] Generating master lesson plan
+{}
+
+[2025-08-16T13:37:29.442Z] INFO [74d6965c-cc4c-4a56-9193-51c8fcac3896] [OpenAI] Master plan generation completed
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 973,
+    "completion_tokens": 1536,
+    "total_tokens": 2509,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T13:37:53.720Z] INFO [cc18ad09-2c0c-4d8b-bfc6-1618c5e9a994] [OpenAI] Generating master lesson plan
+{}
+
+[2025-08-16T13:38:07.306Z] INFO [cc18ad09-2c0c-4d8b-bfc6-1618c5e9a994] [OpenAI] Master plan generation completed
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 973,
+    "completion_tokens": 1574,
+    "total_tokens": 2547,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T13:40:24.915Z] INFO [46bfecab-ddb5-4787-8171-af532b330e46] [OpenAI] Generating master lesson plan
+{}
+
+[2025-08-16T13:40:47.111Z] INFO [46bfecab-ddb5-4787-8171-af532b330e46] [OpenAI] Master plan generation completed
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 973,
+    "completion_tokens": 1624,
+    "total_tokens": 2597,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T13:42:49.012Z] INFO [ac2da5f8-2a01-4d60-a39e-192bb1b8eed1] [OpenAI] Generating master lesson plan
+{}
+
+[2025-08-16T13:43:05.980Z] INFO [ac2da5f8-2a01-4d60-a39e-192bb1b8eed1] [OpenAI] Master plan generation completed
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 973,
+    "completion_tokens": 1556,
+    "total_tokens": 2529,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T13:44:20.628Z] INFO [b312b0c7-2ea4-4845-b242-661c67a7dd43] [OpenAI] Generating master lesson plan
+{}
+
+[2025-08-16T13:44:44.173Z] INFO [b312b0c7-2ea4-4845-b242-661c67a7dd43] [OpenAI] Master plan generation completed
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 973,
+    "completion_tokens": 1583,
+    "total_tokens": 2556,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T13:47:47.550Z] INFO [52c9e132-d366-4315-be31-21c77f7f2a40] [OpenAI] Generating master lesson plan
+{}
+
+[2025-08-16T13:48:03.353Z] INFO [52c9e132-d366-4315-be31-21c77f7f2a40] [OpenAI] Master plan generation completed
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 973,
+    "completion_tokens": 1523,
+    "total_tokens": 2496,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T13:52:49.404Z] INFO [4117eb8a-7290-4283-921f-1bd793eb8690] [OpenAI] Generating master lesson plan
+{}
+
+[2025-08-16T13:53:06.065Z] INFO [4117eb8a-7290-4283-921f-1bd793eb8690] [OpenAI] Master plan generation completed
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 973,
+    "completion_tokens": 1407,
+    "total_tokens": 2380,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T13:58:19.501Z] INFO [3dccc648-28a9-45bf-a1a6-b60858f36f87] [OpenAI] Generating master lesson plan
+{}
+
+[2025-08-16T13:58:34.461Z] INFO [3dccc648-28a9-45bf-a1a6-b60858f36f87] [OpenAI] Master plan generation completed
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 973,
+    "completion_tokens": 1525,
+    "total_tokens": 2498,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T14:04:04.774Z] INFO [201ea3c4-b9f2-498b-8738-99032e75d098] [OpenAI] Generating master lesson plan
+{}
+
+[2025-08-16T14:04:30.160Z] INFO [201ea3c4-b9f2-498b-8738-99032e75d098] [OpenAI] Master plan generation completed
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 973,
+    "completion_tokens": 1542,
+    "total_tokens": 2515,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T14:05:39.519Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [OpenAI] Preparing evaluation
+{}
+
+[2025-08-16T14:05:39.519Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [OpenAI] Calling API for evaluation
+{
+  "promptLength": 5329
+}
+
+[2025-08-16T14:05:43.519Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 1341,
+    "completion_tokens": 394,
+    "total_tokens": 1735,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T14:05:47.348Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [OpenAI] Preparing script generation
+{}
+
+[2025-08-16T14:05:47.348Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [OpenAI] Script prompt prepared
+{
+  "promptLength": 3069
+}
+
+[2025-08-16T14:05:47.349Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [OpenAI] Calling OpenAI API
+{}
+
+[2025-08-16T14:05:55.030Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 656,
+    "completion_tokens": 383,
+    "total_tokens": 1039,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T14:05:55.031Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [OpenAI] Script generated
+{
+  "length": 1980,
+  "preview": "Welcome to our exploration of kinematics, where we'll uncover the fascinating details of motion. Tod..."
+}
+
+[2025-08-16T14:06:03.924Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 1980
+}
+
+[2025-08-16T14:06:07.886Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 4
+}
+
+[2025-08-16T14:07:40.667Z] INFO [OpenAI] Preparing prompt
+
+[2025-08-16T14:07:40.667Z] INFO [OpenAI] Prompt prepared
+{
+  "promptLength": 2934
+}
+
+[2025-08-16T14:07:40.668Z] INFO [OpenAI] Calling API for response generation
+
+[2025-08-16T14:07:45.231Z] INFO [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 643,
+    "completion_tokens": 138,
+    "total_tokens": 781,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T14:07:45.232Z] INFO [OpenAI] Raw response received
+{
+  "length": 703,
+  "preview": "```json\n{\n  \"answer\": \"Let's continue with our exploration of kinematics. Since we've covered the foundational concepts of position and velocity, and you're ready to proceed, we'll move on to understa..."
+}
+
+[2025-08-16T14:07:45.232Z] INFO [OpenAI] Content cleaned
+{
+  "cleanedLength": 691
+}
+
+[2025-08-16T14:07:45.233Z] INFO [OpenAI] Response parsed successfully
+{
+  "canAnswer": true,
+  "hasAnswer": true,
+  "answerLength": 426,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T14:07:49.867Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 426
+}
+
+[2025-08-16T14:07:51.188Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 1
+}
+
+[2025-08-16T14:08:25.183Z] INFO [OpenAI] Preparing prompt
+
+[2025-08-16T14:08:25.184Z] INFO [OpenAI] Prompt prepared
+{
+  "promptLength": 2930
+}
+
+[2025-08-16T14:08:25.184Z] INFO [OpenAI] Calling API for response generation
+
+[2025-08-16T14:08:28.278Z] INFO [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 642,
+    "completion_tokens": 109,
+    "total_tokens": 751,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-16T14:08:28.279Z] INFO [OpenAI] Raw response received
+{
+  "length": 537,
+  "preview": "```json\n{\n  \"answer\": \"Let's continue with our exploration of kinematics. We've been discussing key concepts like position and velocity. These are fundamental to understanding motion. If you have any ..."
+}
+
+[2025-08-16T14:08:28.279Z] INFO [OpenAI] Content cleaned
+{
+  "cleanedLength": 525
+}
+
+[2025-08-16T14:08:28.280Z] INFO [OpenAI] Response parsed successfully
+{
+  "canAnswer": true,
+  "hasAnswer": true,
+  "answerLength": 305,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T14:08:32.030Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 305
+}
+
+[2025-08-16T14:08:32.725Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 0
+}
+

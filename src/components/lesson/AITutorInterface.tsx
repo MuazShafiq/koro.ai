@@ -18,9 +18,10 @@ import {
   Brain
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Blackboard } from './Blackboard';
+import { Blackboard, BlackboardEntry } from './Blackboard';
 import { AudioWaveform } from './AudioWaveform';
 import { ChatMessage } from './ChatMessage';
+import { LessonProgressBar } from './LessonProgressBar';
 
 interface Subject {
   id: string;
@@ -83,7 +84,7 @@ export function AITutorInterface({
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [assessmentAnswers, setAssessmentAnswers] = useState<string[]>([]);
   const firstQuestionAddedRef = useRef(false);
-  const [blackboardContent, setBlackboardContent] = useState('');
+  const [blackboardEntries, setBlackboardEntries] = useState<BlackboardEntry[]>([]);
   const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState([1]);
@@ -352,7 +353,14 @@ export function AITutorInterface({
       
       // Generate intelligent blackboard content using GPT-4o
       const blackboardData = await generateBlackboardContent(chunk.content);
-      setBlackboardContent(JSON.stringify(blackboardData.blackboard, null, 2));
+      
+      // Add new blackboard entry to the accumulative list
+      const newEntry: BlackboardEntry = {
+        id: `entry-${Date.now()}`,
+        timestamp: new Date(),
+        items: blackboardData.blackboard || [{ type: 'text', label: 'Lesson Content', content: chunk.content }]
+      };
+      setBlackboardEntries(prev => [...prev, newEntry]);
       
       // Add lesson content as message
       const lessonMessage: Message = {
@@ -400,7 +408,14 @@ export function AITutorInterface({
       
       // Generate blackboard content for the AI response
       const blackboardData = await generateBlackboardContent(result.answer);
-      setBlackboardContent(JSON.stringify(blackboardData.blackboard, null, 2));
+      
+      // Add new blackboard entry for the interaction response
+      const newEntry: BlackboardEntry = {
+        id: `interaction-${Date.now()}`,
+        timestamp: new Date(),
+        items: blackboardData.blackboard || [{ type: 'text', label: 'Response', content: result.answer }]
+      };
+      setBlackboardEntries(prev => [...prev, newEntry]);
       
       const aiResponse: Message = {
         id: Date.now().toString(),
@@ -475,11 +490,19 @@ export function AITutorInterface({
           <div className={`p-2 rounded-lg ${subject.gradient}`}>
             <span className="text-lg">{subject.icon}</span>
           </div>
-          <div>
-            <h1 className="font-semibold">{subject.name}</h1>
-            {topic && (
-              <p className="text-sm text-muted-foreground">{topic.name}</p>
-            )}
+          <div className="flex-1">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="font-semibold">{subject.name}</h1>
+                {topic && (
+                  <p className="text-sm text-muted-foreground">{topic.name}</p>
+                )}
+              </div>
+              <LessonProgressBar 
+                sessionId={sessionId} 
+                className="ml-4"
+              />
+            </div>
           </div>
         </div>
         
@@ -495,7 +518,7 @@ export function AITutorInterface({
       <div className="flex-1 flex overflow-hidden">
         {/* Blackboard */}
         <div className="flex-1 p-4 overflow-hidden">
-          <Blackboard content={blackboardContent} />
+          <Blackboard entries={blackboardEntries} />
         </div>
 
         {/* Right Panel */}

@@ -4889,3 +4889,3542 @@
   "cleanedLength": 314
 }
 
+[2025-08-16T13:11:46.989Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T13:11:46.991Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:11:46.993Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T13:11:47.317Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:11:47.318Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-16T13:11:47.572Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-16T13:11:47.572Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:11:47.818Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-16T13:11:47.819Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:11:48.062Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:11:48.063Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-16T13:11:48.063Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-16T13:11:56.881Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [Lesson] Lesson plan parsed successfully
+{
+  "hasOverview": true,
+  "conceptsCount": 4,
+  "questionsCount": 3,
+  "chunksCount": 3,
+  "estimatedDuration": "15-20 minutes"
+}
+
+[2025-08-16T13:11:56.881Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] Generating welcome message audio
+{}
+
+[2025-08-16T13:12:01.290Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] Welcome audio generated successfully
+{
+  "fileName": "session-audio/welcome-c4a115dc-81e0-4506-aba0-f59ad983675d-1755349919609.mp3"
+}
+
+[2025-08-16T13:12:01.291Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] Generating assessment question audio
+{}
+
+[2025-08-16T13:12:02.556Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] Assessment question 1 audio generated
+{
+  "fileName": "session-audio/assessment-c4a115dc-81e0-4506-aba0-f59ad983675d-q1-1755349922026.mp3"
+}
+
+[2025-08-16T13:12:04.033Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] Assessment question 2 audio generated
+{
+  "fileName": "session-audio/assessment-c4a115dc-81e0-4506-aba0-f59ad983675d-q2-1755349923354.mp3"
+}
+
+[2025-08-16T13:12:05.106Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] Assessment question 3 audio generated
+{
+  "fileName": "session-audio/assessment-c4a115dc-81e0-4506-aba0-f59ad983675d-q3-1755349924561.mp3"
+}
+
+[2025-08-16T13:12:05.107Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [Database] Creating lesson session in database
+{}
+
+[2025-08-16T13:12:05.108Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [Database] Session data to insert
+{
+  "user_id": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "subject_id": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topic_id": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "current_phase": "assessment",
+  "hasLessonPlan": true,
+  "status": "active"
+}
+
+[2025-08-16T13:12:05.396Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [Database] Session created successfully
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:12:05.396Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] Initializing progress tracking
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:12:05.397Z] INFO [288c0d1f-5d4c-416b-940a-804a5ba8164b] [EQUATION-EXTRACTOR] Starting equation extraction
+{
+  "contentLength": 2992
+}
+
+[2025-08-16T13:12:05.400Z] INFO [288c0d1f-5d4c-416b-940a-804a5ba8164b] [EQUATION-EXTRACTOR] Equation extraction completed
+{
+  "totalFound": 10,
+  "byType": {
+    "mathematical_expression": 9,
+    "formula": 1
+  },
+  "byComplexity": {
+    "intermediate": 10
+  },
+  "processingTime": 3,
+  "confidence": 0.8099999999999999
+}
+
+[2025-08-16T13:12:05.401Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] Equations extracted
+{
+  "equationsCount": 10,
+  "totalFound": 10
+}
+
+[2025-08-16T13:12:05.402Z] INFO [4672be95-ce78-41ad-a2a8-2ad54602224d] [PROGRESS-SERVICE] Analyzing RAG content
+{
+  "subject": "Physics"
+}
+
+[2025-08-16T13:12:05.404Z] INFO [4672be95-ce78-41ad-a2a8-2ad54602224d] [PROGRESS-SERVICE] RAG content analysis completed
+{
+  "conceptsFound": 2,
+  "equationsFound": 2,
+  "sectionsFound": 0,
+  "complexity": "beginner",
+  "duration": 3
+}
+
+[2025-08-16T13:12:05.404Z] INFO [d42c351b-ff39-4999-838a-7db26b7a5918] [PROGRESS-SERVICE] Creating lesson plan
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:12:05.645Z] INFO [d42c351b-ff39-4999-838a-7db26b7a5918] [PROGRESS-SERVICE] Lesson plan created
+{
+  "plannedConcepts": 0,
+  "plannedEquations": 2,
+  "estimatedChunks": 1
+}
+
+[2025-08-16T13:12:05.646Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] Progress lesson plan created
+{
+  "conceptsCount": 0,
+  "equationsCount": 2,
+  "resourceSections": 0
+}
+
+[2025-08-16T13:12:05.647Z] INFO [1400c364-610f-49b6-b64a-020a2a7e264a] [PROGRESS-SERVICE] Getting progress summary
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:12:07.602Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] Progress tracking initialized successfully
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40",
+  "totalConcepts": 0,
+  "totalEquations": 10
+}
+
+[2025-08-16T13:12:07.602Z] INFO [3e4594d7-73a4-41df-9a4e-6fd9d3c51c07] [PROGRESS-SERVICE] Getting progress summary
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:12:07.820Z] INFO [c4a115dc-81e0-4506-aba0-f59ad983675d] [START-SESSION] Success! Returning response
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40",
+  "subject": "Physics",
+  "topic": "Kinematics",
+  "hasOverview": true,
+  "questionsCount": 3,
+  "estimatedDuration": "15-20 minutes"
+}
+
+[2025-08-16T13:12:51.217Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [ASSESSMENT] Request received
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40",
+  "answersCount": 3,
+  "isArray": true
+}
+
+[2025-08-16T13:12:51.218Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [ASSESSMENT] Authenticating user
+{}
+
+[2025-08-16T13:12:51.981Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [ASSESSMENT] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:12:51.982Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] Fetching session data
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:12:52.233Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] Session found
+{
+  "id": "42c435d3-f5f6-4459-8083-f9a5a53e9c40",
+  "phase": "assessment",
+  "hasLessonPlan": true
+}
+
+[2025-08-16T13:12:52.233Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:12:52.635Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:12:52.636Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] Storing student assessments
+{
+  "assessmentCount": 3
+}
+
+[2025-08-16T13:12:52.636Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] Storing assessment 1
+{
+  "questionPreview": "What is the primary difference between velocity an...",
+  "answerLength": 3
+}
+
+[2025-08-16T13:12:52.636Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] Storing assessment 2
+{
+  "questionPreview": "An object is thrown upwards with an initial veloci...",
+  "answerLength": 3
+}
+
+[2025-08-16T13:12:52.637Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] Storing assessment 3
+{
+  "questionPreview": "True or False: Acceleration can only occur if an o...",
+  "answerLength": 3
+}
+
+[2025-08-16T13:12:52.956Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] All assessments stored
+{}
+
+[2025-08-16T13:12:52.956Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [ASSESSMENT] Preparing evaluation context
+{}
+
+[2025-08-16T13:12:52.957Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [ASSESSMENT] Context prepared
+{
+  "resourceContextLength": 156,
+  "answersContextLength": 301,
+  "answersCount": 3
+}
+
+[2025-08-16T13:13:00.472Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [ASSESSMENT] Parsing evaluation results
+{
+  "length": 2074,
+  "preview": "```json\n{\n  \"student_evaluation\": {\n    \"understanding_level\": \"beginner\",\n    \"strengths\": [],\n    \"areas_for_focus\": [\"velocity vs speed\", \"applying motion equations\", \"understanding acceleration\"],..."
+}
+
+[2025-08-16T13:13:00.473Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [ASSESSMENT] Content cleaned
+{
+  "cleanedLength": 2062
+}
+
+[2025-08-16T13:13:00.473Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [ASSESSMENT] Evaluation parsed successfully
+{
+  "hasStudentEvaluation": true,
+  "understandingLevel": "beginner",
+  "hasRefinedPlan": true,
+  "chunksCount": 3
+}
+
+[2025-08-16T13:13:00.474Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] Updating session with refined lesson plan
+{}
+
+[2025-08-16T13:13:00.474Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] Session update data prepared
+{
+  "newPhase": "delivery",
+  "hasRefinedPlan": true,
+  "responsesCount": 3
+}
+
+[2025-08-16T13:13:01.103Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] Session updated successfully
+{}
+
+[2025-08-16T13:13:01.104Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] Storing AI evaluations
+{}
+
+[2025-08-16T13:13:01.104Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] Updating evaluation for question 1
+{}
+
+[2025-08-16T13:13:01.105Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] Updating evaluation for question 2
+{}
+
+[2025-08-16T13:13:01.105Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] Updating evaluation for question 3
+{}
+
+[2025-08-16T13:13:01.730Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [Database] All evaluations updated successfully
+{}
+
+[2025-08-16T13:13:01.731Z] INFO [7fbff7d5-b920-4547-9784-d8dbe2981658] [ASSESSMENT] Assessment completed successfully
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40",
+  "understandingLevel": "beginner",
+  "hasRefinedPlan": true,
+  "chunksCount": 3,
+  "nextPhase": "delivery",
+  "processingTime": 10514
+}
+
+[2025-08-16T13:13:03.898Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [DELIVER-CHUNK] Starting chunk delivery
+{}
+
+[2025-08-16T13:13:03.898Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [DELIVER-CHUNK] Request received
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40",
+  "chunkIndex": 0
+}
+
+[2025-08-16T13:13:03.899Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [Auth] Authenticating user
+{}
+
+[2025-08-16T13:13:04.127Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [Auth] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:13:04.128Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [Database] Fetching session data
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:13:04.413Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [Database] Session found
+{
+  "id": "42c435d3-f5f6-4459-8083-f9a5a53e9c40",
+  "phase": "delivery",
+  "status": "active",
+  "hasLessonPlan": true
+}
+
+[2025-08-16T13:13:04.414Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [Database] Checking for existing chunk
+{
+  "chunkIndex": 0
+}
+
+[2025-08-16T13:13:04.644Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [DELIVER-CHUNK] No existing chunk found, creating new one
+{}
+
+[2025-08-16T13:13:04.645Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:13:05.046Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:13:05.047Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [DELIVER-CHUNK] Preparing resource context
+{}
+
+[2025-08-16T13:13:05.047Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [DELIVER-CHUNK] Resource context prepared
+{
+  "contextLength": 156
+}
+
+[2025-08-16T13:13:05.048Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [DELIVER-CHUNK] Analyzing lesson plan structure
+{
+  "hasLessonPlan": true,
+  "hasLessonChunks": true,
+  "totalChunks": 3,
+  "requestedChunkIndex": 0
+}
+
+[2025-08-16T13:13:05.048Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [DELIVER-CHUNK] Target chunk found
+{
+  "hasContent": false
+}
+
+[2025-08-16T13:13:11.909Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [DELIVER-CHUNK] Extracting concepts for progress tracking
+{}
+
+[2025-08-16T13:13:11.910Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [DELIVER-CHUNK] Concepts extracted for tracking
+{
+  "conceptsCount": 0,
+  "equationsCount": 0,
+  "concepts": []
+}
+
+[2025-08-16T13:13:11.910Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [UnrealSpeech] Starting audio generation with chunking
+{
+  "textLength": 1425
+}
+
+[2025-08-16T13:13:15.560Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [UnrealSpeech] Audio generation successful
+{
+  "bufferSize": 2356335,
+  "chunksProcessed": 2
+}
+
+[2025-08-16T13:13:15.560Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [Storage] Uploading to Supabase storage
+{
+  "fileName": "lesson-audio/42c435d3-f5f6-4459-8083-f9a5a53e9c40/chunk-0-1755349995560.mp3"
+}
+
+[2025-08-16T13:13:18.251Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [Storage] Audio uploaded successfully
+{
+  "path": "lesson-audio/42c435d3-f5f6-4459-8083-f9a5a53e9c40/chunk-0-1755349995560.mp3"
+}
+
+[2025-08-16T13:13:18.252Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [Storage] Audio URL generated
+{
+  "audioUrl": "https://sqlxxvrpmzxjyehbpeuw.supabase.co/storage/v1/object/public/lessons/lesson-audio/42c435d3-f5f6-4459-8083-f9a5a53e9c40/chunk-0-1755349995560.mp3"
+}
+
+[2025-08-16T13:13:18.252Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [Database] Storing chunk in database
+{}
+
+[2025-08-16T13:13:18.253Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [Database] Chunk data prepared
+{
+  "session_id": "42c435d3-f5f6-4459-8083-f9a5a53e9c40",
+  "chunk_index": 0,
+  "hasScript": true,
+  "scriptLength": 1425,
+  "hasAudio": true,
+  "chunk_type": "lesson"
+}
+
+[2025-08-16T13:13:18.639Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [Database] Chunk stored successfully
+{
+  "chunkId": "2a2a6c78-9f84-410b-9ea7-9705b4af1736"
+}
+
+[2025-08-16T13:13:18.639Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [DELIVER-CHUNK] Tracking concept progress
+{
+  "conceptsToTrack": 0,
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:13:18.640Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [Database] Updating session current chunk index
+{
+  "chunkIndex": 0
+}
+
+[2025-08-16T13:13:18.887Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [Database] Session updated successfully
+{}
+
+[2025-08-16T13:13:18.887Z] INFO [b431effa-cbfc-428c-aff4-669ddf96b1a4] [PROGRESS-SERVICE] Getting progress summary
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:13:19.335Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [DELIVER-CHUNK] Progress summary retrieved
+{
+  "progressPercentage": 0,
+  "deliveredConcepts": 0,
+  "totalConcepts": 0
+}
+
+[2025-08-16T13:13:19.336Z] INFO [c53d41eb-73e9-43df-9b7a-71caaaf5296e] [DELIVER-CHUNK] Chunk delivered successfully
+{
+  "chunkId": "2a2a6c78-9f84-410b-9ea7-9705b4af1736",
+  "contentLength": 1425,
+  "hasAudio": true,
+  "chunkIndex": 0,
+  "totalChunks": 3,
+  "isLastChunk": false,
+  "processingTime": 15438
+}
+
+[2025-08-16T13:13:19.508Z] INFO [d58f4727-2fed-4d4b-a1f7-336ca5861c7c] [BLACKBOARD-GENERATE] Starting blackboard content generation
+{}
+
+[2025-08-16T13:13:19.757Z] INFO [d58f4727-2fed-4d4b-a1f7-336ca5861c7c] [BLACKBOARD-GENERATE] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:13:19.758Z] INFO [d58f4727-2fed-4d4b-a1f7-336ca5861c7c] [BLACKBOARD-GENERATE] Calling OpenAI API
+{
+  "model": "gpt-4o",
+  "hasApiKey": true,
+  "scriptLength": 1425
+}
+
+[2025-08-16T13:13:21.672Z] INFO [d58f4727-2fed-4d4b-a1f7-336ca5861c7c] [BLACKBOARD-GENERATE] OpenAI API call successful
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 869,
+    "completion_tokens": 122,
+    "total_tokens": 991,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T13:13:21.672Z] INFO [d58f4727-2fed-4d4b-a1f7-336ca5861c7c] [BLACKBOARD-GENERATE] Raw OpenAI response for user b50bca67-bbc6-485b-a9a7-6c0574dca179
+{
+  "content": "```json\n{\n  \"blackboard\": [\n    {\n      \"type\": \"definition\",\n      \"label\": \"Position\",\n      \"content\": \"Position is the location of an object in space at any given time.\"\n    },\n    {\n      \"type\": \"definition\",\n      \"label\": \"Velocity\",\n      \"content\": \"Velocity is the speed of an object in a given direction.\"\n    },\n    {\n      \"type\": \"definition\",\n      \"label\": \"Acceleration\",\n      \"content\": \"Acceleration is the rate at which an object's velocity changes over time.\"\n    }\n  ]\n}\n```",
+  "contentLength": 498,
+  "contentType": "string"
+}
+
+[2025-08-16T13:13:21.673Z] INFO [d58f4727-2fed-4d4b-a1f7-336ca5861c7c] [BLACKBOARD-GENERATE] Removed markdown code blocks from response
+{
+  "originalLength": 498,
+  "cleanedLength": 486
+}
+
+[2025-08-16T13:14:15.278Z] INFO [INTERACTION] New interaction request
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40",
+  "questionLength": 31,
+  "hasChunkId": true,
+  "chunkId": "1755349981733"
+}
+
+[2025-08-16T13:14:15.279Z] INFO [INTERACTION] Authenticating user
+
+[2025-08-16T13:14:15.718Z] INFO [INTERACTION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "email": "muaz.shafiq18@gmail.com"
+}
+
+[2025-08-16T13:14:15.718Z] INFO [Database] Fetching session data
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:14:15.973Z] INFO [Database] Session found
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40",
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "currentPhase": "delivery",
+  "hasLessonPlan": true
+}
+
+[2025-08-16T13:14:15.973Z] INFO [Database] Fetching educational resources
+
+[2025-08-16T13:14:16.227Z] INFO [Database] Resources fetched
+{
+  "resourcesCount": 1,
+  "resourceTitles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:14:16.228Z] INFO [Database] Fetching chunk context
+{
+  "chunkId": "1755349981733"
+}
+
+[2025-08-16T13:14:16.468Z] WARN [INTERACTION] Could not load chunk context
+{
+  "chunkId": "1755349981733",
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755349981733\""
+  }
+}
+
+[2025-08-16T13:14:16.468Z] INFO [INTERACTION] Preparing context for AI response
+
+[2025-08-16T13:14:16.469Z] INFO [INTERACTION] Context prepared
+{
+  "resourceContextLength": 156,
+  "lessonContextLength": 1621,
+  "hasCurrentChunk": false,
+  "currentChunkLength": 0
+}
+
+[2025-08-16T13:14:20.057Z] INFO [Database] Storing interaction
+
+[2025-08-16T13:14:20.307Z] INFO [Database] Interaction stored successfully
+
+[2025-08-16T13:14:20.308Z] INFO [Database] Updating chunk interaction
+{
+  "chunkId": "1755349981733"
+}
+
+[2025-08-16T13:14:20.556Z] INFO [INTERACTION] Generating audio with chunking support
+{
+  "textLength": 236
+}
+
+[2025-08-16T13:14:22.162Z] INFO [INTERACTION] Audio generated successfully
+{
+  "sizeBytes": 350608,
+  "chunksProcessed": 1
+}
+
+[2025-08-16T13:14:22.163Z] INFO [INTERACTION] Uploading audio to Supabase
+{
+  "fileName": "interaction-audio/42c435d3-f5f6-4459-8083-f9a5a53e9c40/response-1755350062163.mp3"
+}
+
+[2025-08-16T13:14:24.099Z] INFO [INTERACTION] Audio uploaded successfully
+{
+  "audioUrl": "https://sqlxxvrpmzxjyehbpeuw.supabase.co/storage/v1/object/public/lessons/interaction-audio/42c435d3-f5f6-4459-8083-f9a5a53e9c40/response-1755350062163.mp3"
+}
+
+[2025-08-16T13:14:24.100Z] INFO [INTERACTION] Success! Returning response
+{
+  "canAnswer": true,
+  "hasAnswer": true,
+  "answerLength": 236,
+  "hasAudio": true,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T13:14:24.158Z] INFO [1c21eaf0-e588-4f78-ba39-0897b9bd6545] [BLACKBOARD-GENERATE] Starting blackboard content generation
+{}
+
+[2025-08-16T13:14:24.403Z] INFO [1c21eaf0-e588-4f78-ba39-0897b9bd6545] [BLACKBOARD-GENERATE] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:14:24.405Z] INFO [1c21eaf0-e588-4f78-ba39-0897b9bd6545] [BLACKBOARD-GENERATE] Calling OpenAI API
+{
+  "model": "gpt-4o",
+  "hasApiKey": true,
+  "scriptLength": 236
+}
+
+[2025-08-16T13:14:25.790Z] INFO [1c21eaf0-e588-4f78-ba39-0897b9bd6545] [BLACKBOARD-GENERATE] OpenAI API call successful
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 630,
+    "completion_tokens": 12,
+    "total_tokens": 642,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T13:14:25.791Z] INFO [1c21eaf0-e588-4f78-ba39-0897b9bd6545] [BLACKBOARD-GENERATE] Raw OpenAI response for user b50bca67-bbc6-485b-a9a7-6c0574dca179
+{
+  "content": "```json\n{\n  \"blackboard\": []\n}\n```",
+  "contentLength": 34,
+  "contentType": "string"
+}
+
+[2025-08-16T13:14:25.791Z] INFO [1c21eaf0-e588-4f78-ba39-0897b9bd6545] [BLACKBOARD-GENERATE] Removed markdown code blocks from response
+{
+  "originalLength": 34,
+  "cleanedLength": 22
+}
+
+[2025-08-16T13:14:50.317Z] INFO [INTERACTION] New interaction request
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40",
+  "questionLength": 10,
+  "hasChunkId": true,
+  "chunkId": "1755350055131"
+}
+
+[2025-08-16T13:14:50.318Z] INFO [INTERACTION] Authenticating user
+
+[2025-08-16T13:14:50.794Z] INFO [INTERACTION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "email": "muaz.shafiq18@gmail.com"
+}
+
+[2025-08-16T13:14:50.795Z] INFO [Database] Fetching session data
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:14:51.059Z] INFO [Database] Session found
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40",
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "currentPhase": "delivery",
+  "hasLessonPlan": true
+}
+
+[2025-08-16T13:14:51.059Z] INFO [Database] Fetching educational resources
+
+[2025-08-16T13:14:51.335Z] INFO [Database] Resources fetched
+{
+  "resourcesCount": 1,
+  "resourceTitles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:14:51.336Z] INFO [Database] Fetching chunk context
+{
+  "chunkId": "1755350055131"
+}
+
+[2025-08-16T13:14:51.583Z] WARN [INTERACTION] Could not load chunk context
+{
+  "chunkId": "1755350055131",
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755350055131\""
+  }
+}
+
+[2025-08-16T13:14:51.584Z] INFO [INTERACTION] Preparing context for AI response
+
+[2025-08-16T13:14:51.584Z] INFO [INTERACTION] Context prepared
+{
+  "resourceContextLength": 156,
+  "lessonContextLength": 1621,
+  "hasCurrentChunk": false,
+  "currentChunkLength": 0
+}
+
+[2025-08-16T13:14:54.439Z] INFO [Database] Storing interaction
+
+[2025-08-16T13:14:54.688Z] INFO [Database] Interaction stored successfully
+
+[2025-08-16T13:14:54.688Z] INFO [Database] Updating chunk interaction
+{
+  "chunkId": "1755350055131"
+}
+
+[2025-08-16T13:14:54.956Z] WARN [INTERACTION] Skipping audio generation
+{
+  "canAnswer": false,
+  "hasAnswer": true
+}
+
+[2025-08-16T13:14:54.957Z] INFO [INTERACTION] Success! Returning response
+{
+  "canAnswer": false,
+  "hasAnswer": true,
+  "answerLength": 474,
+  "hasAudio": false,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T13:14:55.005Z] INFO [29109544-c2cf-4acb-bcbc-b2964a87d223] [BLACKBOARD-GENERATE] Starting blackboard content generation
+{}
+
+[2025-08-16T13:14:55.243Z] INFO [29109544-c2cf-4acb-bcbc-b2964a87d223] [BLACKBOARD-GENERATE] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:14:55.245Z] INFO [29109544-c2cf-4acb-bcbc-b2964a87d223] [BLACKBOARD-GENERATE] Calling OpenAI API
+{
+  "model": "gpt-4o",
+  "hasApiKey": true,
+  "scriptLength": 474
+}
+
+[2025-08-16T13:14:56.132Z] INFO [29109544-c2cf-4acb-bcbc-b2964a87d223] [BLACKBOARD-GENERATE] OpenAI API call successful
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 679,
+    "completion_tokens": 12,
+    "total_tokens": 691,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T13:14:56.133Z] INFO [29109544-c2cf-4acb-bcbc-b2964a87d223] [BLACKBOARD-GENERATE] Raw OpenAI response for user b50bca67-bbc6-485b-a9a7-6c0574dca179
+{
+  "content": "```json\n{\n  \"blackboard\": []\n}\n```",
+  "contentLength": 34,
+  "contentType": "string"
+}
+
+[2025-08-16T13:14:56.133Z] INFO [29109544-c2cf-4acb-bcbc-b2964a87d223] [BLACKBOARD-GENERATE] Removed markdown code blocks from response
+{
+  "originalLength": 34,
+  "cleanedLength": 22
+}
+
+[2025-08-16T13:15:10.103Z] INFO [INTERACTION] New interaction request
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40",
+  "questionLength": 29,
+  "hasChunkId": true,
+  "chunkId": "1755350090267"
+}
+
+[2025-08-16T13:15:10.105Z] INFO [INTERACTION] Authenticating user
+
+[2025-08-16T13:15:10.953Z] INFO [INTERACTION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "email": "muaz.shafiq18@gmail.com"
+}
+
+[2025-08-16T13:15:10.954Z] INFO [Database] Fetching session data
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:15:11.188Z] INFO [Database] Session found
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40",
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "currentPhase": "delivery",
+  "hasLessonPlan": true
+}
+
+[2025-08-16T13:15:11.188Z] INFO [Database] Fetching educational resources
+
+[2025-08-16T13:15:11.576Z] INFO [Database] Resources fetched
+{
+  "resourcesCount": 1,
+  "resourceTitles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:15:11.577Z] INFO [Database] Fetching chunk context
+{
+  "chunkId": "1755350090267"
+}
+
+[2025-08-16T13:15:11.803Z] WARN [INTERACTION] Could not load chunk context
+{
+  "chunkId": "1755350090267",
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755350090267\""
+  }
+}
+
+[2025-08-16T13:15:11.805Z] INFO [INTERACTION] Preparing context for AI response
+
+[2025-08-16T13:15:11.805Z] INFO [INTERACTION] Context prepared
+{
+  "resourceContextLength": 156,
+  "lessonContextLength": 1621,
+  "hasCurrentChunk": false,
+  "currentChunkLength": 0
+}
+
+[2025-08-16T13:15:14.867Z] INFO [Database] Storing interaction
+
+[2025-08-16T13:15:15.092Z] INFO [Database] Interaction stored successfully
+
+[2025-08-16T13:15:15.093Z] INFO [Database] Updating chunk interaction
+{
+  "chunkId": "1755350090267"
+}
+
+[2025-08-16T13:15:15.317Z] INFO [INTERACTION] Generating audio with chunking support
+{
+  "textLength": 501
+}
+
+[2025-08-16T13:15:17.467Z] INFO [INTERACTION] Audio generated successfully
+{
+  "sizeBytes": 773270,
+  "chunksProcessed": 1
+}
+
+[2025-08-16T13:15:17.467Z] INFO [INTERACTION] Uploading audio to Supabase
+{
+  "fileName": "interaction-audio/42c435d3-f5f6-4459-8083-f9a5a53e9c40/response-1755350117467.mp3"
+}
+
+[2025-08-16T13:15:19.029Z] INFO [INTERACTION] Audio uploaded successfully
+{
+  "audioUrl": "https://sqlxxvrpmzxjyehbpeuw.supabase.co/storage/v1/object/public/lessons/interaction-audio/42c435d3-f5f6-4459-8083-f9a5a53e9c40/response-1755350117467.mp3"
+}
+
+[2025-08-16T13:15:19.029Z] INFO [INTERACTION] Success! Returning response
+{
+  "canAnswer": true,
+  "hasAnswer": true,
+  "answerLength": 501,
+  "hasAudio": true,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T13:15:19.086Z] INFO [b6731f1b-1563-47aa-96c2-663d276c6f62] [BLACKBOARD-GENERATE] Starting blackboard content generation
+{}
+
+[2025-08-16T13:15:19.311Z] INFO [b6731f1b-1563-47aa-96c2-663d276c6f62] [BLACKBOARD-GENERATE] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:15:19.312Z] INFO [b6731f1b-1563-47aa-96c2-663d276c6f62] [BLACKBOARD-GENERATE] Calling OpenAI API
+{
+  "model": "gpt-4o",
+  "hasApiKey": true,
+  "scriptLength": 501
+}
+
+[2025-08-16T13:15:21.888Z] INFO [b6731f1b-1563-47aa-96c2-663d276c6f62] [BLACKBOARD-GENERATE] OpenAI API call successful
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 667,
+    "completion_tokens": 159,
+    "total_tokens": 826,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T13:15:21.889Z] INFO [b6731f1b-1563-47aa-96c2-663d276c6f62] [BLACKBOARD-GENERATE] Raw OpenAI response for user b50bca67-bbc6-485b-a9a7-6c0574dca179
+{
+  "content": "```json\n{\n  \"blackboard\": [\n    {\n      \"type\": \"definition\",\n      \"label\": \"Kinematics\",\n      \"content\": \"Kinematics is the study of motion without considering its causes.\"\n    },\n    {\n      \"type\": \"definition\",\n      \"label\": \"Position\",\n      \"content\": \"Position is the location of an object at a particular point in time.\"\n    },\n    {\n      \"type\": \"definition\",\n      \"label\": \"Velocity\",\n      \"content\": \"Velocity is the rate of change of position with respect to time.\"\n    },\n    {\n      \"type\": \"definition\",\n      \"label\": \"Acceleration\",\n      \"content\": \"Acceleration is the rate of change of velocity with respect to time.\"\n    }\n  ]\n}\n```",
+  "contentLength": 659,
+  "contentType": "string"
+}
+
+[2025-08-16T13:15:21.889Z] INFO [b6731f1b-1563-47aa-96c2-663d276c6f62] [BLACKBOARD-GENERATE] Removed markdown code blocks from response
+{
+  "originalLength": 659,
+  "cleanedLength": 647
+}
+
+[2025-08-16T13:29:50.610Z] INFO [c28cd033-490f-4082-a29c-e1db16eefb28] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:29:52.328Z] INFO [c28cd033-490f-4082-a29c-e1db16eefb28] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:29:52.420Z] INFO [282ec149-41e3-4868-8730-139c6a4006d7] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:29:53.415Z] INFO [282ec149-41e3-4868-8730-139c6a4006d7] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:30:00.018Z] INFO [ec700d62-5e07-46d8-993f-73a146150f17] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:30:01.769Z] INFO [ec700d62-5e07-46d8-993f-73a146150f17] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:30:09.998Z] INFO [00a7042e-c0a7-4520-abb8-ef33bdcfde3d] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:30:12.657Z] INFO [00a7042e-c0a7-4520-abb8-ef33bdcfde3d] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:30:19.996Z] INFO [38242720-0b20-42ea-a82f-35b6ecccc61a] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:30:21.112Z] INFO [38242720-0b20-42ea-a82f-35b6ecccc61a] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:30:30.000Z] INFO [93d28353-94a1-45de-8547-1ce9d11ef273] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:30:31.265Z] INFO [93d28353-94a1-45de-8547-1ce9d11ef273] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:30:40.023Z] INFO [c2cacd2a-9599-4139-a05f-6b3783abf054] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:30:41.073Z] INFO [c2cacd2a-9599-4139-a05f-6b3783abf054] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:30:50.055Z] INFO [2a99b78d-89e7-4cc7-8a25-8c7bf4c8ac75] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:30:51.365Z] INFO [2a99b78d-89e7-4cc7-8a25-8c7bf4c8ac75] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:31:00.085Z] INFO [3c56032b-4ee7-4a16-b239-c97df40319c4] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:31:01.468Z] INFO [3c56032b-4ee7-4a16-b239-c97df40319c4] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:31:10.020Z] INFO [311aeba3-3d30-4711-8230-7a4f5b9a22aa] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:31:10.820Z] INFO [311aeba3-3d30-4711-8230-7a4f5b9a22aa] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:31:20.004Z] INFO [3ddd1aa6-e8dc-48c0-9f0e-5a2443fd526e] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:31:21.366Z] INFO [3ddd1aa6-e8dc-48c0-9f0e-5a2443fd526e] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:31:30.026Z] INFO [d9a713bb-1013-48fc-871f-40716f01ced9] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:31:30.845Z] INFO [d9a713bb-1013-48fc-871f-40716f01ced9] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:31:40.048Z] INFO [709e0099-1bfa-4ca5-80df-65748adf8bfe] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:31:41.074Z] INFO [709e0099-1bfa-4ca5-80df-65748adf8bfe] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:31:50.040Z] INFO [e2c3423e-8265-4a8f-87f0-d95020c0dc2f] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:31:51.053Z] INFO [e2c3423e-8265-4a8f-87f0-d95020c0dc2f] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:32:00.023Z] INFO [c8ce4b3f-f865-4d47-9a6f-d26d1b3b93cc] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:32:00.890Z] INFO [c8ce4b3f-f865-4d47-9a6f-d26d1b3b93cc] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:32:10.020Z] INFO [17120fe6-6842-4f1a-8cad-269d5c46f842] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:32:10.798Z] INFO [17120fe6-6842-4f1a-8cad-269d5c46f842] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:32:20.018Z] INFO [2fa5ca3e-0b02-4f23-ba6c-79de07c4864a] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:32:21.000Z] INFO [2fa5ca3e-0b02-4f23-ba6c-79de07c4864a] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:32:30.042Z] INFO [98a3fd36-79f3-464a-9a3e-faf6ea5d897f] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:32:31.029Z] INFO [98a3fd36-79f3-464a-9a3e-faf6ea5d897f] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:32:40.041Z] INFO [1adb4cef-e336-45f9-bade-d05617d86173] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:32:40.828Z] INFO [1adb4cef-e336-45f9-bade-d05617d86173] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:32:50.028Z] INFO [550a8569-3926-40b0-a908-0908592602e8] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:32:51.026Z] INFO [550a8569-3926-40b0-a908-0908592602e8] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:33:00.043Z] INFO [8cda47d3-207a-41a6-89e3-01aa7a427ec3] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:33:01.080Z] INFO [8cda47d3-207a-41a6-89e3-01aa7a427ec3] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:33:10.413Z] INFO [ee56f256-acce-402c-88c9-e7ede905172c] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:33:11.375Z] INFO [ee56f256-acce-402c-88c9-e7ede905172c] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:33:20.413Z] INFO [01279843-9323-4472-b153-c456dbee0e52] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:33:21.456Z] INFO [01279843-9323-4472-b153-c456dbee0e52] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:33:30.428Z] INFO [8747ab2d-c970-42f1-bf02-22afa4e58d16] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:33:31.289Z] INFO [8747ab2d-c970-42f1-bf02-22afa4e58d16] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:33:40.412Z] INFO [bddbe9df-4183-44da-92ae-1dcfc5d1e1b6] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:33:41.630Z] INFO [bddbe9df-4183-44da-92ae-1dcfc5d1e1b6] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:33:50.406Z] INFO [2f69bf91-d537-48b8-83f8-e0b3be0002af] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:33:51.531Z] INFO [2f69bf91-d537-48b8-83f8-e0b3be0002af] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:34:00.421Z] INFO [645b6697-f801-47d3-b65f-73507519c7ed] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:34:01.266Z] INFO [645b6697-f801-47d3-b65f-73507519c7ed] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:34:19.223Z] INFO [1b96dba1-9243-41eb-a0a1-331328da136a] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "42c435d3-f5f6-4459-8083-f9a5a53e9c40"
+}
+
+[2025-08-16T13:34:20.761Z] INFO [1b96dba1-9243-41eb-a0a1-331328da136a] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T13:34:26.399Z] INFO [60ddb332-0830-4f1a-8db7-243546370d24] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T13:34:26.400Z] INFO [60ddb332-0830-4f1a-8db7-243546370d24] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:34:26.401Z] INFO [60ddb332-0830-4f1a-8db7-243546370d24] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T13:34:26.919Z] INFO [60ddb332-0830-4f1a-8db7-243546370d24] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:34:26.920Z] INFO [60ddb332-0830-4f1a-8db7-243546370d24] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-16T13:34:27.165Z] INFO [60ddb332-0830-4f1a-8db7-243546370d24] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-16T13:34:27.165Z] INFO [60ddb332-0830-4f1a-8db7-243546370d24] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:34:27.479Z] INFO [60ddb332-0830-4f1a-8db7-243546370d24] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-16T13:34:27.479Z] INFO [60ddb332-0830-4f1a-8db7-243546370d24] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:34:27.736Z] INFO [60ddb332-0830-4f1a-8db7-243546370d24] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:34:27.737Z] INFO [60ddb332-0830-4f1a-8db7-243546370d24] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-16T13:34:27.737Z] INFO [60ddb332-0830-4f1a-8db7-243546370d24] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-16T13:34:27.737Z] INFO [60ddb332-0830-4f1a-8db7-243546370d24] [START-SESSION] Getting master lesson plan
+{}
+
+[2025-08-16T13:34:27.738Z] INFO [3490b13d-95a0-4c9a-954c-f91c8bdfb76c] [MASTER-LESSON-PLAN] Getting or creating master plan
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "subjectName": "Kinematics",
+  "topicName": "Physics"
+}
+
+[2025-08-16T13:34:27.995Z] INFO [3490b13d-95a0-4c9a-954c-f91c8bdfb76c] [MASTER-LESSON-PLAN] Creating new master plan
+{}
+
+[2025-08-16T13:35:03.492Z] INFO [2d5fcc90-dc61-48c3-a3f0-709f4aea0e58] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T13:35:03.493Z] INFO [2d5fcc90-dc61-48c3-a3f0-709f4aea0e58] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:35:03.493Z] INFO [2d5fcc90-dc61-48c3-a3f0-709f4aea0e58] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T13:35:03.904Z] INFO [2d5fcc90-dc61-48c3-a3f0-709f4aea0e58] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:35:03.905Z] INFO [2d5fcc90-dc61-48c3-a3f0-709f4aea0e58] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-16T13:35:04.159Z] INFO [2d5fcc90-dc61-48c3-a3f0-709f4aea0e58] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-16T13:35:04.159Z] INFO [2d5fcc90-dc61-48c3-a3f0-709f4aea0e58] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:35:04.498Z] INFO [2d5fcc90-dc61-48c3-a3f0-709f4aea0e58] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-16T13:35:04.499Z] INFO [2d5fcc90-dc61-48c3-a3f0-709f4aea0e58] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:35:04.830Z] INFO [2d5fcc90-dc61-48c3-a3f0-709f4aea0e58] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:35:04.831Z] INFO [2d5fcc90-dc61-48c3-a3f0-709f4aea0e58] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-16T13:35:04.831Z] INFO [2d5fcc90-dc61-48c3-a3f0-709f4aea0e58] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-16T13:35:04.831Z] INFO [2d5fcc90-dc61-48c3-a3f0-709f4aea0e58] [START-SESSION] Getting master lesson plan
+{}
+
+[2025-08-16T13:35:04.832Z] INFO [cd8593e5-67c5-4104-81e5-40347f31eb1e] [MASTER-LESSON-PLAN] Getting or creating master plan
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "subjectName": "Kinematics",
+  "topicName": "Physics"
+}
+
+[2025-08-16T13:35:05.084Z] INFO [cd8593e5-67c5-4104-81e5-40347f31eb1e] [MASTER-LESSON-PLAN] Creating new master plan
+{}
+
+[2025-08-16T13:35:05.178Z] INFO [6cb3d453-48b3-4897-be91-536993149080] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T13:35:05.178Z] INFO [6cb3d453-48b3-4897-be91-536993149080] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:35:05.179Z] INFO [6cb3d453-48b3-4897-be91-536993149080] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T13:35:05.453Z] INFO [6cb3d453-48b3-4897-be91-536993149080] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:35:05.454Z] INFO [6cb3d453-48b3-4897-be91-536993149080] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-16T13:35:05.748Z] INFO [6cb3d453-48b3-4897-be91-536993149080] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-16T13:35:05.748Z] INFO [6cb3d453-48b3-4897-be91-536993149080] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:35:06.001Z] INFO [6cb3d453-48b3-4897-be91-536993149080] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-16T13:35:06.002Z] INFO [6cb3d453-48b3-4897-be91-536993149080] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:35:06.264Z] INFO [6cb3d453-48b3-4897-be91-536993149080] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:35:06.265Z] INFO [6cb3d453-48b3-4897-be91-536993149080] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-16T13:35:06.265Z] INFO [6cb3d453-48b3-4897-be91-536993149080] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-16T13:35:06.266Z] INFO [6cb3d453-48b3-4897-be91-536993149080] [START-SESSION] Getting master lesson plan
+{}
+
+[2025-08-16T13:35:06.266Z] INFO [57afe028-ba45-487d-a4c8-becd0ec240c9] [MASTER-LESSON-PLAN] Getting or creating master plan
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "subjectName": "Kinematics",
+  "topicName": "Physics"
+}
+
+[2025-08-16T13:35:06.523Z] INFO [57afe028-ba45-487d-a4c8-becd0ec240c9] [MASTER-LESSON-PLAN] Creating new master plan
+{}
+
+[2025-08-16T13:37:13.395Z] INFO [277be1cf-3a3c-4fa5-8d39-ac1f37780a2b] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T13:37:13.396Z] INFO [277be1cf-3a3c-4fa5-8d39-ac1f37780a2b] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:37:13.396Z] INFO [277be1cf-3a3c-4fa5-8d39-ac1f37780a2b] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T13:37:13.984Z] INFO [277be1cf-3a3c-4fa5-8d39-ac1f37780a2b] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:37:13.985Z] INFO [277be1cf-3a3c-4fa5-8d39-ac1f37780a2b] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-16T13:37:14.238Z] INFO [277be1cf-3a3c-4fa5-8d39-ac1f37780a2b] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-16T13:37:14.239Z] INFO [277be1cf-3a3c-4fa5-8d39-ac1f37780a2b] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:37:14.489Z] INFO [277be1cf-3a3c-4fa5-8d39-ac1f37780a2b] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-16T13:37:14.490Z] INFO [277be1cf-3a3c-4fa5-8d39-ac1f37780a2b] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:37:14.777Z] INFO [277be1cf-3a3c-4fa5-8d39-ac1f37780a2b] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:37:14.778Z] INFO [277be1cf-3a3c-4fa5-8d39-ac1f37780a2b] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-16T13:37:14.778Z] INFO [277be1cf-3a3c-4fa5-8d39-ac1f37780a2b] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-16T13:37:14.779Z] INFO [277be1cf-3a3c-4fa5-8d39-ac1f37780a2b] [START-SESSION] Getting master lesson plan
+{}
+
+[2025-08-16T13:37:14.780Z] INFO [74d6965c-cc4c-4a56-9193-51c8fcac3896] [MASTER-LESSON-PLAN] Getting or creating master plan
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "subjectName": "Kinematics",
+  "topicName": "Physics"
+}
+
+[2025-08-16T13:37:15.046Z] INFO [74d6965c-cc4c-4a56-9193-51c8fcac3896] [MASTER-LESSON-PLAN] Creating new master plan
+{}
+
+[2025-08-16T13:37:52.048Z] INFO [8e9c34f8-445c-447a-aca0-d8114a94cfee] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T13:37:52.048Z] INFO [8e9c34f8-445c-447a-aca0-d8114a94cfee] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:37:52.049Z] INFO [8e9c34f8-445c-447a-aca0-d8114a94cfee] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T13:37:52.809Z] INFO [8e9c34f8-445c-447a-aca0-d8114a94cfee] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:37:52.810Z] INFO [8e9c34f8-445c-447a-aca0-d8114a94cfee] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-16T13:37:53.045Z] INFO [8e9c34f8-445c-447a-aca0-d8114a94cfee] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-16T13:37:53.046Z] INFO [8e9c34f8-445c-447a-aca0-d8114a94cfee] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:37:53.269Z] INFO [8e9c34f8-445c-447a-aca0-d8114a94cfee] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-16T13:37:53.270Z] INFO [8e9c34f8-445c-447a-aca0-d8114a94cfee] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:37:53.497Z] INFO [8e9c34f8-445c-447a-aca0-d8114a94cfee] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:37:53.497Z] INFO [8e9c34f8-445c-447a-aca0-d8114a94cfee] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-16T13:37:53.498Z] INFO [8e9c34f8-445c-447a-aca0-d8114a94cfee] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-16T13:37:53.498Z] INFO [8e9c34f8-445c-447a-aca0-d8114a94cfee] [START-SESSION] Getting master lesson plan
+{}
+
+[2025-08-16T13:37:53.499Z] INFO [cc18ad09-2c0c-4d8b-bfc6-1618c5e9a994] [MASTER-LESSON-PLAN] Getting or creating master plan
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "subjectName": "Kinematics",
+  "topicName": "Physics"
+}
+
+[2025-08-16T13:37:53.720Z] INFO [cc18ad09-2c0c-4d8b-bfc6-1618c5e9a994] [MASTER-LESSON-PLAN] Creating new master plan
+{}
+
+[2025-08-16T13:40:23.602Z] INFO [5f9c120c-7c21-48ca-9506-1a0e3c1e7d83] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T13:40:23.603Z] INFO [5f9c120c-7c21-48ca-9506-1a0e3c1e7d83] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:40:23.604Z] INFO [5f9c120c-7c21-48ca-9506-1a0e3c1e7d83] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T13:40:23.907Z] INFO [5f9c120c-7c21-48ca-9506-1a0e3c1e7d83] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:40:23.908Z] INFO [5f9c120c-7c21-48ca-9506-1a0e3c1e7d83] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-16T13:40:24.183Z] INFO [5f9c120c-7c21-48ca-9506-1a0e3c1e7d83] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-16T13:40:24.184Z] INFO [5f9c120c-7c21-48ca-9506-1a0e3c1e7d83] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:40:24.419Z] INFO [5f9c120c-7c21-48ca-9506-1a0e3c1e7d83] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-16T13:40:24.421Z] INFO [5f9c120c-7c21-48ca-9506-1a0e3c1e7d83] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:40:24.668Z] INFO [5f9c120c-7c21-48ca-9506-1a0e3c1e7d83] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:40:24.669Z] INFO [5f9c120c-7c21-48ca-9506-1a0e3c1e7d83] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-16T13:40:24.670Z] INFO [5f9c120c-7c21-48ca-9506-1a0e3c1e7d83] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-16T13:40:24.670Z] INFO [5f9c120c-7c21-48ca-9506-1a0e3c1e7d83] [START-SESSION] Getting master lesson plan
+{}
+
+[2025-08-16T13:40:24.671Z] INFO [46bfecab-ddb5-4787-8171-af532b330e46] [MASTER-LESSON-PLAN] Getting or creating master plan
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "subjectName": "Kinematics",
+  "topicName": "Physics"
+}
+
+[2025-08-16T13:40:24.915Z] INFO [46bfecab-ddb5-4787-8171-af532b330e46] [MASTER-LESSON-PLAN] Creating new master plan
+{}
+
+[2025-08-16T13:42:47.050Z] INFO [47f0bb97-e191-4c07-854b-e1e2787638fa] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T13:42:47.052Z] INFO [47f0bb97-e191-4c07-854b-e1e2787638fa] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:42:47.053Z] INFO [47f0bb97-e191-4c07-854b-e1e2787638fa] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T13:42:47.878Z] INFO [47f0bb97-e191-4c07-854b-e1e2787638fa] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:42:47.879Z] INFO [47f0bb97-e191-4c07-854b-e1e2787638fa] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-16T13:42:48.181Z] INFO [47f0bb97-e191-4c07-854b-e1e2787638fa] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-16T13:42:48.182Z] INFO [47f0bb97-e191-4c07-854b-e1e2787638fa] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:42:48.440Z] INFO [47f0bb97-e191-4c07-854b-e1e2787638fa] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-16T13:42:48.440Z] INFO [47f0bb97-e191-4c07-854b-e1e2787638fa] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:42:48.716Z] INFO [47f0bb97-e191-4c07-854b-e1e2787638fa] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:42:48.717Z] INFO [47f0bb97-e191-4c07-854b-e1e2787638fa] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-16T13:42:48.718Z] INFO [47f0bb97-e191-4c07-854b-e1e2787638fa] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-16T13:42:48.718Z] INFO [47f0bb97-e191-4c07-854b-e1e2787638fa] [START-SESSION] Getting master lesson plan
+{}
+
+[2025-08-16T13:42:48.718Z] INFO [ac2da5f8-2a01-4d60-a39e-192bb1b8eed1] [MASTER-LESSON-PLAN] Getting or creating master plan
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "subjectName": "Kinematics",
+  "topicName": "Physics"
+}
+
+[2025-08-16T13:42:49.011Z] INFO [ac2da5f8-2a01-4d60-a39e-192bb1b8eed1] [MASTER-LESSON-PLAN] Creating new master plan
+{}
+
+[2025-08-16T13:43:47.209Z] INFO [501c3972-aca2-4998-b26a-57cbe6f74fe8] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T13:43:47.211Z] INFO [501c3972-aca2-4998-b26a-57cbe6f74fe8] [START-SESSION] Request data
+{}
+
+[2025-08-16T13:44:19.227Z] INFO [8a7303f5-713c-401e-b010-618c103710ab] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T13:44:19.228Z] INFO [8a7303f5-713c-401e-b010-618c103710ab] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:44:19.231Z] INFO [8a7303f5-713c-401e-b010-618c103710ab] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T13:44:19.595Z] INFO [8a7303f5-713c-401e-b010-618c103710ab] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:44:19.595Z] INFO [8a7303f5-713c-401e-b010-618c103710ab] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-16T13:44:19.844Z] INFO [8a7303f5-713c-401e-b010-618c103710ab] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-16T13:44:19.844Z] INFO [8a7303f5-713c-401e-b010-618c103710ab] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:44:20.105Z] INFO [8a7303f5-713c-401e-b010-618c103710ab] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-16T13:44:20.106Z] INFO [8a7303f5-713c-401e-b010-618c103710ab] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:44:20.376Z] INFO [8a7303f5-713c-401e-b010-618c103710ab] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:44:20.377Z] INFO [8a7303f5-713c-401e-b010-618c103710ab] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-16T13:44:20.377Z] INFO [8a7303f5-713c-401e-b010-618c103710ab] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-16T13:44:20.378Z] INFO [8a7303f5-713c-401e-b010-618c103710ab] [START-SESSION] Getting master lesson plan
+{}
+
+[2025-08-16T13:44:20.378Z] INFO [b312b0c7-2ea4-4845-b242-661c67a7dd43] [MASTER-LESSON-PLAN] Getting or creating master plan
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "subjectName": "Kinematics",
+  "topicName": "Physics"
+}
+
+[2025-08-16T13:44:20.628Z] INFO [b312b0c7-2ea4-4845-b242-661c67a7dd43] [MASTER-LESSON-PLAN] Creating new master plan
+{}
+
+[2025-08-16T13:47:46.130Z] INFO [76e34d5f-d411-4f3e-bf58-77a09f74d8a8] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T13:47:46.131Z] INFO [76e34d5f-d411-4f3e-bf58-77a09f74d8a8] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:47:46.132Z] INFO [76e34d5f-d411-4f3e-bf58-77a09f74d8a8] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T13:47:46.612Z] INFO [76e34d5f-d411-4f3e-bf58-77a09f74d8a8] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:47:46.613Z] INFO [76e34d5f-d411-4f3e-bf58-77a09f74d8a8] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-16T13:47:46.840Z] INFO [76e34d5f-d411-4f3e-bf58-77a09f74d8a8] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-16T13:47:46.841Z] INFO [76e34d5f-d411-4f3e-bf58-77a09f74d8a8] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:47:47.066Z] INFO [76e34d5f-d411-4f3e-bf58-77a09f74d8a8] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-16T13:47:47.067Z] INFO [76e34d5f-d411-4f3e-bf58-77a09f74d8a8] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:47:47.317Z] INFO [76e34d5f-d411-4f3e-bf58-77a09f74d8a8] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:47:47.318Z] INFO [76e34d5f-d411-4f3e-bf58-77a09f74d8a8] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-16T13:47:47.318Z] INFO [76e34d5f-d411-4f3e-bf58-77a09f74d8a8] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-16T13:47:47.318Z] INFO [76e34d5f-d411-4f3e-bf58-77a09f74d8a8] [START-SESSION] Getting master lesson plan
+{}
+
+[2025-08-16T13:47:47.319Z] INFO [52c9e132-d366-4315-be31-21c77f7f2a40] [MASTER-LESSON-PLAN] Getting or creating master plan
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "subjectName": "Kinematics",
+  "topicName": "Physics"
+}
+
+[2025-08-16T13:47:47.549Z] INFO [52c9e132-d366-4315-be31-21c77f7f2a40] [MASTER-LESSON-PLAN] Creating new master plan
+{}
+
+[2025-08-16T13:52:47.875Z] INFO [542ed91e-c495-41a5-94d9-d98d107c336b] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T13:52:47.876Z] INFO [542ed91e-c495-41a5-94d9-d98d107c336b] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:52:47.878Z] INFO [542ed91e-c495-41a5-94d9-d98d107c336b] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T13:52:48.316Z] INFO [542ed91e-c495-41a5-94d9-d98d107c336b] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:52:48.316Z] INFO [542ed91e-c495-41a5-94d9-d98d107c336b] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-16T13:52:48.730Z] INFO [542ed91e-c495-41a5-94d9-d98d107c336b] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-16T13:52:48.731Z] INFO [542ed91e-c495-41a5-94d9-d98d107c336b] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:52:48.947Z] INFO [542ed91e-c495-41a5-94d9-d98d107c336b] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-16T13:52:48.948Z] INFO [542ed91e-c495-41a5-94d9-d98d107c336b] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:52:49.189Z] INFO [542ed91e-c495-41a5-94d9-d98d107c336b] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:52:49.190Z] INFO [542ed91e-c495-41a5-94d9-d98d107c336b] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-16T13:52:49.190Z] INFO [542ed91e-c495-41a5-94d9-d98d107c336b] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-16T13:52:49.190Z] INFO [542ed91e-c495-41a5-94d9-d98d107c336b] [START-SESSION] Getting master lesson plan
+{}
+
+[2025-08-16T13:52:49.191Z] INFO [4117eb8a-7290-4283-921f-1bd793eb8690] [MASTER-LESSON-PLAN] Getting or creating master plan
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "subjectName": "Kinematics",
+  "topicName": "Physics"
+}
+
+[2025-08-16T13:52:49.403Z] INFO [4117eb8a-7290-4283-921f-1bd793eb8690] [MASTER-LESSON-PLAN] Creating new master plan
+{}
+
+[2025-08-16T13:58:18.046Z] INFO [ac73eae4-9f8e-4f9a-a22a-66a5c68e7381] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T13:58:18.047Z] INFO [ac73eae4-9f8e-4f9a-a22a-66a5c68e7381] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:58:18.049Z] INFO [ac73eae4-9f8e-4f9a-a22a-66a5c68e7381] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T13:58:18.483Z] INFO [ac73eae4-9f8e-4f9a-a22a-66a5c68e7381] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T13:58:18.483Z] INFO [ac73eae4-9f8e-4f9a-a22a-66a5c68e7381] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-16T13:58:18.697Z] INFO [ac73eae4-9f8e-4f9a-a22a-66a5c68e7381] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-16T13:58:18.697Z] INFO [ac73eae4-9f8e-4f9a-a22a-66a5c68e7381] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:58:18.912Z] INFO [ac73eae4-9f8e-4f9a-a22a-66a5c68e7381] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-16T13:58:18.912Z] INFO [ac73eae4-9f8e-4f9a-a22a-66a5c68e7381] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T13:58:19.287Z] INFO [ac73eae4-9f8e-4f9a-a22a-66a5c68e7381] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T13:58:19.288Z] INFO [ac73eae4-9f8e-4f9a-a22a-66a5c68e7381] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-16T13:58:19.288Z] INFO [ac73eae4-9f8e-4f9a-a22a-66a5c68e7381] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-16T13:58:19.290Z] INFO [ac73eae4-9f8e-4f9a-a22a-66a5c68e7381] [START-SESSION] Getting master lesson plan
+{}
+
+[2025-08-16T13:58:19.290Z] INFO [3dccc648-28a9-45bf-a1a6-b60858f36f87] [MASTER-LESSON-PLAN] Getting or creating master plan
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "subjectName": "Kinematics",
+  "topicName": "Physics"
+}
+
+[2025-08-16T13:58:19.500Z] INFO [3dccc648-28a9-45bf-a1a6-b60858f36f87] [MASTER-LESSON-PLAN] Creating new master plan
+{}
+
+[2025-08-16T13:58:34.916Z] INFO [3dccc648-28a9-45bf-a1a6-b60858f36f87] [MASTER-LESSON-PLAN] Master plan created and saved
+{
+  "planId": "56b37636-d14f-43ca-bfee-4d9b8c6a9d7b",
+  "chunkCount": "4"
+}
+
+[2025-08-16T14:00:56.953Z] INFO [f6ef4e30-c279-4097-b1ac-ebbca57eb054] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T14:00:56.954Z] INFO [f6ef4e30-c279-4097-b1ac-ebbca57eb054] [START-SESSION] Request data
+{
+  "subjectId": "504c7125-0f0b-45fb-b2ed-7ce7890cbf0d",
+  "topicId": "0cbf9207-a45e-4676-a4bc-53415213c775"
+}
+
+[2025-08-16T14:00:56.956Z] INFO [f6ef4e30-c279-4097-b1ac-ebbca57eb054] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T14:01:04.912Z] INFO [92808122-cf54-40f4-8eba-027b62395d68] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T14:01:04.913Z] INFO [92808122-cf54-40f4-8eba-027b62395d68] [START-SESSION] Request data
+{
+  "subjectId": "504c7125-0f0b-45fb-b2ed-7ce7890cbf0d",
+  "topicId": "0cbf9207-a45e-4676-a4bc-53415213c775"
+}
+
+[2025-08-16T14:01:04.913Z] INFO [92808122-cf54-40f4-8eba-027b62395d68] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T14:02:22.288Z] INFO [6a25e8ba-8a0e-4e19-b4f4-d08e8c71833b] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T14:02:22.289Z] INFO [6a25e8ba-8a0e-4e19-b4f4-d08e8c71833b] [START-SESSION] Request data
+{
+  "subjectId": "504c7125-0f0b-45fb-b2ed-7ce7890cbf0d",
+  "topicId": "0cbf9207-a45e-4676-a4bc-53415213c775"
+}
+
+[2025-08-16T14:02:22.291Z] INFO [6a25e8ba-8a0e-4e19-b4f4-d08e8c71833b] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T14:02:31.007Z] INFO [92abc827-4296-4cda-8222-6b9370023757] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T14:02:31.007Z] INFO [92abc827-4296-4cda-8222-6b9370023757] [START-SESSION] Request data
+{
+  "subjectId": "504c7125-0f0b-45fb-b2ed-7ce7890cbf0d",
+  "topicId": "0cbf9207-a45e-4676-a4bc-53415213c775"
+}
+
+[2025-08-16T14:02:31.008Z] INFO [92abc827-4296-4cda-8222-6b9370023757] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T14:03:26.430Z] INFO [8091f12e-9ecd-46b0-bf5c-08a9f94272a6] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T14:03:26.431Z] INFO [8091f12e-9ecd-46b0-bf5c-08a9f94272a6] [START-SESSION] Request data
+{
+  "subjectId": "504c7125-0f0b-45fb-b2ed-7ce7890cbf0d",
+  "topicId": "0cbf9207-a45e-4676-a4bc-53415213c775"
+}
+
+[2025-08-16T14:03:26.431Z] INFO [8091f12e-9ecd-46b0-bf5c-08a9f94272a6] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T14:03:36.442Z] INFO [d7686921-ab3a-4f91-ac9e-30bf8ee80338] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T14:03:36.443Z] INFO [d7686921-ab3a-4f91-ac9e-30bf8ee80338] [START-SESSION] Request data
+{
+  "subjectId": "504c7125-0f0b-45fb-b2ed-7ce7890cbf0d",
+  "topicId": "0cbf9207-a45e-4676-a4bc-53415213c775"
+}
+
+[2025-08-16T14:03:36.443Z] INFO [d7686921-ab3a-4f91-ac9e-30bf8ee80338] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T14:04:02.980Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-16T14:04:02.981Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T14:04:02.982Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] Authenticating user
+{}
+
+[2025-08-16T14:04:03.577Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T14:04:03.578Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-16T14:04:03.969Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-16T14:04:03.970Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T14:04:04.182Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-16T14:04:04.183Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T14:04:04.564Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T14:04:04.564Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-16T14:04:04.565Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-16T14:04:04.565Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] Getting master lesson plan
+{}
+
+[2025-08-16T14:04:04.565Z] INFO [201ea3c4-b9f2-498b-8738-99032e75d098] [MASTER-LESSON-PLAN] Getting or creating master plan
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "subjectName": "Kinematics",
+  "topicName": "Physics"
+}
+
+[2025-08-16T14:04:04.773Z] INFO [201ea3c4-b9f2-498b-8738-99032e75d098] [MASTER-LESSON-PLAN] Creating new master plan
+{}
+
+[2025-08-16T14:04:30.620Z] INFO [201ea3c4-b9f2-498b-8738-99032e75d098] [MASTER-LESSON-PLAN] Master plan created and saved
+{
+  "planId": "ffbd007e-90b0-4a88-a6d0-b9059f56b8d9",
+  "chunkCount": "4"
+}
+
+[2025-08-16T14:04:30.621Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [Lesson] Master lesson plan retrieved
+{
+  "planId": "ffbd007e-90b0-4a88-a6d0-b9059f56b8d9",
+  "chunksCount": 4,
+  "conceptsCount": 4,
+  "estimatedDuration": 45
+}
+
+[2025-08-16T14:04:30.621Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] Generating welcome message audio
+{}
+
+[2025-08-16T14:04:39.464Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] Welcome audio generated successfully
+{
+  "fileName": "session-audio/welcome-e8f09d38-3a66-414c-8fbb-50bd1c9992cb-1755353072620.mp3"
+}
+
+[2025-08-16T14:04:39.465Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] Generating assessment question audio
+{}
+
+[2025-08-16T14:04:45.025Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] Assessment question 1 audio generated
+{
+  "fileName": "session-audio/assessment-e8f09d38-3a66-414c-8fbb-50bd1c9992cb-q1-1755353080632.mp3"
+}
+
+[2025-08-16T14:04:58.443Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] Assessment question 2 audio generated
+{
+  "fileName": "session-audio/assessment-e8f09d38-3a66-414c-8fbb-50bd1c9992cb-q2-1755353086256.mp3"
+}
+
+[2025-08-16T14:04:58.444Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [Database] Creating lesson session in database
+{}
+
+[2025-08-16T14:04:58.445Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [Database] Session data to insert
+{
+  "user_id": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "subject_id": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topic_id": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "current_phase": "assessment",
+  "hasLessonPlan": true,
+  "status": "active"
+}
+
+[2025-08-16T14:04:59.014Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [Database] Session created successfully
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:04:59.014Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] Initializing progress tracking
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:04:59.015Z] INFO [21ce3ca8-7982-4055-90f9-9b7ff9434240] [EQUATION-EXTRACTOR] Starting equation extraction
+{
+  "contentLength": 3125
+}
+
+[2025-08-16T14:04:59.016Z] INFO [21ce3ca8-7982-4055-90f9-9b7ff9434240] [EQUATION-EXTRACTOR] Equation extraction completed
+{
+  "totalFound": 0,
+  "byType": {},
+  "byComplexity": {},
+  "processingTime": 1,
+  "confidence": 0
+}
+
+[2025-08-16T14:04:59.016Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] Equations extracted
+{
+  "equationsCount": 0,
+  "totalFound": 0
+}
+
+[2025-08-16T14:04:59.017Z] INFO [bef3f356-b297-4454-8f08-66c7968311d0] [PROGRESS-SERVICE] Analyzing RAG content
+{
+  "subject": "Physics"
+}
+
+[2025-08-16T14:04:59.018Z] INFO [bef3f356-b297-4454-8f08-66c7968311d0] [PROGRESS-SERVICE] RAG content analysis completed
+{
+  "conceptsFound": 1,
+  "equationsFound": 0,
+  "sectionsFound": 0,
+  "complexity": "beginner",
+  "duration": 2
+}
+
+[2025-08-16T14:04:59.018Z] INFO [3f31e0c7-9d07-4d55-b0a3-48bf27cb870d] [PROGRESS-SERVICE] Creating lesson plan
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:04:59.274Z] INFO [3f31e0c7-9d07-4d55-b0a3-48bf27cb870d] [PROGRESS-SERVICE] Lesson plan created
+{
+  "plannedConcepts": 0,
+  "plannedEquations": 0,
+  "estimatedChunks": 1
+}
+
+[2025-08-16T14:04:59.274Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] Progress lesson plan created
+{
+  "conceptsCount": 0,
+  "equationsCount": 0,
+  "resourceSections": 0
+}
+
+[2025-08-16T14:04:59.275Z] INFO [0d1d71b9-3b56-4471-ae79-fe642ad4d6cd] [PROGRESS-SERVICE] Getting progress summary
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:05:00.172Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] Progress tracking initialized successfully
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2",
+  "totalConcepts": 0,
+  "totalEquations": 0
+}
+
+[2025-08-16T14:05:00.173Z] INFO [de5e1aa5-8d1a-43f8-81e1-935a30aaa5ce] [PROGRESS-SERVICE] Getting progress summary
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:05:00.393Z] INFO [e8f09d38-3a66-414c-8fbb-50bd1c9992cb] [START-SESSION] Success! Returning response
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2",
+  "subject": "Physics",
+  "topic": "Kinematics",
+  "hasOverview": true,
+  "questionsCount": 2,
+  "estimatedDuration": "45 minutes"
+}
+
+[2025-08-16T14:05:00.980Z] INFO [07353531-0712-4921-b185-1592186f792c] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:05:01.904Z] INFO [07353531-0712-4921-b185-1592186f792c] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:05:01.978Z] INFO [bf954b15-36ea-4484-9627-65746269a59b] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:05:02.686Z] INFO [bf954b15-36ea-4484-9627-65746269a59b] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:05:10.527Z] INFO [e5a06182-6ad5-4278-84a4-f11c65c99f77] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:05:11.487Z] INFO [e5a06182-6ad5-4278-84a4-f11c65c99f77] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:05:20.519Z] INFO [500cb049-78cf-4698-8ff0-d1498ca2bc3d] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:05:21.392Z] INFO [500cb049-78cf-4698-8ff0-d1498ca2bc3d] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:05:30.532Z] INFO [f3965876-465e-4345-96fd-900bcfe3e776] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:05:31.625Z] INFO [f3965876-465e-4345-96fd-900bcfe3e776] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:05:38.135Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [ASSESSMENT] Request received
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2",
+  "answersCount": 2,
+  "isArray": true
+}
+
+[2025-08-16T14:05:38.136Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [ASSESSMENT] Authenticating user
+{}
+
+[2025-08-16T14:05:38.443Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [ASSESSMENT] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T14:05:38.444Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [Database] Fetching session data
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:05:38.713Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [Database] Session found
+{
+  "id": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2",
+  "phase": "assessment",
+  "hasLessonPlan": true
+}
+
+[2025-08-16T14:05:38.713Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T14:05:39.027Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T14:05:39.027Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [Database] Storing student assessments
+{
+  "assessmentCount": 2
+}
+
+[2025-08-16T14:05:39.028Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [Database] Storing assessment 1
+{
+  "questionPreview": "Ability to solve kinematics problems using motion ...",
+  "answerLength": 2
+}
+
+[2025-08-16T14:05:39.029Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [Database] Storing assessment 2
+{
+  "questionPreview": "Understanding of core concepts through practical e...",
+  "answerLength": 2
+}
+
+[2025-08-16T14:05:39.517Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [Database] All assessments stored
+{}
+
+[2025-08-16T14:05:39.518Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [ASSESSMENT] Preparing evaluation context
+{}
+
+[2025-08-16T14:05:39.518Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [ASSESSMENT] Context prepared
+{
+  "resourceContextLength": 156,
+  "answersContextLength": 136,
+  "answersCount": 2
+}
+
+[2025-08-16T14:05:40.497Z] INFO [ccd671c1-fb9b-452a-bb2b-032540e66804] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:05:41.232Z] INFO [ccd671c1-fb9b-452a-bb2b-032540e66804] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:05:43.519Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [ASSESSMENT] Parsing evaluation results
+{
+  "length": 1946,
+  "preview": "```json\n{\n  \"student_evaluation\": {\n    \"understanding_level\": \"beginner\",\n    \"strengths\": [],\n    \"areas_for_focus\": [\n      \"Position\",\n      \"Velocity\",\n      \"Acceleration\",\n      \"Motion Equatio..."
+}
+
+[2025-08-16T14:05:43.520Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [ASSESSMENT] Content cleaned
+{
+  "cleanedLength": 1934
+}
+
+[2025-08-16T14:05:43.520Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [ASSESSMENT] Evaluation parsed successfully
+{
+  "hasStudentEvaluation": true,
+  "understandingLevel": "beginner",
+  "hasRefinedPlan": true,
+  "chunksCount": 4
+}
+
+[2025-08-16T14:05:43.521Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [Database] Updating session with refined lesson plan
+{}
+
+[2025-08-16T14:05:43.521Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [Database] Session update data prepared
+{
+  "newPhase": "delivery",
+  "hasRefinedPlan": true,
+  "responsesCount": 2
+}
+
+[2025-08-16T14:05:43.777Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [Database] Session updated successfully
+{}
+
+[2025-08-16T14:05:43.778Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [Database] Storing AI evaluations
+{}
+
+[2025-08-16T14:05:43.778Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [Database] Updating evaluation for question 1
+{}
+
+[2025-08-16T14:05:43.779Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [Database] Updating evaluation for question 2
+{}
+
+[2025-08-16T14:05:44.194Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [Database] All evaluations updated successfully
+{}
+
+[2025-08-16T14:05:44.195Z] INFO [1a0661f6-8801-4886-a177-e608ae3a4db6] [ASSESSMENT] Assessment completed successfully
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2",
+  "understandingLevel": "beginner",
+  "hasRefinedPlan": true,
+  "chunksCount": 4,
+  "nextPhase": "delivery",
+  "processingTime": 6060
+}
+
+[2025-08-16T14:05:46.353Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [DELIVER-CHUNK] Starting chunk delivery
+{}
+
+[2025-08-16T14:05:46.354Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [DELIVER-CHUNK] Request received
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2",
+  "chunkIndex": 0
+}
+
+[2025-08-16T14:05:46.354Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [Auth] Authenticating user
+{}
+
+[2025-08-16T14:05:46.606Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [Auth] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T14:05:46.606Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [Database] Fetching session data
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:05:46.845Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [Database] Session found
+{
+  "id": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2",
+  "phase": "delivery",
+  "status": "active",
+  "hasLessonPlan": true
+}
+
+[2025-08-16T14:05:46.846Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [Database] Checking for existing chunk
+{
+  "chunkIndex": 0
+}
+
+[2025-08-16T14:05:47.095Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [DELIVER-CHUNK] No existing chunk found, creating new one
+{}
+
+[2025-08-16T14:05:47.095Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-16T14:05:47.345Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T14:05:47.346Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [DELIVER-CHUNK] Preparing resource context
+{}
+
+[2025-08-16T14:05:47.346Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [DELIVER-CHUNK] Resource context prepared
+{
+  "contextLength": 156
+}
+
+[2025-08-16T14:05:47.347Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [DELIVER-CHUNK] Analyzing lesson plan structure
+{
+  "hasLessonPlan": true,
+  "hasLessonChunks": true,
+  "totalChunks": 4,
+  "requestedChunkIndex": 0
+}
+
+[2025-08-16T14:05:47.347Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [DELIVER-CHUNK] Target chunk found
+{
+  "hasContent": false
+}
+
+[2025-08-16T14:05:50.502Z] INFO [cf0f129d-6f73-4e09-bb8a-83c71ac40368] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:05:51.213Z] INFO [cf0f129d-6f73-4e09-bb8a-83c71ac40368] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:05:55.031Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [DELIVER-CHUNK] Extracting concepts for progress tracking
+{}
+
+[2025-08-16T14:05:55.032Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [DELIVER-CHUNK] Concepts extracted for tracking
+{
+  "conceptsCount": 0,
+  "equationsCount": 0,
+  "concepts": []
+}
+
+[2025-08-16T14:05:55.032Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [UnrealSpeech] Starting audio generation with chunking
+{
+  "textLength": 1980
+}
+
+[2025-08-16T14:06:00.213Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [UnrealSpeech] Audio generation successful
+{
+  "bufferSize": 3075270,
+  "chunksProcessed": 3
+}
+
+[2025-08-16T14:06:00.214Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [Storage] Uploading to Supabase storage
+{
+  "fileName": "lesson-audio/5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2/chunk-0-1755353160214.mp3"
+}
+
+[2025-08-16T14:06:00.514Z] INFO [8e5247c4-ae8b-4d51-9cee-ae16fdcb7272] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:06:01.402Z] INFO [8e5247c4-ae8b-4d51-9cee-ae16fdcb7272] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:06:02.614Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [Storage] Audio uploaded successfully
+{
+  "path": "lesson-audio/5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2/chunk-0-1755353160214.mp3"
+}
+
+[2025-08-16T14:06:02.615Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [Storage] Audio URL generated
+{
+  "audioUrl": "https://sqlxxvrpmzxjyehbpeuw.supabase.co/storage/v1/object/public/lessons/lesson-audio/5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2/chunk-0-1755353160214.mp3"
+}
+
+[2025-08-16T14:06:02.615Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [Database] Storing chunk in database
+{}
+
+[2025-08-16T14:06:02.615Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [Database] Chunk data prepared
+{
+  "session_id": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2",
+  "chunk_index": 0,
+  "hasScript": true,
+  "scriptLength": 1980,
+  "hasAudio": true,
+  "chunk_type": "lesson"
+}
+
+[2025-08-16T14:06:03.066Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [Database] Chunk stored successfully
+{
+  "chunkId": "963db149-d875-4581-a7a4-39a83b3d9253"
+}
+
+[2025-08-16T14:06:03.067Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [DELIVER-CHUNK] Tracking concept progress
+{
+  "conceptsToTrack": 0,
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:06:03.067Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [Database] Updating session current chunk index
+{
+  "chunkIndex": 0
+}
+
+[2025-08-16T14:06:03.291Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [Database] Session updated successfully
+{}
+
+[2025-08-16T14:06:03.292Z] INFO [badab023-9a87-4b8d-8dbf-7beabb3cae4e] [PROGRESS-SERVICE] Getting progress summary
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:06:03.513Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [DELIVER-CHUNK] Progress summary retrieved
+{
+  "progressPercentage": 0,
+  "deliveredConcepts": 0,
+  "totalConcepts": 0
+}
+
+[2025-08-16T14:06:03.514Z] INFO [a0050fc6-d2be-4173-abd7-586ce62054ff] [DELIVER-CHUNK] Chunk delivered successfully
+{
+  "chunkId": "963db149-d875-4581-a7a4-39a83b3d9253",
+  "contentLength": 1980,
+  "hasAudio": true,
+  "chunkIndex": 0,
+  "totalChunks": 4,
+  "isLastChunk": false,
+  "processingTime": 17161
+}
+
+[2025-08-16T14:06:03.654Z] INFO [02cba8f1-ff43-4f5d-af5b-8464f0ece574] [BLACKBOARD-GENERATE] Starting blackboard content generation
+{}
+
+[2025-08-16T14:06:03.923Z] INFO [02cba8f1-ff43-4f5d-af5b-8464f0ece574] [BLACKBOARD-GENERATE] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T14:06:03.924Z] INFO [02cba8f1-ff43-4f5d-af5b-8464f0ece574] [BLACKBOARD-GENERATE] Calling OpenAI API
+{
+  "model": "gpt-4o",
+  "hasApiKey": true,
+  "scriptLength": 1980
+}
+
+[2025-08-16T14:06:07.884Z] INFO [02cba8f1-ff43-4f5d-af5b-8464f0ece574] [BLACKBOARD-GENERATE] OpenAI API call successful
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 967,
+    "completion_tokens": 176,
+    "total_tokens": 1143,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T14:06:07.885Z] INFO [02cba8f1-ff43-4f5d-af5b-8464f0ece574] [BLACKBOARD-GENERATE] Raw OpenAI response for user b50bca67-bbc6-485b-a9a7-6c0574dca179
+{
+  "content": "```json\n{\n  \"blackboard\": [\n    {\n      \"type\": \"definition\",\n      \"label\": \"Position\",\n      \"content\": \"Position is the location of an object in space at a particular point in time, often described using a coordinate system.\"\n    },\n    {\n      \"type\": \"definition\",\n      \"label\": \"Velocity\",\n      \"content\": \"Velocity is a vector quantity that describes both the speed and direction of an object's movement.\"\n    },\n    {\n      \"type\": \"definition\",\n      \"label\": \"Speed\",\n      \"content\": \"Speed is a scalar quantity that describes how fast an object is moving, without regard to direction.\"\n    },\n    {\n      \"type\": \"text\",\n      \"label\": \"Velocity vs Speed\",\n      \"content\": \"Velocity includes direction, while speed does not.\"\n    }\n  ]\n}\n```",
+  "contentLength": 756,
+  "contentType": "string"
+}
+
+[2025-08-16T14:06:07.886Z] INFO [02cba8f1-ff43-4f5d-af5b-8464f0ece574] [BLACKBOARD-GENERATE] Removed markdown code blocks from response
+{
+  "originalLength": 756,
+  "cleanedLength": 744
+}
+
+[2025-08-16T14:06:10.515Z] INFO [54ffe4fa-52cb-4243-9037-214cd90f738a] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:06:11.466Z] INFO [54ffe4fa-52cb-4243-9037-214cd90f738a] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:06:20.507Z] INFO [138c1c20-6c8e-490c-9fd4-f9f66e526e58] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:06:21.307Z] INFO [138c1c20-6c8e-490c-9fd4-f9f66e526e58] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:06:30.504Z] INFO [e311b229-c016-445f-88e2-032ccd5aa4fe] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:06:31.467Z] INFO [e311b229-c016-445f-88e2-032ccd5aa4fe] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:06:40.504Z] INFO [a9591cc8-3c87-45ca-8577-f80662932b28] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:06:41.313Z] INFO [a9591cc8-3c87-45ca-8577-f80662932b28] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:06:50.496Z] INFO [c7a1b99f-bf7d-45f6-beca-5a8176c0e57a] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:06:51.447Z] INFO [c7a1b99f-bf7d-45f6-beca-5a8176c0e57a] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:07:00.512Z] INFO [7316c1d9-7503-4b1b-9861-09194d946c6c] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:07:01.703Z] INFO [7316c1d9-7503-4b1b-9861-09194d946c6c] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:07:10.495Z] INFO [7e54a685-616c-4bc8-85f7-ff7c50cb87f3] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:07:11.349Z] INFO [7e54a685-616c-4bc8-85f7-ff7c50cb87f3] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:07:20.505Z] INFO [0e4e7816-eaf7-40ec-a605-fe7085aadbf5] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:07:21.458Z] INFO [0e4e7816-eaf7-40ec-a605-fe7085aadbf5] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:07:30.507Z] INFO [a2a10a21-a6cd-4962-b984-20e8a1164059] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:07:31.494Z] INFO [a2a10a21-a6cd-4962-b984-20e8a1164059] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:07:39.498Z] INFO [INTERACTION] New interaction request
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2",
+  "questionLength": 8,
+  "hasChunkId": true,
+  "chunkId": "1755353144197"
+}
+
+[2025-08-16T14:07:39.498Z] INFO [INTERACTION] Authenticating user
+
+[2025-08-16T14:07:39.939Z] INFO [INTERACTION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "email": "muaz.shafiq18@gmail.com"
+}
+
+[2025-08-16T14:07:39.940Z] INFO [Database] Fetching session data
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:07:40.175Z] INFO [Database] Session found
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2",
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "currentPhase": "delivery",
+  "hasLessonPlan": true
+}
+
+[2025-08-16T14:07:40.176Z] INFO [Database] Fetching educational resources
+
+[2025-08-16T14:07:40.413Z] INFO [Database] Resources fetched
+{
+  "resourcesCount": 1,
+  "resourceTitles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T14:07:40.414Z] INFO [Database] Fetching chunk context
+{
+  "chunkId": "1755353144197"
+}
+
+[2025-08-16T14:07:40.510Z] INFO [87a2e065-6142-41a1-859e-3d903313e6fd] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:07:40.665Z] WARN [INTERACTION] Could not load chunk context
+{
+  "chunkId": "1755353144197",
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755353144197\""
+  }
+}
+
+[2025-08-16T14:07:40.666Z] INFO [INTERACTION] Preparing context for AI response
+
+[2025-08-16T14:07:40.666Z] INFO [INTERACTION] Context prepared
+{
+  "resourceContextLength": 156,
+  "lessonContextLength": 1463,
+  "hasCurrentChunk": false,
+  "currentChunkLength": 0
+}
+
+[2025-08-16T14:07:41.435Z] INFO [87a2e065-6142-41a1-859e-3d903313e6fd] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:07:45.233Z] INFO [Database] Storing interaction
+
+[2025-08-16T14:07:45.485Z] INFO [Database] Interaction stored successfully
+
+[2025-08-16T14:07:45.486Z] INFO [Database] Updating chunk interaction
+{
+  "chunkId": "1755353144197"
+}
+
+[2025-08-16T14:07:45.737Z] INFO [INTERACTION] Generating audio with chunking support
+{
+  "textLength": 426
+}
+
+[2025-08-16T14:07:47.569Z] INFO [INTERACTION] Audio generated successfully
+{
+  "sizeBytes": 611310,
+  "chunksProcessed": 1
+}
+
+[2025-08-16T14:07:47.570Z] INFO [INTERACTION] Uploading audio to Supabase
+{
+  "fileName": "interaction-audio/5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2/response-1755353267570.mp3"
+}
+
+[2025-08-16T14:07:49.534Z] INFO [INTERACTION] Audio uploaded successfully
+{
+  "audioUrl": "https://sqlxxvrpmzxjyehbpeuw.supabase.co/storage/v1/object/public/lessons/interaction-audio/5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2/response-1755353267570.mp3"
+}
+
+[2025-08-16T14:07:49.535Z] INFO [INTERACTION] Success! Returning response
+{
+  "canAnswer": true,
+  "hasAnswer": true,
+  "answerLength": 426,
+  "hasAudio": true,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T14:07:49.615Z] INFO [bca83d87-465b-4286-b83c-0e2fa63dbedf] [BLACKBOARD-GENERATE] Starting blackboard content generation
+{}
+
+[2025-08-16T14:07:49.866Z] INFO [bca83d87-465b-4286-b83c-0e2fa63dbedf] [BLACKBOARD-GENERATE] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T14:07:49.868Z] INFO [bca83d87-465b-4286-b83c-0e2fa63dbedf] [BLACKBOARD-GENERATE] Calling OpenAI API
+{
+  "model": "gpt-4o",
+  "hasApiKey": true,
+  "scriptLength": 426
+}
+
+[2025-08-16T14:07:50.501Z] INFO [9c802b16-1831-4f59-b35b-4c7ded8f5d88] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:07:51.187Z] INFO [bca83d87-465b-4286-b83c-0e2fa63dbedf] [BLACKBOARD-GENERATE] OpenAI API call successful
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 659,
+    "completion_tokens": 48,
+    "total_tokens": 707,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T14:07:51.187Z] INFO [bca83d87-465b-4286-b83c-0e2fa63dbedf] [BLACKBOARD-GENERATE] Raw OpenAI response for user b50bca67-bbc6-485b-a9a7-6c0574dca179
+{
+  "content": "```json\n{\n  \"blackboard\": [\n    {\n      \"type\": \"definition\",\n      \"label\": \"Acceleration\",\n      \"content\": \"Acceleration is the rate of change of velocity over time.\"\n    }\n  ]\n}\n```",
+  "contentLength": 185,
+  "contentType": "string"
+}
+
+[2025-08-16T14:07:51.188Z] INFO [bca83d87-465b-4286-b83c-0e2fa63dbedf] [BLACKBOARD-GENERATE] Removed markdown code blocks from response
+{
+  "originalLength": 185,
+  "cleanedLength": 173
+}
+
+[2025-08-16T14:07:51.243Z] INFO [9c802b16-1831-4f59-b35b-4c7ded8f5d88] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:08:00.498Z] INFO [31c313c5-389d-481b-8c7e-cba1a3b73cae] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:08:01.581Z] INFO [31c313c5-389d-481b-8c7e-cba1a3b73cae] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:08:10.500Z] INFO [c971d6e4-3a7a-4d22-8914-3c380095a69f] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:08:11.330Z] INFO [c971d6e4-3a7a-4d22-8914-3c380095a69f] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:08:20.520Z] INFO [ed7221b2-cc4d-41c4-bad8-61d09e80c535] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:08:21.292Z] INFO [ed7221b2-cc4d-41c4-bad8-61d09e80c535] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:08:24.196Z] INFO [INTERACTION] New interaction request
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2",
+  "questionLength": 4,
+  "hasChunkId": true,
+  "chunkId": "1755353259352"
+}
+
+[2025-08-16T14:08:24.196Z] INFO [INTERACTION] Authenticating user
+
+[2025-08-16T14:08:24.430Z] INFO [INTERACTION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "email": "muaz.shafiq18@gmail.com"
+}
+
+[2025-08-16T14:08:24.430Z] INFO [Database] Fetching session data
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:08:24.670Z] INFO [Database] Session found
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2",
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "currentPhase": "delivery",
+  "hasLessonPlan": true
+}
+
+[2025-08-16T14:08:24.671Z] INFO [Database] Fetching educational resources
+
+[2025-08-16T14:08:24.936Z] INFO [Database] Resources fetched
+{
+  "resourcesCount": 1,
+  "resourceTitles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-16T14:08:24.937Z] INFO [Database] Fetching chunk context
+{
+  "chunkId": "1755353259352"
+}
+
+[2025-08-16T14:08:25.182Z] WARN [INTERACTION] Could not load chunk context
+{
+  "chunkId": "1755353259352",
+  "error": {
+    "code": "22P02",
+    "details": null,
+    "hint": null,
+    "message": "invalid input syntax for type uuid: \"1755353259352\""
+  }
+}
+
+[2025-08-16T14:08:25.183Z] INFO [INTERACTION] Preparing context for AI response
+
+[2025-08-16T14:08:25.183Z] INFO [INTERACTION] Context prepared
+{
+  "resourceContextLength": 156,
+  "lessonContextLength": 1463,
+  "hasCurrentChunk": false,
+  "currentChunkLength": 0
+}
+
+[2025-08-16T14:08:28.280Z] INFO [Database] Storing interaction
+
+[2025-08-16T14:08:28.518Z] INFO [Database] Interaction stored successfully
+
+[2025-08-16T14:08:28.518Z] INFO [Database] Updating chunk interaction
+{
+  "chunkId": "1755353259352"
+}
+
+[2025-08-16T14:08:28.752Z] INFO [INTERACTION] Generating audio with chunking support
+{
+  "textLength": 305
+}
+
+[2025-08-16T14:08:30.508Z] INFO [ada593b0-3ab9-4db0-9e9e-0570cf40bab9] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:08:30.518Z] INFO [INTERACTION] Audio generated successfully
+{
+  "sizeBytes": 459278,
+  "chunksProcessed": 1
+}
+
+[2025-08-16T14:08:30.519Z] INFO [INTERACTION] Uploading audio to Supabase
+{
+  "fileName": "interaction-audio/5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2/response-1755353310519.mp3"
+}
+
+[2025-08-16T14:08:31.253Z] INFO [ada593b0-3ab9-4db0-9e9e-0570cf40bab9] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:08:31.732Z] INFO [INTERACTION] Audio uploaded successfully
+{
+  "audioUrl": "https://sqlxxvrpmzxjyehbpeuw.supabase.co/storage/v1/object/public/lessons/interaction-audio/5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2/response-1755353310519.mp3"
+}
+
+[2025-08-16T14:08:31.733Z] INFO [INTERACTION] Success! Returning response
+{
+  "canAnswer": true,
+  "hasAnswer": true,
+  "answerLength": 305,
+  "hasAudio": true,
+  "resourceUsed": "Kinematics Fundamentals"
+}
+
+[2025-08-16T14:08:31.787Z] INFO [e0241329-aea4-40bf-8911-404174e61bb9] [BLACKBOARD-GENERATE] Starting blackboard content generation
+{}
+
+[2025-08-16T14:08:32.029Z] INFO [e0241329-aea4-40bf-8911-404174e61bb9] [BLACKBOARD-GENERATE] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-16T14:08:32.030Z] INFO [e0241329-aea4-40bf-8911-404174e61bb9] [BLACKBOARD-GENERATE] Calling OpenAI API
+{
+  "model": "gpt-4o",
+  "hasApiKey": true,
+  "scriptLength": 305
+}
+
+[2025-08-16T14:08:32.723Z] INFO [e0241329-aea4-40bf-8911-404174e61bb9] [BLACKBOARD-GENERATE] OpenAI API call successful
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 640,
+    "completion_tokens": 12,
+    "total_tokens": 652,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-16T14:08:32.724Z] INFO [e0241329-aea4-40bf-8911-404174e61bb9] [BLACKBOARD-GENERATE] Raw OpenAI response for user b50bca67-bbc6-485b-a9a7-6c0574dca179
+{
+  "content": "```json\n{\n  \"blackboard\": []\n}\n```",
+  "contentLength": 34,
+  "contentType": "string"
+}
+
+[2025-08-16T14:08:32.724Z] INFO [e0241329-aea4-40bf-8911-404174e61bb9] [BLACKBOARD-GENERATE] Removed markdown code blocks from response
+{
+  "originalLength": 34,
+  "cleanedLength": 22
+}
+
+[2025-08-16T14:08:40.497Z] INFO [b845b8b4-4343-4460-a7f3-e597d2b60279] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:08:41.344Z] INFO [b845b8b4-4343-4460-a7f3-e597d2b60279] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:08:50.498Z] INFO [5319e59e-31da-4b6c-93fd-93864e075f30] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:08:51.483Z] INFO [5319e59e-31da-4b6c-93fd-93864e075f30] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:09:00.499Z] INFO [945073a8-ee61-4b6d-a446-6d780313c51f] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:09:01.413Z] INFO [945073a8-ee61-4b6d-a446-6d780313c51f] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:09:10.503Z] INFO [afdcf8ae-5098-4fea-b398-ddbc11f5fc1d] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:09:11.303Z] INFO [afdcf8ae-5098-4fea-b398-ddbc11f5fc1d] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:09:20.492Z] INFO [e79e9fa7-bb0f-4af1-be46-26af37b812bd] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:09:21.295Z] INFO [e79e9fa7-bb0f-4af1-be46-26af37b812bd] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:09:30.502Z] INFO [c1869964-58df-40ac-a6e3-fb1c2c34b07d] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:09:32.376Z] INFO [c1869964-58df-40ac-a6e3-fb1c2c34b07d] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:09:40.495Z] INFO [7983b4f9-c9d9-4c77-a743-c5e195260f74] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:09:41.286Z] INFO [7983b4f9-c9d9-4c77-a743-c5e195260f74] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:09:50.497Z] INFO [63b78ac0-6c99-4fbc-91ec-631e4d1199d6] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:09:51.273Z] INFO [63b78ac0-6c99-4fbc-91ec-631e4d1199d6] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:10:00.498Z] INFO [400237bf-ccac-4159-8ad2-920615c0c2ad] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:10:01.290Z] INFO [400237bf-ccac-4159-8ad2-920615c0c2ad] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T14:10:10.497Z] INFO [a5cceee1-5982-49c9-829b-dac9df43d923] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T14:10:11.612Z] INFO [a5cceee1-5982-49c9-829b-dac9df43d923] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T19:11:54.067Z] INFO [4517074f-d7a4-4053-9877-fa22aa0d39ae] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T19:11:56.958Z] INFO [4517074f-d7a4-4053-9877-fa22aa0d39ae] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T19:11:58.252Z] INFO [4e2d6a4f-8ad9-4bc1-b9fb-d505b316a552] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T19:11:59.259Z] INFO [4e2d6a4f-8ad9-4bc1-b9fb-d505b316a552] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T19:12:09.189Z] INFO [70ec792a-e9d2-4f73-91c5-d18bd42b1628] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T19:12:10.794Z] INFO [70ec792a-e9d2-4f73-91c5-d18bd42b1628] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-16T19:12:19.152Z] INFO [766f481f-ba64-46ae-8f6c-aabb696f624a] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "5269a47d-e3f1-4e03-b0eb-cc2a91bb03b2"
+}
+
+[2025-08-16T19:12:20.919Z] INFO [766f481f-ba64-46ae-8f6c-aabb696f624a] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+

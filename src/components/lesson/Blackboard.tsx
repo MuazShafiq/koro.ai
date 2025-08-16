@@ -16,42 +16,31 @@ interface BlackboardItem {
   steps?: string[];
 }
 
-interface BlackboardProps {
-  content: string;
+export interface BlackboardEntry {
+  id: string;
+  timestamp: Date;
+  items: BlackboardItem[];
 }
 
-export function Blackboard({ content }: BlackboardProps) {
+interface BlackboardProps {
+  entries: BlackboardEntry[];
+}
+
+export function Blackboard({ entries }: BlackboardProps) {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const [blackboardItems, setBlackboardItems] = useState<BlackboardItem[]>([]);
 
   useEffect(() => {
-    if (content) {
-      try {
-        // Try to parse as structured blackboard data
-        const parsedContent = JSON.parse(content);
-        if (Array.isArray(parsedContent)) {
-          setBlackboardItems(parsedContent);
-        } else {
-          // Fallback to plain text
-          setBlackboardItems([{ type: 'text', label: 'Lesson Content', content }]);
+    // Auto-scroll to bottom when entries update
+    setTimeout(() => {
+      if (scrollAreaRef.current) {
+        const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+        if (scrollContainer) {
+          scrollContainer.scrollTop = scrollContainer.scrollHeight;
         }
-      } catch (error) {
-        // Fallback to plain text if JSON parsing fails
-        setBlackboardItems([{ type: 'text', label: 'Lesson Content', content }]);
       }
-      
-      // Auto-scroll to bottom when content updates
-      setTimeout(() => {
-        if (scrollAreaRef.current) {
-          const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-          if (scrollContainer) {
-            scrollContainer.scrollTop = scrollContainer.scrollHeight;
-          }
-        }
-      }, 100);
-    }
-  }, [content]);
+    }, 100);
+  }, [entries]);
 
   const getItemIcon = (type: string) => {
     switch (type) {
@@ -153,6 +142,28 @@ export function Blackboard({ content }: BlackboardProps) {
     );
   };
 
+  const renderBlackboardEntry = (entry: BlackboardEntry, entryIndex: number) => {
+    return (
+      <div key={entry.id} className="mb-8">
+        {/* Entry separator with timestamp */}
+        {entryIndex > 0 && (
+          <div className="flex items-center my-6">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-green-500/30 to-transparent"></div>
+            <div className="px-4 text-xs text-green-400/60 font-mono">
+              {entry.timestamp.toLocaleTimeString()}
+            </div>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-green-500/30 to-transparent"></div>
+          </div>
+        )}
+        
+        {/* Entry content */}
+        <div className="space-y-2">
+          {entry.items.map((item, index) => renderBlackboardItem(item, index))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Card className="h-full bg-slate-900 border-slate-700 shadow-2xl">
       <div className="h-full flex flex-col">
@@ -181,13 +192,8 @@ export function Blackboard({ content }: BlackboardProps) {
             }}
           >
             <div className="space-y-2">
-              {blackboardItems.length > 0 ? (
-                blackboardItems.map((item, index) => renderBlackboardItem(item, index))
-              ) : content ? (
-                // Fallback to plain text rendering for non-structured content
-                <div className="font-mono text-sm text-green-300 whitespace-pre-wrap">
-                  {content}
-                </div>
+              {entries.length > 0 ? (
+                entries.map((entry, index) => renderBlackboardEntry(entry, index))
               ) : (
                 <div className="text-center text-slate-400 mt-8">
                   <div className="text-4xl mb-2">📝</div>
