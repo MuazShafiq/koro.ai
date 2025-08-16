@@ -135,36 +135,64 @@ export async function POST(request: NextRequest) {
 
     // Generate initial lesson plan using OpenAI
     logger.openai('Preparing lesson planning', {}, requestId);
-    const lessonPlanPrompt = `You are an AI tutor creating a personalized lesson plan.
+    const topicName = topic?.name || 'General Overview';
+     const subjectName = subject.name;
+     
+     const prompt = `You are an expert AI tutor creating a personalized lesson plan. Generate a comprehensive lesson plan for the topic "${topicName}" in ${subjectName}.
 
-Subject: ${subject.name}
-${topicContext}
-Subject Description: ${subject.description || 'No description available'}
+**Available Educational Resources:**
+${resourceContext || 'No specific resources provided - use your general knowledge.'}
 
-Available Educational Resources:
-${resourceContext}
+**Requirements:**
+- Use ONLY the provided educational resources above as your knowledge base
+- Structure the lesson for interactive, conversational learning
+- Include 2-3 assessment questions to gauge understanding
+- Break the lesson into 2-3 detailed chunks, each 2-3 minutes long
+- Focus on practical understanding and real-world applications
+- Ensure content is engaging and age-appropriate
+- Include mathematical equations and formulas from the resources when applicable
 
-Create a high-level lesson plan that:
-1. Uses ONLY the provided educational resources
-2. Is structured for interactive learning
-3. Includes 2-3 assessment questions to gauge student understanding
-4. Can be broken into 2-3 minute chunks for delivery
-5. Focuses on key concepts from the resources
-
-Return a JSON object with:
+**Response Format (JSON only):**
 {
   "lesson_overview": "Brief overview of what will be covered",
   "key_concepts": ["concept1", "concept2", "concept3"],
+  "lesson_chunks": [
+    {
+      "chunk_index": 1,
+      "title": "Introduction to [Topic]",
+      "content_outline": "Detailed outline of what this chunk covers",
+      "key_points": ["point1", "point2", "point3"],
+      "duration_minutes": 2,
+      "chunk_type": "lesson"
+    },
+    {
+      "chunk_index": 2,
+      "title": "Core Concepts and Examples",
+      "content_outline": "Detailed outline including equations and examples",
+      "key_points": ["point1", "point2", "point3"],
+      "duration_minutes": 3,
+      "chunk_type": "lesson"
+    },
+    {
+      "chunk_index": 3,
+      "title": "Practice and Application",
+      "content_outline": "Detailed outline of practice problems and applications",
+      "key_points": ["point1", "point2", "point3"],
+      "duration_minutes": 2,
+      "chunk_type": "lesson"
+    }
+  ],
   "assessment_questions": [
     {
       "question": "Question text",
-      "purpose": "What this question assesses"
+      "type": "multiple_choice" | "open_ended" | "true_false",
+      "options": ["option1", "option2", "option3", "option4"] // only for multiple_choice
     }
   ],
-  "estimated_duration": "Duration in minutes"
+  "estimated_duration": "15-20 minutes"
 }`;
     
-    logger.openai('Lesson plan prompt prepared', { promptLength: lessonPlanPrompt.length }, requestId);
+    logger.openai('Lesson plan prompt prepared', { promptLength: prompt.length }, requestId);
 
     logger.openai('Calling OpenAI for lesson planning', {}, requestId);
     const completion = await openai.chat.completions.create({
@@ -176,11 +204,11 @@ Return a JSON object with:
         },
         {
           role: 'user',
-          content: lessonPlanPrompt
+          content: prompt
         }
       ],
       temperature: 0.7,
-      max_tokens: 1000
+      max_tokens: 3000
     });
     
     logger.openai('OpenAI response received', {
@@ -216,6 +244,7 @@ Return a JSON object with:
         hasOverview: !!lessonPlan.lesson_overview,
         conceptsCount: lessonPlan.key_concepts?.length || 0,
         questionsCount: lessonPlan.assessment_questions?.length || 0,
+        chunksCount: lessonPlan.lesson_chunks?.length || 0,
         estimatedDuration: lessonPlan.estimated_duration
       }, requestId);
     } catch (parseError) {
@@ -358,6 +387,7 @@ Return a JSON object with:
       subject: subject.name,
       topic: topic?.name || 'General',
       lessonOverview: lessonPlan.lesson_overview,
+      lessonChunks: lessonPlan.lesson_chunks,
       assessmentQuestions: lessonPlan.assessment_questions,
       estimatedDuration: lessonPlan.estimated_duration,
       welcomeAudioUrl

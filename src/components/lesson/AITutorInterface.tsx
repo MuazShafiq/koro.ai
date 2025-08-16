@@ -82,6 +82,7 @@ export function AITutorInterface({
   const [assessmentQuestions, setAssessmentQuestions] = useState<AssessmentQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [assessmentAnswers, setAssessmentAnswers] = useState<string[]>([]);
+  const firstQuestionAddedRef = useRef(false);
   const [blackboardContent, setBlackboardContent] = useState('');
   const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -125,6 +126,7 @@ export function AITutorInterface({
       if (sessionInfo && sessionInfo.assessmentQuestions) {
         setAssessmentQuestions(sessionInfo.assessmentQuestions);
         setCurrentPhase('assessment');
+        firstQuestionAddedRef.current = false; // Reset flag for new session
         
         // Add welcome message with audio
         const welcomeMessage: Message = {
@@ -136,15 +138,15 @@ export function AITutorInterface({
         };
         setMessages([welcomeMessage]);
         
-        // Auto-play welcome audio
-        if (sessionInfo.welcomeAudioUrl) {
-          setTimeout(() => {
-            playAudio(sessionInfo.welcomeAudioUrl!);
-          }, 500);
-        }
-        
-        // Add first assessment question with audio
-        if (sessionInfo.assessmentQuestions.length > 0) {
+        // Auto-play welcome audio and add first question after it finishes
+        // Helper function to add first assessment question
+        const addFirstAssessmentQuestion = () => {
+          if (firstQuestionAddedRef.current || sessionInfo.assessmentQuestions.length === 0) {
+            return; // Prevent duplicate addition
+          }
+          
+          firstQuestionAddedRef.current = true;
+          
           const firstQuestion: Message = {
             id: (Date.now() + 1).toString(),
             type: 'ai',
@@ -153,6 +155,43 @@ export function AITutorInterface({
             audioUrl: sessionInfo.assessmentQuestions[0].audioUrl
           };
           setMessages(prev => [...prev, firstQuestion]);
+          
+          // Auto-play first question audio after a brief delay
+          if (sessionInfo.assessmentQuestions[0].audioUrl) {
+            setTimeout(() => {
+              playAudio(sessionInfo.assessmentQuestions[0].audioUrl!);
+            }, 500);
+          }
+        };
+
+        if (sessionInfo.welcomeAudioUrl) {
+          setTimeout(() => {
+            // Create welcome audio with proper event handling
+            if (currentAudio) {
+              currentAudio.pause();
+            }
+            
+            const welcomeAudio = new Audio(sessionInfo.welcomeAudioUrl!);
+            welcomeAudio.playbackRate = playbackSpeed[0];
+            
+            welcomeAudio.onplay = () => setIsPlaying(true);
+            welcomeAudio.onpause = () => setIsPlaying(false);
+            welcomeAudio.onended = () => {
+              setIsPlaying(false);
+              setCurrentAudio(null);
+              // Add first assessment question only after welcome audio completely ends
+              addFirstAssessmentQuestion();
+            };
+            
+            setCurrentAudio(welcomeAudio);
+            audioRef.current = welcomeAudio;
+            welcomeAudio.play();
+          }, 500);
+        } else {
+          // If no welcome audio, add first question after a short delay
+          setTimeout(() => {
+            addFirstAssessmentQuestion();
+          }, 1000);
         }
       }
     } catch (error) {
