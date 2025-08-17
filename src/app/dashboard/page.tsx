@@ -404,9 +404,9 @@ export default function DashboardPage() {
                   size="wide"
                 >
                   <motion.div
-                    className="relative h-48 p-6 bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl border border-primary/20 overflow-hidden"
+                    className="relative h-full p-6 bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl border border-primary/20 overflow-hidden"
                     whileHover={{ y: -2 }}
-                    onClick={() => window.location.href = subject.href}
+                    onClick={() => window.location.href = '/study'}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
@@ -462,7 +462,7 @@ export default function DashboardPage() {
                       </div>
 
                       {/* Right Section - Stats Grid */}
-                      <div className="flex flex-col gap-3 min-w-[140px]">
+                      <div className="flex flex-col gap-3 min-w-[160px] flex-shrink-0">
                         <div className="p-3 rounded-lg bg-white/5 border border-white/10">
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-5 h-5 rounded bg-orange-500 flex items-center justify-center">

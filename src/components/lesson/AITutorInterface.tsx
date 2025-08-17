@@ -18,7 +18,7 @@ import {
   Brain
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Blackboard, BlackboardEntry } from './Blackboard';
+import { Blackboard, BlackboardEntry, BlackboardItem } from './Blackboard';
 import { AudioWaveform } from './AudioWaveform';
 import { ChatMessage } from './ChatMessage';
 import { LessonProgressBar } from './LessonProgressBar';
@@ -129,19 +129,19 @@ export function AITutorInterface({
         setCurrentPhase('assessment');
         firstQuestionAddedRef.current = false; // Reset flag for new session
         
-        // Add welcome message with audio
+        // Add welcome message WITHOUT audio URL to prevent automatic playback
         const welcomeMessage: Message = {
           id: Date.now().toString(),
           type: 'ai',
           content: `Welcome to your ${subject.name} tutoring session${topic ? ` on ${topic.name}` : ''}! Let's start with a few questions to understand your current knowledge level.`,
-          timestamp: new Date(),
-          audioUrl: sessionInfo.welcomeAudioUrl
+          timestamp: new Date()
+          // audioUrl intentionally omitted to prevent automatic playback
         };
         setMessages([welcomeMessage]);
         
         // Auto-play welcome audio and add first question after it finishes
         // Helper function to add first assessment question
-        const addFirstAssessmentQuestion = () => {
+        const addFirstAssessmentQuestion = (shouldPlayAudio = true) => {
           if (firstQuestionAddedRef.current || sessionInfo.assessmentQuestions.length === 0) {
             return; // Prevent duplicate addition
           }
@@ -157,10 +157,14 @@ export function AITutorInterface({
           };
           setMessages(prev => [...prev, firstQuestion]);
           
-          // Auto-play first question audio after a brief delay
-          if (sessionInfo.assessmentQuestions[0].audioUrl) {
+          // Only auto-play first question audio if requested and after ensuring no other audio is playing
+          if (shouldPlayAudio && sessionInfo.assessmentQuestions[0].audioUrl) {
+            // Wait a bit to ensure the message is rendered before playing audio
             setTimeout(() => {
-              playAudio(sessionInfo.assessmentQuestions[0].audioUrl!);
+              // Double-check that no audio is currently playing
+              if (!currentAudio || currentAudio.paused) {
+                playAudio(sessionInfo.assessmentQuestions[0].audioUrl!);
+              }
             }, 500);
           }
         };
@@ -285,7 +289,7 @@ export function AITutorInterface({
 
       const result = await response.json();
       
-      // Add AI response about assessment
+      // Add AI response about assessment without audio initially
       const assessmentComplete: Message = {
         id: Date.now().toString(),
         type: 'ai',
@@ -297,15 +301,47 @@ export function AITutorInterface({
       // Move to delivery phase
       setCurrentPhase('delivery');
       
-      // Start delivering first chunk
-      setTimeout(() => {
-        deliverNextChunk(0);
-      }, 2000);
+      // Wait for any current audio to finish, then start delivering first chunk
+      const waitForAudioAndDeliver = () => {
+        let hasDelivered = false; // Flag to prevent duplicate calls
+        
+        const deliverChunk = () => {
+          if (!hasDelivered) {
+            hasDelivered = true;
+            setTimeout(() => {
+              deliverNextChunk(0);
+            }, 500);
+          }
+        };
+        
+        if (currentAudio && !currentAudio.paused) {
+          // Audio is still playing, wait for it to finish
+          currentAudio.addEventListener('ended', deliverChunk, { once: true });
+        } else {
+          // No audio playing, start immediately with small delay
+          setTimeout(deliverChunk, 1000);
+        }
+      };
+      
+      waitForAudioAndDeliver();
       
     } catch (error) {
       console.error('Error submitting assessment:', error);
       toast.error('Failed to submit assessment');
     }
+  };
+
+  // Helper function to check if a blackboard entry already exists
+  const isDuplicateEntry = (newItems: BlackboardItem[], existingEntries: BlackboardEntry[]): boolean => {
+    return existingEntries.some(entry => {
+      return entry.items.some(existingItem => {
+        return newItems.some(newItem => {
+          return existingItem.type === newItem.type &&
+                 existingItem.label === newItem.label &&
+                 existingItem.content === newItem.content;
+        });
+      });
+    });
   };
 
   const generateBlackboardContent = async (script: string) => {
@@ -327,8 +363,7 @@ export function AITutorInterface({
       return blackboardData;
     } catch (error) {
       console.error('Error generating blackboard content:', error);
-      // Fallback to original content if blackboard generation fails
-      return { blackboard: [{ type: 'text', label: 'Lesson Content', content: script }] };
+      return { blackboard: [] };
     }
   };
 
@@ -354,13 +389,17 @@ export function AITutorInterface({
       // Generate intelligent blackboard content using GPT-4o
       const blackboardData = await generateBlackboardContent(chunk.content);
       
-      // Add new blackboard entry to the accumulative list
-      const newEntry: BlackboardEntry = {
-        id: `entry-${Date.now()}`,
-        timestamp: new Date(),
-        items: blackboardData.blackboard || [{ type: 'text', label: 'Lesson Content', content: chunk.content }]
-      };
-      setBlackboardEntries(prev => [...prev, newEntry]);
+      // Check for duplicates before adding new blackboard entry
+      const newItems = blackboardData.blackboard || [{ type: 'text', label: 'Lesson Content', content: chunk.content }];
+      
+      if (!isDuplicateEntry(newItems, blackboardEntries)) {
+        const newEntry: BlackboardEntry = {
+          id: `entry-${Date.now()}`,
+          timestamp: new Date(),
+          items: newItems
+        };
+        setBlackboardEntries(prev => [...prev, newEntry]);
+      }
       
       // Add lesson content as message
       const lessonMessage: Message = {
@@ -409,13 +448,17 @@ export function AITutorInterface({
       // Generate blackboard content for the AI response
       const blackboardData = await generateBlackboardContent(result.answer);
       
-      // Add new blackboard entry for the interaction response
-      const newEntry: BlackboardEntry = {
-        id: `interaction-${Date.now()}`,
-        timestamp: new Date(),
-        items: blackboardData.blackboard || [{ type: 'text', label: 'Response', content: result.answer }]
-      };
-      setBlackboardEntries(prev => [...prev, newEntry]);
+      // Check for duplicates before adding new blackboard entry for interaction response
+      const newItems = blackboardData.blackboard || [{ type: 'text', label: 'Response', content: result.answer }];
+      
+      if (!isDuplicateEntry(newItems, blackboardEntries)) {
+        const newEntry: BlackboardEntry = {
+          id: `interaction-${Date.now()}`,
+          timestamp: new Date(),
+          items: newItems
+        };
+        setBlackboardEntries(prev => [...prev, newEntry]);
+      }
       
       const aiResponse: Message = {
         id: Date.now().toString(),

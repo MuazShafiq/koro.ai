@@ -193,13 +193,83 @@ export async function POST(request: NextRequest) {
           learning_objectives: chunk.learning_objectives || []
         };
       }),
-      // Enhanced assessment with concept-specific questions
-      assessment_questions: (masterPlan.assessmentCriteria || []).map((question, index) => ({
-        id: `q${index + 1}`,
-        question: question.question || question,
-        type: 'understanding_check',
-        concepts_tested: masterPlan.coreConcepts.slice(0, 3).map(c => c.name)
-      })),
+      // Enhanced assessment with concept-specific questions - ensure minimum 2 questions
+      assessment_questions: await (async () => {
+        let assessmentCriteria = masterPlan.assessmentCriteria || [];
+        
+        // Ensure we have at least 2 assessment criteria
+        if (assessmentCriteria.length < 2) {
+          const additionalCriteria = [];
+          
+          // Add basic understanding questions based on core concepts
+          const coreConcepts = masterPlan.coreConcepts.filter(c => c.importance === 'core').slice(0, 3);
+          
+          if (assessmentCriteria.length === 0) {
+            // No existing criteria, create 2 basic questions
+            additionalCriteria.push(
+              `Understanding of fundamental concepts in ${subject.name}${topic ? ` related to ${topic.name}` : ''}`,
+              `Application of key principles in ${subject.name}${topic ? ` for ${topic.name}` : ''}`
+            );
+          } else if (assessmentCriteria.length === 1) {
+            // One existing criteria, add one more
+            if (coreConcepts.length > 0) {
+              additionalCriteria.push(`Understanding of ${coreConcepts[0].name} concepts`);
+            } else {
+              additionalCriteria.push(`Application of key principles in ${subject.name}${topic ? ` for ${topic.name}` : ''}`);
+            }
+          }
+          
+          assessmentCriteria = [...assessmentCriteria, ...additionalCriteria];
+          logger.info('START-SESSION', `Enhanced assessment criteria to ensure minimum 2 questions. Total: ${assessmentCriteria.length}`, {}, requestId);
+        }
+        
+        return await Promise.all(assessmentCriteria.map(async (criteria, index) => {
+          // Convert assessment criteria statements to proper questions using OpenAI
+          let questionText = criteria.question || criteria;
+          
+          // If the criteria is a statement (doesn't end with ?), convert it to a question
+          if (typeof questionText === 'string' && !questionText.trim().endsWith('?')) {
+            try {
+              const openai = new (await import('openai')).default({
+                apiKey: process.env.OPENAI_API_KEY,
+              });
+              
+              const completion = await openai.chat.completions.create({
+                model: 'gpt-4o',
+                messages: [
+                  {
+                    role: 'system',
+                    content: 'You are an expert educator. Convert assessment criteria statements into engaging assessment questions. Return only the question, nothing else.'
+                  },
+                  {
+                    role: 'user',
+                    content: `Convert this assessment criteria into a clear, engaging question for ${subject.name}${topic ? ` on ${topic.name}` : ''}:\n\n"${questionText}"\n\nMake it a question that tests understanding of this concept.`
+                  }
+                ],
+                temperature: 0.7,
+                max_tokens: 150
+              });
+              
+              const generatedQuestion = completion.choices[0]?.message?.content?.trim();
+              if (generatedQuestion) {
+                questionText = generatedQuestion;
+                logger.info('START-SESSION', `Converted assessment criteria to question: ${questionText}`, {}, requestId);
+              }
+            } catch (error) {
+              logger.error('START-SESSION', 'Failed to convert assessment criteria to question', { error, criteria: questionText }, requestId);
+              // Fallback: create a basic question format
+              questionText = `Can you explain ${questionText.toLowerCase()}?`;
+            }
+          }
+          
+          return {
+            id: `q${index + 1}`,
+            question: questionText,
+            type: 'understanding_check',
+            concepts_tested: masterPlan.coreConcepts.slice(0, 3).map(c => c.name)
+          };
+        }));
+      })(),
       estimated_duration: `${masterPlan.estimatedDurationMinutes} minutes`,
       // Additional metadata for better lesson delivery
       core_fundamentals: masterPlan.coreConcepts.filter(c => c.importance === 'core'),
