@@ -36,7 +36,6 @@ git-workflow.bat
 # Development config files
 eslint.config.mjs
 postcss.config.mjs
-tailwind.config.js
 components.json
 
 # Environment

@@ -1,0 +1,102 @@
+[2025-08-18T20:00:43.089Z] INFO [99b9e27f-6474-4bce-8c88-e5ce44c63f65] [OpenAI] Generating master lesson plan
+{}
+
+[2025-08-18T20:01:03.397Z] INFO [99b9e27f-6474-4bce-8c88-e5ce44c63f65] [OpenAI] Master plan generation completed
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 973,
+    "completion_tokens": 1518,
+    "total_tokens": 2491,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-18T20:01:51.304Z] INFO [0cf89c31-2c69-4b26-9582-51d44a2c3ed2] [OpenAI] Preparing evaluation
+{}
+
+[2025-08-18T20:01:51.305Z] INFO [0cf89c31-2c69-4b26-9582-51d44a2c3ed2] [OpenAI] Calling API for evaluation
+{
+  "promptLength": 6324
+}
+
+[2025-08-18T20:01:58.564Z] INFO [0cf89c31-2c69-4b26-9582-51d44a2c3ed2] [OpenAI] Response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 1619,
+    "completion_tokens": 356,
+    "total_tokens": 1975,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-18T20:02:02.740Z] INFO [b2341d96-f9d5-4e0c-871e-34cfcbc63a25] [OpenAI] Preparing script generation
+{}
+
+[2025-08-18T20:02:02.740Z] INFO [b2341d96-f9d5-4e0c-871e-34cfcbc63a25] [OpenAI] Script prompt prepared
+{
+  "promptLength": 2788
+}
+
+[2025-08-18T20:02:02.741Z] INFO [b2341d96-f9d5-4e0c-871e-34cfcbc63a25] [OpenAI] Calling OpenAI API
+{}
+
+[2025-08-18T20:02:09.874Z] INFO [b2341d96-f9d5-4e0c-871e-34cfcbc63a25] [OpenAI] OpenAI response received
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 609,
+    "completion_tokens": 313,
+    "total_tokens": 922,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "finishReason": "stop"
+}
+
+[2025-08-18T20:02:09.875Z] INFO [b2341d96-f9d5-4e0c-871e-34cfcbc63a25] [OpenAI] Script generated
+{
+  "length": 1603,
+  "preview": "Welcome to our introduction to position and motion, part of our journey into the world of kinematics..."
+}
+
+[2025-08-18T20:02:27.508Z] INFO [OpenAI] Generating blackboard content
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "scriptLength": 1603
+}
+
+[2025-08-18T20:02:30.328Z] INFO [OpenAI] Blackboard content generated successfully
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "itemCount": 3
+}
+
