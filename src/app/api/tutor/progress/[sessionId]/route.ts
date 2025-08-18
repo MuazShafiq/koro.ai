@@ -4,10 +4,10 @@ import { logger } from '@/lib/logger';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { sessionId: string } }
+  { params }: { params: Promise<{ sessionId: string }> }
 ) {
   const requestId = crypto.randomUUID();
-  const { sessionId } = params;
+  const { sessionId } = await params;
   
   logger.info('PROGRESS-API', 'Fetching session progress', { sessionId }, requestId);
   
@@ -45,7 +45,14 @@ export async function GET(
       .rpc('get_session_progress_summary', {
         session_uuid: sessionId
       })
-      .single();
+      .single() as {
+        data: {
+          progress_percentage: number;
+          total_concepts: number;
+          delivered_concepts: number;
+        } | null;
+        error: any;
+      };
       
     if (progressError) {
       logger.error('PROGRESS-API', 'Failed to fetch progress summary', { progressError }, requestId);

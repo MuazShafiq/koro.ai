@@ -179,18 +179,18 @@ export async function POST(request: NextRequest) {
         .map(concept => concept.name),
       // Enhanced lesson chunks with concept mapping and prerequisites
       lesson_chunks: masterPlan.chunkStructure.map(chunk => {
-        const chunkConcepts = chunk.key_concepts || [];
+        const chunkConcepts = chunk.concepts || [];
         
         return {
-          chunk_index: chunk.chunk_number,
+          chunk_index: chunk.chunkIndex,
           title: chunk.title,
-          content_outline: chunk.content_outline,
+          content_outline: chunk.contentSections,
           key_points: chunkConcepts,
-          duration_minutes: chunk.estimated_duration_minutes,
+          duration_minutes: chunk.estimatedMinutes,
           chunk_type: 'lesson',
           core_concepts: chunkConcepts,
           prerequisites: chunk.prerequisites || [],
-          learning_objectives: chunk.learning_objectives || []
+          learning_objectives: chunk.objectives || []
         };
       }),
       // Enhanced assessment with concept-specific questions - ensure minimum 2 questions
@@ -225,7 +225,7 @@ export async function POST(request: NextRequest) {
         
         return await Promise.all(assessmentCriteria.map(async (criteria, index) => {
           // Convert assessment criteria statements to proper questions using OpenAI
-          let questionText = criteria.question || criteria;
+          let questionText = criteria;
           
           // If the criteria is a statement (doesn't end with ?), convert it to a question
           if (typeof questionText === 'string' && !questionText.trim().endsWith('?')) {
@@ -349,7 +349,7 @@ export async function POST(request: NextRequest) {
             const { data: urlData } = supabase.storage
               .from('lessons')
               .getPublicUrl(uploadData.path);
-            question.audioUrl = urlData.publicUrl;
+            (question as any).audioUrl = urlData.publicUrl;
             logger.info('START-SESSION', `Assessment question ${i + 1} audio generated`, { fileName }, requestId);
           }
         }

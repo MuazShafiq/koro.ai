@@ -8,7 +8,7 @@ import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
 import { BookOpen, Calculator, Image, List, FileText, Lightbulb } from 'lucide-react';
 
-interface BlackboardItem {
+export interface BlackboardItem {
   type: 'text' | 'equation' | 'diagram' | 'step-by-step' | 'definition' | 'example';
   label: string;
   content?: string;

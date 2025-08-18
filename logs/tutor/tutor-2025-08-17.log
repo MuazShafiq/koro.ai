@@ -19626,3 +19626,15 @@
   "deliveredConcepts": 0
 }
 
+[2025-08-17T20:32:09.479Z] INFO [1f0afa19-56b7-4af1-abd1-9ab85e6e88c0] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "f78987ed-8658-45a6-9a37-86965c538e2e"
+}
+
+[2025-08-17T20:32:10.531Z] INFO [1f0afa19-56b7-4af1-abd1-9ab85e6e88c0] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
