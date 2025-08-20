@@ -1,0 +1,601 @@
+[2025-08-20T19:24:42.354Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-20T19:24:42.355Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-20T19:24:42.361Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Authenticating user
+{}
+
+[2025-08-20T19:24:43.256Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-20T19:24:43.257Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-20T19:24:44.143Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-20T19:24:44.144Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-20T19:24:44.962Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-20T19:24:44.962Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-20T19:24:45.774Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-20T19:24:45.775Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-20T19:24:45.776Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-20T19:24:45.776Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Getting master lesson plan
+{}
+
+[2025-08-20T19:24:45.777Z] INFO [e706bc44-9919-4bef-bd0a-1217496337ab] [MASTER-LESSON-PLAN] Getting or creating master plan
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "subjectName": "Kinematics",
+  "topicName": "Physics"
+}
+
+[2025-08-20T19:24:46.115Z] INFO [e706bc44-9919-4bef-bd0a-1217496337ab] [MASTER-LESSON-PLAN] Creating new master plan
+{}
+
+[2025-08-20T19:25:02.925Z] INFO [e706bc44-9919-4bef-bd0a-1217496337ab] [MASTER-LESSON-PLAN] Master plan created and saved
+{
+  "planId": "c777cbdf-aa24-49ec-86bf-82351ba9c92f",
+  "chunkCount": "4"
+}
+
+[2025-08-20T19:25:02.926Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [Lesson] Master lesson plan retrieved
+{
+  "planId": "c777cbdf-aa24-49ec-86bf-82351ba9c92f",
+  "chunksCount": 4,
+  "conceptsCount": 4,
+  "estimatedDuration": 45
+}
+
+[2025-08-20T19:25:02.926Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Enhanced assessment criteria to ensure minimum 2 questions. Total: 2
+{}
+
+[2025-08-20T19:25:03.915Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-20T19:25:03.916Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Request data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-20T19:25:03.917Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Authenticating user
+{}
+
+[2025-08-20T19:25:04.381Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] User authenticated
+{
+  "userId": "b50bca67-bbc6-485b-a9a7-6c0574dca179"
+}
+
+[2025-08-20T19:25:04.381Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [Database] Fetching subject data
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367"
+}
+
+[2025-08-20T19:25:04.594Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Converted assessment criteria to question: How can you solve a kinematic problem involving a car accelerating from rest to a certain velocity, and explain the underlying principles that govern this motion?
+{}
+
+[2025-08-20T19:25:04.844Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": false
+}
+
+[2025-08-20T19:25:04.845Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [Database] Fetching topic data
+{
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-20T19:25:05.134Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-20T19:25:05.135Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [Database] Fetching resources
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04"
+}
+
+[2025-08-20T19:25:05.414Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-20T19:25:05.415Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-20T19:25:05.415Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-20T19:25:05.415Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Getting master lesson plan
+{}
+
+[2025-08-20T19:25:05.416Z] INFO [04e105df-30e9-4fec-966b-2ebe58c08ff3] [MASTER-LESSON-PLAN] Getting or creating master plan
+{
+  "subjectId": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topicId": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "subjectName": "Kinematics",
+  "topicName": "Physics"
+}
+
+[2025-08-20T19:25:05.587Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Converted assessment criteria to question: Can you explain the difference between distance and displacement, and provide an example of each in a real-world scenario?
+{}
+
+[2025-08-20T19:25:05.588Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Generating welcome message audio
+{}
+
+[2025-08-20T19:25:05.698Z] INFO [04e105df-30e9-4fec-966b-2ebe58c08ff3] [MASTER-LESSON-PLAN] Creating new master plan
+{}
+
+[2025-08-20T19:25:11.953Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Welcome audio generated successfully
+{
+  "fileName": "session-audio/welcome-10ba1630-e0ec-4876-9be9-345ea9ba00bf-1755717907602.mp3"
+}
+
+[2025-08-20T19:25:11.954Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Generating assessment question audio
+{}
+
+[2025-08-20T19:25:16.405Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Assessment question 1 audio generated
+{
+  "fileName": "session-audio/assessment-10ba1630-e0ec-4876-9be9-345ea9ba00bf-q1-1755717913779.mp3"
+}
+
+[2025-08-20T19:25:19.787Z] INFO [04e105df-30e9-4fec-966b-2ebe58c08ff3] [MASTER-LESSON-PLAN] Master plan created and saved
+{
+  "planId": "bf8b3eb0-2847-43b9-997f-25551a94e918",
+  "chunkCount": "4"
+}
+
+[2025-08-20T19:25:19.788Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [Lesson] Master lesson plan retrieved
+{
+  "planId": "bf8b3eb0-2847-43b9-997f-25551a94e918",
+  "chunksCount": 4,
+  "conceptsCount": 4,
+  "estimatedDuration": 45
+}
+
+[2025-08-20T19:25:20.431Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Assessment question 2 audio generated
+{
+  "fileName": "session-audio/assessment-10ba1630-e0ec-4876-9be9-345ea9ba00bf-q2-1755717917325.mp3"
+}
+
+[2025-08-20T19:25:20.431Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [Database] Creating lesson session in database
+{}
+
+[2025-08-20T19:25:20.432Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [Database] Session data to insert
+{
+  "user_id": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "subject_id": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topic_id": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "current_phase": "assessment",
+  "hasLessonPlan": true,
+  "status": "active"
+}
+
+[2025-08-20T19:25:20.930Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [Database] Session created successfully
+{
+  "sessionId": "b042a956-7790-4d0c-bad8-71b9662dccd1"
+}
+
+[2025-08-20T19:25:20.930Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Initializing progress tracking
+{
+  "sessionId": "b042a956-7790-4d0c-bad8-71b9662dccd1"
+}
+
+[2025-08-20T19:25:20.931Z] INFO [c211f0c6-c63d-4fce-90c7-36dd818d9de7] [EQUATION-EXTRACTOR] Starting equation extraction
+{
+  "contentLength": 3616
+}
+
+[2025-08-20T19:25:20.932Z] INFO [c211f0c6-c63d-4fce-90c7-36dd818d9de7] [EQUATION-EXTRACTOR] Equation extraction completed
+{
+  "totalFound": 1,
+  "byType": {
+    "mathematical_expression": 1
+  },
+  "byComplexity": {
+    "intermediate": 1
+  },
+  "processingTime": 1,
+  "confidence": 0.7
+}
+
+[2025-08-20T19:25:20.933Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Equations extracted
+{
+  "equationsCount": 1,
+  "totalFound": 1
+}
+
+[2025-08-20T19:25:20.933Z] INFO [9f1ada89-7eb0-4653-a41f-726d6e98aaa6] [PROGRESS-SERVICE] Analyzing RAG content
+{
+  "subject": "Physics"
+}
+
+[2025-08-20T19:25:20.934Z] INFO [9f1ada89-7eb0-4653-a41f-726d6e98aaa6] [PROGRESS-SERVICE] RAG content analysis completed
+{
+  "conceptsFound": 1,
+  "equationsFound": 0,
+  "sectionsFound": 0,
+  "complexity": "beginner",
+  "duration": 2
+}
+
+[2025-08-20T19:25:20.935Z] INFO [98ffa362-1c3f-479b-bb03-ba0d1bd1db85] [PROGRESS-SERVICE] Creating lesson plan
+{
+  "sessionId": "b042a956-7790-4d0c-bad8-71b9662dccd1"
+}
+
+[2025-08-20T19:25:21.208Z] INFO [98ffa362-1c3f-479b-bb03-ba0d1bd1db85] [PROGRESS-SERVICE] Lesson plan created
+{
+  "plannedConcepts": 0,
+  "plannedEquations": 0,
+  "estimatedChunks": 1
+}
+
+[2025-08-20T19:25:21.208Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Progress lesson plan created
+{
+  "conceptsCount": 0,
+  "equationsCount": 0,
+  "resourceSections": 0
+}
+
+[2025-08-20T19:25:21.210Z] INFO [fbf451a3-553e-4b46-a0e5-0b9e6fdcbeca] [PROGRESS-SERVICE] Getting progress summary
+{
+  "sessionId": "b042a956-7790-4d0c-bad8-71b9662dccd1"
+}
+
+[2025-08-20T19:25:21.530Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Converted assessment criteria to question: How can you use the equations of motion to calculate the final velocity of a car that accelerates uniformly from rest to cover a distance of 100 meters in 10 seconds?
+{}
+
+[2025-08-20T19:25:21.806Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Progress tracking initialized successfully
+{
+  "sessionId": "b042a956-7790-4d0c-bad8-71b9662dccd1",
+  "totalConcepts": 0,
+  "totalEquations": 1
+}
+
+[2025-08-20T19:25:21.807Z] INFO [8fc77af6-e8f2-4ee8-b71d-299a6b3fe4fb] [PROGRESS-SERVICE] Getting progress summary
+{
+  "sessionId": "b042a956-7790-4d0c-bad8-71b9662dccd1"
+}
+
+[2025-08-20T19:25:22.089Z] INFO [10ba1630-e0ec-4876-9be9-345ea9ba00bf] [START-SESSION] Success! Returning response
+{
+  "sessionId": "b042a956-7790-4d0c-bad8-71b9662dccd1",
+  "subject": "Physics",
+  "topic": "Kinematics",
+  "hasOverview": true,
+  "questionsCount": 2,
+  "estimatedDuration": "45 minutes"
+}
+
+[2025-08-20T19:25:23.221Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Converted assessment criteria to question: How can you apply the core concepts of kinematics to determine the time it takes for a ball thrown vertically upwards to return to its starting point?
+{}
+
+[2025-08-20T19:25:23.222Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Generating welcome message audio
+{}
+
+[2025-08-20T19:25:29.475Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Welcome audio generated successfully
+{
+  "fileName": "session-audio/welcome-5efd2083-aefa-4e3f-9d62-cd9c539a67bf-1755717924810.mp3"
+}
+
+[2025-08-20T19:25:29.476Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Generating assessment question audio
+{}
+
+[2025-08-20T19:25:34.072Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Assessment question 1 audio generated
+{
+  "fileName": "session-audio/assessment-5efd2083-aefa-4e3f-9d62-cd9c539a67bf-q1-1755717931061.mp3"
+}
+
+[2025-08-20T19:25:37.074Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Assessment question 2 audio generated
+{
+  "fileName": "session-audio/assessment-5efd2083-aefa-4e3f-9d62-cd9c539a67bf-q2-1755717935044.mp3"
+}
+
+[2025-08-20T19:25:37.075Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [Database] Creating lesson session in database
+{}
+
+[2025-08-20T19:25:37.075Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [Database] Session data to insert
+{
+  "user_id": "b50bca67-bbc6-485b-a9a7-6c0574dca179",
+  "subject_id": "4125e30b-b07e-49f3-90ec-46a00c338367",
+  "topic_id": "8ac1a6e9-6768-4ea3-96a0-a861a72bee04",
+  "current_phase": "assessment",
+  "hasLessonPlan": true,
+  "status": "active"
+}
+
+[2025-08-20T19:25:37.368Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [Database] Session created successfully
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:25:37.369Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Initializing progress tracking
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:25:37.369Z] INFO [2047d1f4-cf5c-428c-8805-a502264860af] [EQUATION-EXTRACTOR] Starting equation extraction
+{
+  "contentLength": 3640
+}
+
+[2025-08-20T19:25:37.370Z] INFO [2047d1f4-cf5c-428c-8805-a502264860af] [EQUATION-EXTRACTOR] Equation extraction completed
+{
+  "totalFound": 0,
+  "byType": {},
+  "byComplexity": {},
+  "processingTime": 1,
+  "confidence": 0
+}
+
+[2025-08-20T19:25:37.370Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Equations extracted
+{
+  "equationsCount": 0,
+  "totalFound": 0
+}
+
+[2025-08-20T19:25:37.370Z] INFO [7dc01bfe-296b-45d2-a434-79104d996da0] [PROGRESS-SERVICE] Analyzing RAG content
+{
+  "subject": "Physics"
+}
+
+[2025-08-20T19:25:37.371Z] INFO [7dc01bfe-296b-45d2-a434-79104d996da0] [PROGRESS-SERVICE] RAG content analysis completed
+{
+  "conceptsFound": 1,
+  "equationsFound": 0,
+  "sectionsFound": 0,
+  "complexity": "beginner",
+  "duration": 2
+}
+
+[2025-08-20T19:25:37.372Z] INFO [96db750e-dcd7-43f0-ac92-85ca79976831] [PROGRESS-SERVICE] Creating lesson plan
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:25:37.944Z] INFO [96db750e-dcd7-43f0-ac92-85ca79976831] [PROGRESS-SERVICE] Lesson plan created
+{
+  "plannedConcepts": 0,
+  "plannedEquations": 0,
+  "estimatedChunks": 1
+}
+
+[2025-08-20T19:25:37.945Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Progress lesson plan created
+{
+  "conceptsCount": 0,
+  "equationsCount": 0,
+  "resourceSections": 0
+}
+
+[2025-08-20T19:25:37.945Z] INFO [7909cf2f-a4b5-4df3-b9ed-9de41d154275] [PROGRESS-SERVICE] Getting progress summary
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:25:38.875Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Progress tracking initialized successfully
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237",
+  "totalConcepts": 0,
+  "totalEquations": 0
+}
+
+[2025-08-20T19:25:38.876Z] INFO [aca0d96b-2045-420a-b49c-0e2d0ec91148] [PROGRESS-SERVICE] Getting progress summary
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:25:39.154Z] INFO [5efd2083-aefa-4e3f-9d62-cd9c539a67bf] [START-SESSION] Success! Returning response
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237",
+  "subject": "Physics",
+  "topic": "Kinematics",
+  "hasOverview": true,
+  "questionsCount": 2,
+  "estimatedDuration": "45 minutes"
+}
+
+[2025-08-20T19:25:39.698Z] INFO [66cd3aae-0081-4945-8708-5d54b6b90044] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:25:40.696Z] INFO [66cd3aae-0081-4945-8708-5d54b6b90044] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-20T19:25:40.747Z] INFO [3a041f29-6ba9-4f84-bf88-3e0ab4ccd9bf] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:25:41.737Z] INFO [3a041f29-6ba9-4f84-bf88-3e0ab4ccd9bf] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-20T19:25:49.249Z] INFO [71bf4142-e1af-4e03-893c-0256be1731c4] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:25:50.762Z] INFO [71bf4142-e1af-4e03-893c-0256be1731c4] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-20T19:25:59.246Z] INFO [f5ea447c-d6c4-4994-9ed3-d91ff93510f5] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:26:00.406Z] INFO [f5ea447c-d6c4-4994-9ed3-d91ff93510f5] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-20T19:26:09.241Z] INFO [fb20cc7d-38fc-4c1b-acbc-1725834f38ac] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:26:10.573Z] INFO [fb20cc7d-38fc-4c1b-acbc-1725834f38ac] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-20T19:26:19.242Z] INFO [399f2283-36bc-4c27-9981-a0e3752b77c5] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:26:20.919Z] INFO [399f2283-36bc-4c27-9981-a0e3752b77c5] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-20T19:26:29.250Z] INFO [7028e4c8-d4da-4bfd-823a-ae9090138962] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:26:30.338Z] INFO [7028e4c8-d4da-4bfd-823a-ae9090138962] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-20T19:26:39.251Z] INFO [80882e6f-d5fb-4127-b008-4305c4736d49] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:26:40.212Z] INFO [80882e6f-d5fb-4127-b008-4305c4736d49] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-20T19:26:49.244Z] INFO [c867c826-8d5b-4462-9fcc-3d432a244351] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:26:50.196Z] INFO [c867c826-8d5b-4462-9fcc-3d432a244351] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-20T19:26:59.244Z] INFO [c7f5b072-9c86-4f08-9553-c13472a9b0a0] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:27:00.570Z] INFO [c7f5b072-9c86-4f08-9553-c13472a9b0a0] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-20T19:27:09.245Z] INFO [cea424e2-0234-4c79-987f-4add10fab966] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:27:10.642Z] INFO [cea424e2-0234-4c79-987f-4add10fab966] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-20T19:27:19.242Z] INFO [f3a30b15-2d42-4f36-b233-22c472155ba2] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:27:20.404Z] INFO [f3a30b15-2d42-4f36-b233-22c472155ba2] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+
+[2025-08-20T19:27:29.246Z] INFO [e70c22c9-fd6e-4e9e-b5bd-97ea7f41a4e9] [PROGRESS-API] Fetching session progress
+{
+  "sessionId": "f6fb3c6c-5527-4548-8e94-bda5b3d71237"
+}
+
+[2025-08-20T19:27:30.214Z] INFO [e70c22c9-fd6e-4e9e-b5bd-97ea7f41a4e9] [PROGRESS-API] Progress data retrieved successfully
+{
+  "progressPercentage": 0,
+  "totalConcepts": 0,
+  "deliveredConcepts": 0
+}
+

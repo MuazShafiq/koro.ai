@@ -1,0 +1,46 @@
+[2025-08-20T19:24:46.116Z] INFO [e706bc44-9919-4bef-bd0a-1217496337ab] [OpenAI] Generating master lesson plan
+{}
+
+[2025-08-20T19:25:02.242Z] INFO [e706bc44-9919-4bef-bd0a-1217496337ab] [OpenAI] Master plan generation completed
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 973,
+    "completion_tokens": 1513,
+    "total_tokens": 2486,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
+[2025-08-20T19:25:05.699Z] INFO [04e105df-30e9-4fec-966b-2ebe58c08ff3] [OpenAI] Generating master lesson plan
+{}
+
+[2025-08-20T19:25:18.979Z] INFO [04e105df-30e9-4fec-966b-2ebe58c08ff3] [OpenAI] Master plan generation completed
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 973,
+    "completion_tokens": 1505,
+    "total_tokens": 2478,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+
