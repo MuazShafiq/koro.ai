@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
-import { logger } from '@/lib/logger';
-import { getResourcesByTopic, createLesson, uploadAudioFile, updateLessonAudio } from '@/lib/supabase/resources';
-import { generateLessonContent } from '@/lib/services/openai';
-import { convertTextToSpeech, cleanTextForTTS } from '@/lib/services/unrealSpeech';
+import { createClient } from '../../../src/utils/supabase/server';
+import { logger } from '../../../src/lib/logger';
+import { getResourcesByTopic, createLesson, uploadAudioFile, updateLessonAudio } from '../../../src/lib/supabase/resources';
+import { generateLessonContent } from '../../../src/lib/services/openai';
+import { convertTextToSpeech, cleanTextForTTS } from '../../../src/lib/services/unrealSpeech';
 
 export interface LessonRequest {
   subjectId: string;

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { logger } from '@/lib/logger';
-import { createClient } from '@/utils/supabase/server';
+import { logger } from '../../../../src/lib/logger';
+import { createClient } from '../../../../src/utils/supabase/server';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
