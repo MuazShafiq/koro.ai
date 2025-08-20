@@ -1,18 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { 
-  getResourcesByTopic, 
-  createLesson, 
-  updateLessonAudio, 
-  uploadAudioFile 
-} from '../../../src/lib/supabase/resources';
-import { generateLessonContent } from '../../../src/lib/services/openai';
-import { 
-  convertTextToSpeech, 
-  cleanTextForTTS, 
-  estimateAudioDuration 
-} from '../../../src/lib/services/unrealSpeech';
+import { createClient } from '@/utils/supabase/server';
+import { logger } from '@/lib/logger';
+import { getResourcesByTopic, createLesson, uploadAudioFile, updateLessonAudio } from '@/lib/supabase/resources';
+import { generateLessonContent } from '@/lib/services/openai';
+import { convertTextToSpeech, cleanTextForTTS } from '@/lib/services/unrealSpeech';
 
 export interface LessonRequest {
   subjectId: string;
@@ -68,24 +59,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get authenticated user
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value || '';
-        },
-        set(name: string, value: string, options: any) {
-          cookieStore.set({ name, value, ...options });
-        },
-        remove(name: string, options: any) {
-          cookieStore.set({ name, value: '', ...options });
-        },
-      },
-    }
-  );
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
@@ -243,24 +217,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get authenticated user
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value || '';
-        },
-        set(name: string, value: string, options: any) {
-          cookieStore.set({ name, value, ...options });
-        },
-        remove(name: string, options: any) {
-          cookieStore.set({ name, value: '', ...options });
-        },
-      },
-    }
-  );
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '../../../../src/utils/supabase/server';
+import { createClient } from '@/utils/supabase/server';
 import OpenAI from 'openai';
-import { logger } from '../../../../src/lib/logger';
-import { convertTextToSpeech } from '../../../../src/lib/services/unrealSpeech';
-import { progressService } from '../../../../src/lib/services/progressService';
+import { logger } from '@/lib/logger';
+import { convertTextToSpeech } from '@/lib/services/unrealSpeech';
+import { progressService } from '@/lib/services/progressService';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
