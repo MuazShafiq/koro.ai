@@ -37,8 +37,8 @@ git-workflow.bat
 eslint.config.mjs
 components.json
 
-# Environment
-.env*
+# Environment (keep .env.example but allow .env.local for Vercel)
+.env.example
 
 # IDE
 .vscode
