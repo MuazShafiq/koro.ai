@@ -27,7 +27,7 @@ interface Topic {
 export default function AITutorPage() {
   const params = useParams();
   const router = useRouter();
-  const subjectId = params.subjectId as string;
+  const subjectId = params?.subjectId as string;
   
   const [subject, setSubject] = useState<Subject | null>(null);
   const [topics, setTopics] = useState<Topic[]>([]);
