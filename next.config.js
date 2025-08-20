@@ -17,10 +17,6 @@ const nextConfig = {
   // Ensure server-side rendering and API routes are enabled
   output: undefined, // Remove any static export configuration
   trailingSlash: false,
-  experimental: {
-    // Ensure App Router is properly configured
-    appDir: true,
-  },
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
