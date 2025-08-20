@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
-import { logger } from '@/lib/logger';
-import { progressService } from '@/lib/services/progressService';
+import { createClient } from '../../../../src/utils/supabase/server';
+import { logger } from '../../../../src/lib/logger';
+import { progressService } from '../../../../src/lib/services/progressService';
 
 export interface CompletionValidationResult {
   canComplete: boolean;

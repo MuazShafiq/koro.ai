@@ -6,13 +6,13 @@ import {
   createLesson, 
   updateLessonAudio, 
   uploadAudioFile 
-} from '@/lib/supabase/resources';
-import { generateLessonContent } from '@/lib/services/openai';
+} from '../../../src/lib/supabase/resources';
+import { generateLessonContent } from '../../../src/lib/services/openai';
 import { 
   convertTextToSpeech, 
   cleanTextForTTS, 
   estimateAudioDuration 
-} from '@/lib/services/unrealSpeech';
+} from '../../../src/lib/services/unrealSpeech';
 
 export interface LessonRequest {
   subjectId: string;

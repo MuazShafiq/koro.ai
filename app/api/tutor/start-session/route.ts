@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
-import { withAuthRetry, withDatabaseRetry } from '@/utils/supabase/retry';
+import { createClient } from '../../../../src/utils/supabase/server';
+import { withAuthRetry, withDatabaseRetry } from '../../../../src/utils/supabase/retry';
 import OpenAI from 'openai';
-import { logger } from '@/lib/logger';
-import { convertTextToSpeech } from '@/lib/services/unrealSpeech';
-import { progressService } from '@/lib/services/progressService';
-import { equationExtractor } from '@/lib/services/equationExtractor';
-import tutorVoiceSOP from '@/lib/tutor-voice-sop.json';
-import { MasterLessonPlanService } from '@/lib/services/masterLessonPlanService';
+import { logger } from '../../../../src/lib/logger';
+import { convertTextToSpeech } from '../../../../src/lib/services/unrealSpeech';
+import { progressService } from '../../../../src/lib/services/progressService';
+import { equationExtractor } from '../../../../src/lib/services/equationExtractor';
+import tutorVoiceSOP from '../../../../src/lib/tutor-voice-sop.json';
+import { MasterLessonPlanService } from '../../../../src/lib/services/masterLessonPlanService';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
