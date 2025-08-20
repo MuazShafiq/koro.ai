@@ -23,6 +23,13 @@ const nextConfig = {
       '@': path.resolve(__dirname, 'src'),
     };
     
+    // Add fallback for root directory imports
+    config.resolve.modules = [
+      path.resolve(__dirname, 'src'),
+      path.resolve(__dirname, '.'),
+      'node_modules'
+    ];
+    
     config.resolve.extensions = [
       '.tsx',
       '.ts',
