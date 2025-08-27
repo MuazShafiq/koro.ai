@@ -33,6 +33,7 @@ export default function AITutorPage() {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionData, setSessionData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [startingSession, setStartingSession] = useState(false);
 
@@ -102,6 +103,7 @@ export default function AITutorPage() {
 
       const data = await response.json();
       setSessionId(data.sessionId);
+      setSessionData(data); // Store the full session data
       
       if (topicId) {
         const topic = topics.find(t => t.id === topicId);
@@ -144,8 +146,10 @@ export default function AITutorPage() {
         sessionId={sessionId}
         subject={subject}
         topic={selectedTopic}
+        sessionData={sessionData}
         onEndSession={() => {
           setSessionId(null);
+          setSessionData(null);
           setSelectedTopic(null);
         }}
       />

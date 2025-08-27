@@ -21,7 +21,7 @@ import { toast } from 'sonner';
 import { Blackboard, BlackboardEntry, BlackboardItem } from './Blackboard';
 import { AudioWaveform } from './AudioWaveform';
 import { ChatMessage } from './ChatMessage';
-import { LessonProgressBar } from './LessonProgressBar';
+// import { LessonProgressBar } from './LessonProgressBar';
 
 interface Subject {
   id: string;
@@ -541,10 +541,10 @@ export function AITutorInterface({
                   <p className="text-sm text-muted-foreground">{topic.name}</p>
                 )}
               </div>
-              <LessonProgressBar 
+              {/* <LessonProgressBar 
                 sessionId={sessionId} 
                 className="ml-4"
-              />
+              /> */}
             </div>
           </div>
         </div>

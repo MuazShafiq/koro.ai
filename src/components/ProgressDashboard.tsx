@@ -20,14 +20,14 @@ import {
 import { toast } from 'sonner';
 
 export interface ProgressSummary {
+  sessionId: string;
   progressPercentage: number;
   deliveredConcepts: number;
   totalConcepts: number;
+  pendingConcepts: number;
   equationsCount: number;
   resourceSectionsCovered: number;
   avgEngagementScore: number;
-  sessionDuration: number;
-  lastActivity: string;
 }
 
 export interface CompletionValidation {
@@ -71,10 +71,23 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
 
-  // Fetch progress summary
+  // Fetch progress summary - TEMPORARILY COMMENTED OUT FOR DEMO
   const fetchProgressSummary = async () => {
+    // Mock progress data for demo
+    setProgressSummary({
+      sessionId: sessionId,
+      progressPercentage: 25,
+      totalConcepts: 10,
+      deliveredConcepts: 3,
+      pendingConcepts: 7,
+      equationsCount: 5,
+      resourceSectionsCovered: 2,
+      avgEngagementScore: 0.85
+    });
+    setError(null);
+    /*
     try {
-      const response = await fetch(`/api/tutor/progress?sessionId=${sessionId}`);
+      // const response = await fetch(`/api/tutor/progress?sessionId=${sessionId}`); // COMMENTED OUT FOR DEMO
       if (!response.ok) {
         throw new Error('Failed to fetch progress summary');
       }
@@ -86,6 +99,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({
       setError(errorMessage);
       toast.error('Failed to load progress data');
     }
+    */
   };
 
   // Validate session completion
@@ -336,13 +350,13 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({
           <CardContent>
             <div className="space-y-2">
               <div className="text-2xl font-bold">
-                {formatDuration(progressSummary.sessionDuration || 0)}
+                {progressSummary.deliveredConcepts}/{progressSummary.totalConcepts}
               </div>
               <div className="text-xs text-muted-foreground">
-                Active learning time
+                Concepts delivered
               </div>
               <Badge variant="outline">
-                {progressSummary.sessionDuration >= 10 ? 'Sufficient' : 'Continue Learning'}
+                {progressSummary.deliveredConcepts >= progressSummary.totalConcepts * 0.5 ? 'Good Progress' : 'Keep Learning'}
               </Badge>
             </div>
           </CardContent>

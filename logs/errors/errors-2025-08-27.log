@@ -1,0 +1,50 @@
+[2025-08-27T06:58:31.423Z] ERROR [74bdf889-ee07-47b8-8c2d-c1ecf48b3bad] [START-SESSION] Failed to upload welcome audio
+{
+  "uploadError": {
+    "name": "StorageApiError",
+    "message": "Bucket not found",
+    "status": 400,
+    "statusCode": "404"
+  }
+}
+
+[2025-08-27T06:58:39.411Z] ERROR [74bdf889-ee07-47b8-8c2d-c1ecf48b3bad] [START-SESSION] Failed to create session
+{
+  "sessionError": {
+    "code": "PGRST204",
+    "details": null,
+    "hint": null,
+    "message": "Could not find the 'assessment_questions' column of 'lesson_sessions' in the schema cache"
+  }
+}
+
+[2025-08-27T07:21:59.341Z] ERROR [dc32ebcf-c476-4469-8328-35937ebd7b61] [START-SESSION] Failed to upload welcome audio
+{
+  "uploadError": {
+    "name": "StorageApiError",
+    "message": "Bucket not found",
+    "status": 400,
+    "statusCode": "404"
+  }
+}
+
+[2025-08-27T07:23:51.448Z] ERROR [819c8569-b455-4c77-99f2-74b3d3b0347e] [START-SESSION] Failed to upload welcome audio
+{
+  "uploadError": {
+    "name": "StorageApiError",
+    "message": "Bucket not found",
+    "status": 400,
+    "statusCode": "404"
+  }
+}
+
+[2025-08-27T07:39:15.563Z] ERROR [9caeb9f4-1f6d-4cd8-bef2-c8d5ccafe7fc] [START-SESSION] Failed to upload welcome audio
+{
+  "uploadError": {
+    "name": "StorageApiError",
+    "message": "Bucket not found",
+    "status": 400,
+    "statusCode": "404"
+  }
+}
+

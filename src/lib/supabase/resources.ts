@@ -6,6 +6,27 @@ const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+/**
+ * Convert relative file path to Supabase storage URL
+ * @param filePath Relative file path (e.g., 'resources/physics/kinematics/Kinematics.pdf')
+ * @returns Full Supabase storage URL
+ */
+function getStorageUrl(filePath: string): string {
+  if (!filePath) return '';
+  
+  // If it's already a full URL, return as is
+  if (filePath.startsWith('http')) {
+    return filePath;
+  }
+  
+  // Get public URL from Supabase storage
+  const { data } = supabase.storage
+    .from('resources')
+    .getPublicUrl(filePath);
+    
+  return data.publicUrl;
+}
+
 export interface Resource {
   id: string;
   subject_id: string;
@@ -50,7 +71,21 @@ export async function getResourcesByTopic(
       throw new Error(`Failed to fetch resources: ${error.message}`);
     }
 
-    return data || [];
+    // Convert relative file paths to proper storage URLs and add missing fields
+    const resourcesWithUrls: Resource[] = (data || []).map((resource: any) => ({
+      id: resource.id,
+      subject_id: subjectId,
+      topic_id: topicId,
+      title: resource.title,
+      description: resource.description,
+      file_url: getStorageUrl(resource.file_url),
+      content_type: resource.content_type,
+      content_text: resource.content_text,
+      created_at: new Date().toISOString(), // Placeholder since RPC doesn't return this
+      updated_at: new Date().toISOString()  // Placeholder since RPC doesn't return this
+    }));
+
+    return resourcesWithUrls;
   } catch (error) {
     console.error('Error in getResourcesByTopic:', error);
     throw error;
@@ -155,7 +190,7 @@ export async function uploadAudioFile(
     const filePath = `lessons/${userId}/${fileName}`;
     
     const { data, error } = await supabase.storage
-      .from('audio-lessons')
+      .from('audio')
       .upload(filePath, audioBuffer, {
         contentType: 'audio/mpeg',
         upsert: true
@@ -168,7 +203,7 @@ export async function uploadAudioFile(
 
     // Get public URL
     const { data: urlData } = supabase.storage
-      .from('audio-lessons')
+      .from('audio')
       .getPublicUrl(filePath);
 
     return urlData.publicUrl;

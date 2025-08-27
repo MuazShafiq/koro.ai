@@ -9,7 +9,7 @@ export default async function LoginPage() {
 
   // If there is a session, redirect to the dashboard
   if (session) {
-    redirect('/');
+    redirect('/dashboard');
   }
 
   return (
