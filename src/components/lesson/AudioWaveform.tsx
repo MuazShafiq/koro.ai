@@ -15,12 +15,14 @@ export function AudioWaveform({ audioRef, isPlaying }: AudioWaveformProps) {
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const [dataArray, setDataArray] = useState<Uint8Array | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
 
+  // Re-initialize audio context whenever audioRef.current changes
   useEffect(() => {
-    if (audioRef.current && !isInitialized) {
+    if (audioRef.current) {
       initializeAudioContext();
     }
-  }, [audioRef.current, isInitialized]);
+  }, [audioRef.current]);
 
   useEffect(() => {
     if (isPlaying && analyser && dataArray) {
@@ -35,8 +37,22 @@ export function AudioWaveform({ audioRef, isPlaying }: AudioWaveformProps) {
     return () => stopAnimation();
   }, [isPlaying, analyser, dataArray]);
 
+  // Cleanup audio context on unmount
+  useEffect(() => {
+    return () => {
+      if (audioContext) {
+        audioContext.close();
+      }
+    };
+  }, []);
+
   const initializeAudioContext = async () => {
     try {
+      // Clean up previous audio context if it exists
+      if (audioContext) {
+        await audioContext.close();
+      }
+      
       const context = new (window.AudioContext || (window as any).webkitAudioContext)();
       const analyserNode = context.createAnalyser();
       
@@ -45,18 +61,34 @@ export function AudioWaveform({ audioRef, isPlaying }: AudioWaveformProps) {
       const dataArray = new Uint8Array(bufferLength);
       
       if (audioRef.current) {
-        const source = context.createMediaElementSource(audioRef.current);
-        source.connect(analyserNode);
-        analyserNode.connect(context.destination);
+        try {
+          // Disconnect previous source if it exists
+          if (sourceRef.current) {
+            sourceRef.current.disconnect();
+          }
+          
+          const source = context.createMediaElementSource(audioRef.current);
+          source.connect(analyserNode);
+          analyserNode.connect(context.destination);
+          
+          sourceRef.current = source;
+          setAudioContext(context);
+          setAnalyser(analyserNode);
+          setDataArray(dataArray);
+          setIsInitialized(true);
+          
+          // Draw initial static waveform
+          drawStaticWaveform();
+        } catch (sourceError) {
+          console.warn('Could not create media element source:', sourceError);
+          // Still set up the context for potential future use
+          setAudioContext(context);
+          setAnalyser(analyserNode);
+          setDataArray(dataArray);
+          setIsInitialized(true);
+          drawStaticWaveform();
+        }
       }
-      
-      setAudioContext(context);
-      setAnalyser(analyserNode);
-      setDataArray(dataArray);
-      setIsInitialized(true);
-      
-      // Draw initial static waveform
-      drawStaticWaveform();
     } catch (error) {
       console.error('Error initializing audio context:', error);
       // Fallback to static waveform
