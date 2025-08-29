@@ -186,6 +186,27 @@ export async function convertTextToSpeech(
 }
 
 /**
+ * Validate API key availability and configuration
+ */
+export function validateApiKey(): { isValid: boolean; error?: string } {
+  if (!process.env.UNREAL_SPEECH_API_KEY) {
+    return {
+      isValid: false,
+      error: 'UNREAL_SPEECH_API_KEY environment variable is not set'
+    };
+  }
+  
+  if (process.env.UNREAL_SPEECH_API_KEY.trim() === '') {
+    return {
+      isValid: false,
+      error: 'UNREAL_SPEECH_API_KEY environment variable is empty'
+    };
+  }
+  
+  return { isValid: true };
+}
+
+/**
  * Get available voices from Unreal Speech
  */
 export async function getAvailableVoices(): Promise<string[]> {

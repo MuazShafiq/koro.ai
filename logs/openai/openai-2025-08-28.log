@@ -90,3 +90,26 @@
   }
 }
 
+[2025-08-28T11:50:50.110Z] INFO [02da7bcd-80aa-473b-8c3e-f04de0bf4c31] [OpenAI] Generating master lesson plan
+{}
+
+[2025-08-28T11:51:05.186Z] INFO [02da7bcd-80aa-473b-8c3e-f04de0bf4c31] [OpenAI] Master plan generation completed
+{
+  "model": "gpt-4o-2024-08-06",
+  "usage": {
+    "prompt_tokens": 973,
+    "completion_tokens": 1513,
+    "total_tokens": 2486,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  }
+}
+

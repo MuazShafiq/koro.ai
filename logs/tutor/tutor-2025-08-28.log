@@ -715,3 +715,182 @@
 [2025-08-28T10:34:24.032Z] INFO [299e5c28-4909-453c-9c45-2f83eb8521da] [GENERATE-QUESTION-AUDIO] Starting background audio generation
 {}
 
+[2025-08-28T11:50:44.725Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [START-SESSION] Starting new lesson session
+{}
+
+[2025-08-28T11:50:44.841Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [START-SESSION] Request data
+{
+  "subjectId": "e127cb71-acdb-433e-8b6d-9777a80a7511",
+  "topicId": "a49fddc8-595f-4b1e-b0b9-1f4e3187b0a8"
+}
+
+[2025-08-28T11:50:44.887Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [START-SESSION] Authenticating user
+{}
+
+[2025-08-28T11:50:47.145Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [START-SESSION] User authenticated
+{
+  "userId": "f9087ec2-2eb0-422b-b73b-01535ef9858c"
+}
+
+[2025-08-28T11:50:47.147Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Database] Fetching subject data
+{
+  "subjectId": "e127cb71-acdb-433e-8b6d-9777a80a7511"
+}
+
+[2025-08-28T11:50:47.948Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Database] Subject found
+{
+  "name": "Physics",
+  "hasDescription": true
+}
+
+[2025-08-28T11:50:47.950Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Database] Fetching topic data
+{
+  "topicId": "a49fddc8-595f-4b1e-b0b9-1f4e3187b0a8"
+}
+
+[2025-08-28T11:50:48.673Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Database] Topic found
+{
+  "topicName": "Kinematics"
+}
+
+[2025-08-28T11:50:48.689Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Database] Fetching resources
+{
+  "subjectId": "e127cb71-acdb-433e-8b6d-9777a80a7511",
+  "topicId": "a49fddc8-595f-4b1e-b0b9-1f4e3187b0a8"
+}
+
+[2025-08-28T11:50:49.402Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Database] Resources fetched
+{
+  "count": 1,
+  "titles": [
+    "Kinematics Fundamentals"
+  ]
+}
+
+[2025-08-28T11:50:49.406Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [START-SESSION] Preparing lesson planning context
+{}
+
+[2025-08-28T11:50:49.408Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [START-SESSION] Context prepared
+{
+  "resourceContextLength": 156,
+  "topicContext": "Topic: Kinematics"
+}
+
+[2025-08-28T11:50:49.411Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [START-SESSION] Getting master lesson plan
+{}
+
+[2025-08-28T11:50:49.415Z] INFO [02da7bcd-80aa-473b-8c3e-f04de0bf4c31] [MASTER-LESSON-PLAN] Getting or creating master plan
+{
+  "subjectId": "e127cb71-acdb-433e-8b6d-9777a80a7511",
+  "topicId": "a49fddc8-595f-4b1e-b0b9-1f4e3187b0a8",
+  "subjectName": "Kinematics",
+  "topicName": "Physics"
+}
+
+[2025-08-28T11:50:50.106Z] INFO [02da7bcd-80aa-473b-8c3e-f04de0bf4c31] [MASTER-LESSON-PLAN] Creating new master plan
+{}
+
+[2025-08-28T11:51:06.578Z] INFO [02da7bcd-80aa-473b-8c3e-f04de0bf4c31] [MASTER-LESSON-PLAN] Master plan created and saved
+{
+  "planId": "6cecd2a8-fb78-4796-ae5a-2b2b8c2ab363",
+  "chunkCount": "4"
+}
+
+[2025-08-28T11:51:06.581Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Lesson] Master lesson plan retrieved
+{
+  "planId": "6cecd2a8-fb78-4796-ae5a-2b2b8c2ab363",
+  "chunksCount": 4,
+  "conceptsCount": 4,
+  "estimatedDuration": 45
+}
+
+[2025-08-28T11:51:06.584Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Lesson] Converting master plan to enhanced format
+{}
+
+[2025-08-28T11:51:06.586Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Lesson] Generating assessment questions
+{}
+
+[2025-08-28T11:51:06.732Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Lesson] Insufficient assessment questions, generating more
+{
+  "currentCount": 1
+}
+
+[2025-08-28T11:51:08.622Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Lesson] Additional questions generated
+{
+  "newCount": 2
+}
+
+[2025-08-28T11:51:08.624Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Lesson] Converting criteria to engaging questions
+{}
+
+[2025-08-28T11:51:10.694Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Lesson] Question enhanced
+{
+  "original": "Ability to solve kinematic problems and explain th",
+  "enhanced": "Can you solve the following kinematic problem and "
+}
+
+[2025-08-28T11:51:10.697Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [UnrealSpeech] Generating welcome message audio
+{}
+
+[2025-08-28T11:51:16.845Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Storage] Welcome audio uploaded
+{
+  "url": "https://sqlxxvrpmzxjyehbpeuw.supabase.co/storage/v1/object/public/audio/welcome_67db44b4-f129-44eb-a645-d538c742b5ab.mp3"
+}
+
+[2025-08-28T11:51:16.892Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Storage] Generating assessment question audio
+{
+  "questionCount": 2
+}
+
+[2025-08-28T11:51:36.850Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Database] Creating lesson session
+{}
+
+[2025-08-28T11:51:38.087Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Database] Session created successfully
+{
+  "sessionId": "22a27e28-66f6-4974-a5b8-8e01c9ac295b",
+  "phase": "assessment"
+}
+
+[2025-08-28T11:51:38.089Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Lesson] Initializing progress tracking
+{}
+
+[2025-08-28T11:51:38.094Z] INFO [2df3ce42-9a63-4b81-b469-a873f16063d7] [PROGRESS-SERVICE] Analyzing RAG content
+{
+  "subject": "Physics"
+}
+
+[2025-08-28T11:51:38.440Z] INFO [2df3ce42-9a63-4b81-b469-a873f16063d7] [PROGRESS-SERVICE] RAG content analysis completed
+{
+  "conceptsFound": 0,
+  "equationsFound": 0,
+  "sectionsFound": 0,
+  "complexity": "beginner",
+  "duration": 2
+}
+
+[2025-08-28T11:51:38.598Z] INFO [10f54a88-fe0d-409b-84c0-2d241ab2c10b] [PROGRESS-SERVICE] Creating lesson plan
+{
+  "sessionId": "22a27e28-66f6-4974-a5b8-8e01c9ac295b"
+}
+
+[2025-08-28T11:51:39.790Z] INFO [10f54a88-fe0d-409b-84c0-2d241ab2c10b] [PROGRESS-SERVICE] Lesson plan created
+{
+  "plannedConcepts": 0,
+  "plannedEquations": 0,
+  "estimatedChunks": 1
+}
+
+[2025-08-28T11:51:39.982Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [Lesson] Progress tracking initialized
+{
+  "sessionId": "22a27e28-66f6-4974-a5b8-8e01c9ac295b",
+  "conceptsCount": 0
+}
+
+[2025-08-28T11:51:40.315Z] INFO [67db44b4-f129-44eb-a645-d538c742b5ab] [START-SESSION] Session created successfully
+{
+  "sessionId": "22a27e28-66f6-4974-a5b8-8e01c9ac295b",
+  "chunksCount": 4,
+  "questionsCount": 2,
+  "hasWelcomeAudio": true
+}
+

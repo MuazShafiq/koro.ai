@@ -90,6 +90,9 @@ export function AITutorInterface({
   const [playbackSpeed, setPlaybackSpeed] = useState([1]);
   const [currentChunkIndex, setCurrentChunkIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
+  const [userHasInteracted, setUserHasInteracted] = useState(false);
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+  const [showAudioPrompt, setShowAudioPrompt] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -110,6 +113,36 @@ export function AITutorInterface({
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const enableAudioContext = async () => {
+    if (!userHasInteracted) {
+      try {
+        // Create and resume audio context
+        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        if (ctx.state === 'suspended') {
+          await ctx.resume();
+        }
+        setAudioContext(ctx);
+        setUserHasInteracted(true);
+        setShowAudioPrompt(false);
+        
+        // Try to play any pending audio
+        if (currentAudio && currentAudio.paused) {
+          try {
+            await currentAudio.play();
+          } catch (error) {
+            console.warn('Could not auto-play audio after user interaction:', error);
+          }
+        }
+        
+        // Show success message
+        toast.success('Audio enabled! Audio will now play automatically.');
+      } catch (error) {
+        console.error('Failed to enable audio context:', error);
+        toast.error('Failed to enable audio. Please try clicking again.');
+      }
+    }
   };
 
   const initializeSession = async () => {
@@ -171,26 +204,54 @@ export function AITutorInterface({
 
         if (sessionInfo.welcomeAudioUrl) {
           setTimeout(() => {
-            // Create welcome audio with proper event handling
-            if (currentAudio) {
-              currentAudio.pause();
-            }
-            
-            const welcomeAudio = new Audio(sessionInfo.welcomeAudioUrl!);
-            welcomeAudio.playbackRate = playbackSpeed[0];
-            
-            welcomeAudio.onplay = () => setIsPlaying(true);
-            welcomeAudio.onpause = () => setIsPlaying(false);
-            welcomeAudio.onended = () => {
+            // Use playAudio function to handle welcome audio with proper user interaction checks
+            const originalOnEnded = () => {
               setIsPlaying(false);
               setCurrentAudio(null);
               // Add first assessment question only after welcome audio completely ends
               addFirstAssessmentQuestion();
             };
             
-            setCurrentAudio(welcomeAudio);
-            audioRef.current = welcomeAudio;
-            welcomeAudio.play();
+            // Store the onended handler for later use
+            const playWelcomeAudio = async () => {
+              if (currentAudio) {
+                currentAudio.pause();
+              }
+              
+              const welcomeAudio = new Audio(sessionInfo.welcomeAudioUrl!);
+              welcomeAudio.playbackRate = playbackSpeed[0];
+              
+              welcomeAudio.onplay = () => setIsPlaying(true);
+              welcomeAudio.onpause = () => setIsPlaying(false);
+              welcomeAudio.onended = originalOnEnded;
+              
+              welcomeAudio.onerror = (error) => {
+                console.error('Welcome audio playback error:', error);
+                setIsPlaying(false);
+                setCurrentAudio(null);
+                // Still add first question even if audio fails
+                addFirstAssessmentQuestion();
+              };
+              
+              setCurrentAudio(welcomeAudio);
+              audioRef.current = welcomeAudio;
+              
+              try {
+                // Check if user has interacted, if not show prompt
+                if (!userHasInteracted) {
+                  setShowAudioPrompt(true);
+                  return;
+                }
+                
+                await welcomeAudio.play();
+              } catch (error) {
+                console.warn('Welcome audio auto-play blocked:', error);
+                // Show prompt for user to enable audio
+                setShowAudioPrompt(true);
+              }
+            };
+            
+            playWelcomeAudio();
           }, 500);
         } else {
           // If no welcome audio, add first question after a short delay
@@ -480,7 +541,7 @@ export function AITutorInterface({
     }
   };
 
-  const playAudio = (audioUrl: string) => {
+  const playAudio = async (audioUrl: string) => {
     if (currentAudio) {
       currentAudio.pause();
     }
@@ -495,9 +556,29 @@ export function AITutorInterface({
       setCurrentAudio(null);
     };
     
+    audio.onerror = (error) => {
+      console.error('Audio playback error:', error);
+      setIsPlaying(false);
+      setCurrentAudio(null);
+      toast.error('Failed to play audio');
+    };
+    
     setCurrentAudio(audio);
     audioRef.current = audio;
-    audio.play();
+    
+    try {
+      // Check if user has interacted, if not show prompt
+      if (!userHasInteracted) {
+        setShowAudioPrompt(true);
+        return;
+      }
+      
+      await audio.play();
+    } catch (error) {
+      console.warn('Audio auto-play blocked:', error);
+      // Show prompt for user to enable audio
+      setShowAudioPrompt(true);
+    }
   };
 
   const togglePlayPause = () => {
@@ -518,7 +599,10 @@ export function AITutorInterface({
   };
 
   return (
-    <div className="h-screen bg-background flex flex-col">
+    <div 
+      className="h-screen bg-background flex flex-col" 
+      onClick={!userHasInteracted ? enableAudioContext : undefined}
+    >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
         <div className="flex items-center space-x-3">
@@ -670,6 +754,27 @@ export function AITutorInterface({
           </div>
         </div>
       </div>
+      
+      {/* Audio Prompt Overlay */}
+      {showAudioPrompt && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-background p-6 rounded-lg shadow-lg max-w-md mx-4">
+            <div className="flex items-center space-x-3 mb-4">
+              <Volume2 className="h-6 w-6 text-primary" />
+              <h3 className="text-lg font-semibold">Enable Audio</h3>
+            </div>
+            <p className="text-muted-foreground mb-4">
+              Click anywhere to enable audio playback for the lesson.
+            </p>
+            <Button 
+              onClick={enableAudioContext} 
+              className="w-full"
+            >
+              Enable Audio
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
