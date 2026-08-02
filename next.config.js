@@ -1,22 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
+    // Remove after the inherited lint debt listed in ISSUES.md is cleared.
     ignoreDuringBuilds: true,
   },
-  typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
-    ignoreBuildErrors: false,
-  },
-  // Ensure server-side rendering and API routes are enabled
-  output: undefined, // Remove any static export configuration
-  trailingSlash: false,
-  // Force Next.js to use src/app directory
-  pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
 };
 
 module.exports = nextConfig;

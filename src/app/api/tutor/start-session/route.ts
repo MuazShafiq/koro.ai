@@ -1,17 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { after, NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { withAuthRetry, withDatabaseRetry } from '@/utils/supabase/retry';
-import OpenAI from 'openai';
 import { logger } from '@/lib/logger';
-import { convertTextToSpeech } from '@/lib/services/unrealSpeech';
-import { progressService } from '@/lib/services/progressService';
-import { equationExtractor } from '@/lib/services/equationExtractor';
-import tutorVoiceSOP from '@/lib/tutor-voice-sop.json';
+import { ProgressService } from '@/lib/services/progressService';
 import { MasterLessonPlanService } from '@/lib/services/masterLessonPlanService';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { isLocalMode } from '@/lib/local-mode';
+import { createLocalTutorSession } from '@/lib/local-tutor';
+import type { Json } from '@/utils/supabase/database.types';
+import { formatAssessmentQuestion } from '@/lib/tutor-text';
 
 export async function POST(request: NextRequest) {
   const requestId = crypto.randomUUID();
@@ -27,6 +23,13 @@ export async function POST(request: NextRequest) {
         { error: 'Subject ID is required' },
         { status: 400 }
       );
+    }
+
+    if (isLocalMode()) {
+      const session = await createLocalTutorSession(subjectId, topicId);
+      return session
+        ? NextResponse.json(session)
+        : NextResponse.json({ error: 'Subject not found' }, { status: 404 });
     }
 
     const supabase = await createClient();
@@ -98,7 +101,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get relevant resources using RAG (only if topic is specified)
-    let resources = [];
+    let resources: Array<{ title: string; content_text: string | null }> = [];
     if (topicId) {
       logger.database('Fetching resources', { subjectId, topicId }, requestId);
       const { data: resourcesData, error: resourcesError } = await supabase
@@ -127,7 +130,7 @@ export async function POST(request: NextRequest) {
     logger.info('START-SESSION', 'Preparing lesson planning context', {}, requestId);
     const resourceContext = resources
       ?.map((r: any) => `Title: ${r.title}\nContent: ${r.content_text?.substring(0, 1000) || 'No content available'}`)
-      .join('\n\n') || 'No resources available';
+      .join('\n\n') || 'No external resources are attached. Use accurate general knowledge.';
 
     const topicContext = topic ? `Topic: ${topic.name}` : 'General subject overview';
     
@@ -138,7 +141,8 @@ export async function POST(request: NextRequest) {
 
     // Get or create master lesson plan
     logger.info('START-SESSION', 'Getting master lesson plan', {}, requestId);
-    const masterLessonPlanService = new MasterLessonPlanService();
+    const masterLessonPlanService = new MasterLessonPlanService(supabase);
+    const progressService = new ProgressService(supabase);
     const topicName = topic?.name || 'General Overview';
     const subjectName = subject.name;
     
@@ -147,8 +151,8 @@ export async function POST(request: NextRequest) {
       masterPlan = await masterLessonPlanService.getOrCreateMasterPlan(
         subjectId,
         topicId,
-        topicName,
         subjectName,
+        topicName,
         resourceContext
       );
       
@@ -187,177 +191,29 @@ export async function POST(request: NextRequest) {
       }))
     };
 
-    // Generate and enhance assessment questions
-    logger.lesson('Generating assessment questions', {}, requestId);
-    let assessmentQuestions = masterPlan.assessmentCriteria || [];
-    
-    // Ensure we have at least 2 questions
-    if (assessmentQuestions.length < 2) {
-      logger.lesson('Insufficient assessment questions, generating more', {
-        currentCount: assessmentQuestions.length
-      }, requestId);
-      
-      const additionalQuestionsNeeded = 2 - assessmentQuestions.length;
-      const prompt = `Generate ${additionalQuestionsNeeded} assessment questions for the topic "${topicName}" in ${subjectName}.
-
-Context: ${resourceContext.substring(0, 1000)}
-
-Return only the questions as a JSON array of strings. Each question should assess understanding of key concepts.`;
-      
-      try {
-        const completion = await openai.chat.completions.create({
-          model: "gpt-4",
-          messages: [{ role: "user", content: prompt }],
-          temperature: 0.7,
-        });
-        
-        const additionalQuestions = JSON.parse(completion.choices[0].message.content || '[]');
-        assessmentQuestions = [...assessmentQuestions, ...additionalQuestions];
-        logger.lesson('Additional questions generated', {
-          newCount: assessmentQuestions.length
-        }, requestId);
-      } catch (error) {
-        logger.error('START-SESSION', 'Failed to generate additional questions', { error }, requestId);
-        // Continue with existing questions
-      }
-    }
-
-    // Convert criteria statements to engaging questions using AI
-    logger.lesson('Converting criteria to engaging questions', {}, requestId);
-    const enhancedQuestions = [];
-    
-    for (const question of assessmentQuestions) {
-      if (typeof question === 'string' && !question.includes('?')) {
-        // This looks like a criteria statement, convert to question
-        try {
-          const prompt = `Convert this learning criteria into an engaging assessment question:
-
-"${question}"
-
-Return only the question, make it conversational and engaging for a student.`;
-          
-          const completion = await openai.chat.completions.create({
-            model: "gpt-4",
-            messages: [{ role: "user", content: prompt }],
-            temperature: 0.7,
-          });
-          
-          const enhancedQuestion = completion.choices[0].message.content?.trim() || question;
-          enhancedQuestions.push(enhancedQuestion);
-          logger.lesson('Question enhanced', {
-            original: question.substring(0, 50),
-            enhanced: enhancedQuestion.substring(0, 50)
-          }, requestId);
-        } catch (error) {
-          logger.error('START-SESSION', 'Failed to enhance question', { error }, requestId);
-          enhancedQuestions.push(question);
-        }
-      } else {
-        enhancedQuestions.push(question);
-      }
-    }
-
-    // Generate welcome message audio
-    logger.unrealSpeech('Generating welcome message audio', {}, requestId);
-    const welcomeMessage = `Welcome to your ${subjectName} lesson on ${topicName}! I'm excited to guide you through this learning journey. We'll start with a quick assessment to understand your current knowledge, then dive into the core concepts. Let's begin!`;
-    
-    let welcomeAudioUrl = null;
-    try {
-      const ttsResult = await convertTextToSpeech({
-        text: welcomeMessage,
-        voiceId: tutorVoiceSOP.voice_delivery_instructions.voice_parameters.unreal_speech_settings.voiceId,
-        contentType: 'welcome',
-        context: `welcome message for session ${requestId}`
-      });
-      
-      if (!ttsResult.success) {
-        throw new Error(ttsResult.error || 'TTS conversion failed');
-      }
-      
-      const audioBuffer = ttsResult.audioBuffer;
-      
-      if (!audioBuffer) {
-        throw new Error('No audio buffer received from TTS');
-      }
-      
-      // Upload to Supabase Storage
-      const fileName = `welcome_${requestId}.mp3`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('audio')
-        .upload(fileName, audioBuffer, {
-          contentType: 'audio/mpeg',
-          cacheControl: '3600'
-        });
-      
-      if (uploadError) {
-        logger.error('START-SESSION', 'Failed to upload welcome audio', { uploadError }, requestId);
-      } else {
-        const { data: urlData } = supabase.storage
-          .from('audio')
-          .getPublicUrl(fileName);
-        welcomeAudioUrl = urlData.publicUrl;
-        logger.storage('Welcome audio uploaded', { url: welcomeAudioUrl }, requestId);
-      }
-    } catch (error) {
-      logger.error('START-SESSION', 'Failed to generate welcome audio', { error }, requestId);
-    }
-
-    // Generate audio for assessment questions
-    logger.storage('Generating assessment question audio', {
-      questionCount: enhancedQuestions.length
-    }, requestId);
-    
-    const questionsWithAudio = [];
-    for (let i = 0; i < enhancedQuestions.length; i++) {
-      const question = enhancedQuestions[i];
-      let audioUrl = null;
-      
-      try {
-        const ttsResult = await convertTextToSpeech({
-          text: question,
-          voiceId: tutorVoiceSOP.voice_delivery_instructions.voice_parameters.unreal_speech_settings.voiceId,
-          contentType: 'assessment',
-          context: `assessment question ${i + 1} for session ${requestId}`
-        });
-        
-        if (!ttsResult.success) {
-          throw new Error(ttsResult.error || 'TTS conversion failed');
-        }
-        
-        const audioBuffer = ttsResult.audioBuffer;
-         
-         if (!audioBuffer) {
-           throw new Error('No audio buffer received from TTS');
-         }
-         
-         const fileName = `question_${requestId}_${i}.mp3`;
-         const { data: uploadData, error: uploadError } = await supabase.storage
-           .from('audio')
-           .upload(fileName, audioBuffer, {
-             contentType: 'audio/mpeg',
-             cacheControl: '3600'
-           });
-        
-        if (!uploadError) {
-          const { data: urlData } = supabase.storage
-            .from('audio')
-            .getPublicUrl(fileName);
-          audioUrl = urlData.publicUrl;
-        }
-      } catch (error) {
-        logger.error('START-SESSION', 'Failed to generate question audio', {
-          questionIndex: i,
-          error
-        }, requestId);
-      }
-      
-      questionsWithAudio.push({
-        id: `q_${i + 1}`,
-        question,
-        audioUrl,
-        order: i + 1
-      });
-    }
+    // Keep the startup path to one AI operation. Rewriting every criterion with a
+    // separate request added latency without materially improving the questions.
+    const assessmentCriteria = (masterPlan.assessmentCriteria || [])
+      .filter((criterion): criterion is string => (
+        typeof criterion === 'string' && criterion.trim().length > 0
+      ));
+    const questionCandidates = [
+      ...assessmentCriteria,
+      `What do you already know about ${topicName}?`,
+      `Which part of ${topicName} feels least clear to you?`,
+    ];
+    const enhancedQuestions = Array.from(new Set(
+      questionCandidates
+        .map(formatAssessmentQuestion)
+        .filter(Boolean),
+    )).slice(0, Math.max(2, Math.min(3, assessmentCriteria.length || 2)));
+    const questionsWithAudio = enhancedQuestions.map((question, index) => ({
+      id: `q_${index + 1}`,
+      question,
+      audioUrl: null,
+      order: index + 1,
+    }));
+    const welcomeAudioUrl = null;
 
     // Create lesson session with current_phase set to 'assessment'
     logger.database('Creating lesson session', {}, requestId);
@@ -369,8 +225,8 @@ Return only the question, make it conversational and engaging for a student.`;
         topic_id: topicId || null,
         current_phase: 'assessment',
         status: 'active',
-        lesson_plan: enhancedLessonPlan,
-        assessment_questions: questionsWithAudio,
+        lesson_plan: enhancedLessonPlan as unknown as Json,
+        assessment_questions: questionsWithAudio as unknown as Json,
         student_responses: [],
         current_chunk_index: 0,
         welcome_audio_url: welcomeAudioUrl
@@ -391,26 +247,33 @@ Return only the question, make it conversational and engaging for a student.`;
       phase: session.current_phase
     }, requestId);
 
-    // Initialize progress tracking by analyzing RAG content
-    logger.lesson('Initializing progress tracking', {}, requestId);
-    try {
-      // First analyze the RAG content
-      const ragAnalysis = await progressService.analyzeRAGContent(resourceContext, subjectName);
-      
-      // Then create lesson plan based on analysis
-      const progressLessonPlan = await progressService.createLessonPlan(
-        session.id,
-        ragAnalysis
-      );
-      
-      logger.lesson('Progress tracking initialized', {
-        sessionId: session.id,
-        conceptsCount: progressLessonPlan.plannedConcepts?.length || 0
-      }, requestId);
-    } catch (error) {
-      logger.error('START-SESSION', 'Failed to initialize progress tracking', { error }, requestId);
-      // Continue without progress tracking
-    }
+    // Progress analysis is useful, but it must not hold the interface hostage.
+    // Next.js keeps this work alive after the response on Vercel.
+    after(async () => {
+      logger.lesson('Initializing progress tracking', {}, requestId);
+      try {
+        const ragAnalysis = await progressService.analyzeRAGContent(
+          resourceContext,
+          subjectName,
+        );
+        const progressLessonPlan = await progressService.createLessonPlan(
+          session.id,
+          ragAnalysis,
+        );
+
+        logger.lesson('Progress tracking initialized', {
+          sessionId: session.id,
+          conceptsCount: progressLessonPlan.plannedConcepts?.length || 0,
+        }, requestId);
+      } catch (error) {
+        logger.error(
+          'START-SESSION',
+          'Failed to initialize progress tracking',
+          { error },
+          requestId,
+        );
+      }
+    });
 
     // Return comprehensive session data
     logger.info('START-SESSION', 'Session created successfully', {

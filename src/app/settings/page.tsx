@@ -22,8 +22,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { ThemeEngine } from '@/components/theme/ThemeEngine';
 import { useAppStore } from '@/lib/store';
+import { isLocalMode } from '@/lib/local-mode';
+import { LocalSettingsPage } from '@/components/settings/LocalSettingsPage';
 
 export default function SettingsPage() {
+  return isLocalMode() ? <LocalSettingsPage /> : <HostedSettingsPage />;
+}
+
+function HostedSettingsPage() {
   const { userProgress } = useAppStore();
 
   return (

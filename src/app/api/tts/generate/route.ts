@@ -1,17 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convertTextToSpeech } from '@/lib/services/unrealSpeech';
-import { createClient } from '@supabase/supabase-js';
+import { convertTextToSpeech, type ContentType } from '@/lib/services/cloudflareSpeech';
+import { createClient as createSupabaseAdminClient } from '@supabase/supabase-js';
+import { createClient as createServerClient } from '@/utils/supabase/server';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+const supabase = createSupabaseAdminClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321',
+  process.env.SUPABASE_SECRET_KEY ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    'local-mode'
 );
+
+async function requireUser() {
+  const client = await createServerClient();
+  const { data: { user } } = await client.auth.getUser();
+  return user;
+}
 
 export async function GET(request: NextRequest) {
   try {
+    if (!await requireUser()) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const text = searchParams.get('text');
-    const voiceId = searchParams.get('voice') || 'Scarlett';
+    const voiceId = searchParams.get('voice') || 'asteria';
     const contentType = searchParams.get('type') || 'general';
 
     if (!text) {
@@ -29,7 +42,7 @@ export async function GET(request: NextRequest) {
       speed: '0',
       pitch: '1',
       codec: 'libmp3lame',
-      contentType: contentType as any,
+      contentType: contentType as ContentType,
       context: 'TTS API request'
     });
 
@@ -79,8 +92,12 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!await requireUser()) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
     const body = await request.json();
-    const { text, voiceId = 'Scarlett', contentType = 'general' } = body;
+    const { text, voiceId = 'asteria', contentType = 'general' } = body;
 
     if (!text) {
       return NextResponse.json(

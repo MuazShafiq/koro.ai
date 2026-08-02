@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, ReactElement } from 'react';
+import { useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
@@ -31,15 +31,18 @@ export function Blackboard({ entries }: BlackboardProps) {
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Auto-scroll to bottom when entries update
-    setTimeout(() => {
+    const frame = requestAnimationFrame(() => {
       if (scrollAreaRef.current) {
         const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
         if (scrollContainer) {
-          scrollContainer.scrollTop = scrollContainer.scrollHeight;
+          scrollContainer.scrollTo({
+            top: scrollContainer.scrollHeight,
+            behavior: 'smooth',
+          });
         }
       }
-    }, 100);
+    });
+    return () => cancelAnimationFrame(frame);
   }, [entries]);
 
   const getItemIcon = (type: string) => {

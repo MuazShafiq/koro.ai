@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useSupabase } from '../../utils/supabase/provider';
 import { Database } from '../../utils/supabase/database.types';
+import { isLocalMode } from '@/lib/local-mode';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
@@ -62,6 +63,10 @@ export function UserProfile() {
   }, [supabase, router]);
 
   const handleSignOut = async () => {
+    if (isLocalMode()) {
+      router.push('/settings');
+      return;
+    }
     await supabase.auth.signOut();
     router.push('/login');
     router.refresh();
@@ -169,8 +174,12 @@ export function UserProfile() {
               <Button type="submit" disabled={saving}>
                 {saving ? 'Saving...' : 'Save Profile'}
               </Button>
-              <Button type="button" variant="destructive" onClick={handleSignOut}>
-                Sign Out
+              <Button
+                type="button"
+                variant={isLocalMode() ? 'outline' : 'destructive'}
+                onClick={handleSignOut}
+              >
+                {isLocalMode() ? 'Manage Local Data' : 'Sign Out'}
               </Button>
             </div>
           </div>

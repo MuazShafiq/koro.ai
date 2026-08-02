@@ -1,71 +1,8 @@
-# VERCEL IGNORE - EXCLUDE UNNECESSARY FILES WHILE KEEPING CORE APP FILES
-
-# Dependencies
-node_modules
-
-# Build outputs
-.next
-build
-dist
-out
-
-# Development files
-.git
-.gitignore
-.trae
+.local-run/
+.koro-data/
+.trae/
 logs/
-*.log
-test-*.js
-create-test-user.js
-calculate-deployment-size.js
-temp_*
-
-# Database files
-*.sql
 supabase/
-fix_function.sql
-refresh_schema.sql
-
-# Documentation
-*.md
 resources/
-sidebar.md
-GIT_WORKFLOW_GUIDE.md
-git-workflow.bat
-
-# Development config files
-eslint.config.mjs
-components.json
-
-# Environment (keep .env.example but allow .env.local for Vercel)
-.env.example
-
-# IDE
-.vscode
-.idea
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Temporary
-*.tmp
-*.temp
-*.backup
-*.bak
+*.log
 *.tsbuildinfo
-
-# Archives
-*.zip
-*.tar.gz
-*.rar
-
-# Keep all essential files:
-# - src/ (all source code including utils/supabase/)
-# - package.json and package-lock.json
-# - tsconfig.json (for path mapping)
-# - next.config.js/ts
-# - vercel.json
-# - public/ assets

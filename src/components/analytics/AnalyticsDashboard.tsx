@@ -242,7 +242,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ classNam
     description: achievement.description,
     icon: achievement.icon || '🏆',
     date: new Date(achievement.created_at).toLocaleDateString(),
-    rarity: (achievement.rarity as 'bronze' | 'silver' | 'gold') || 'bronze' as const,
+    rarity: 'bronze' as const,
   })) : [
     {
       id: 1,

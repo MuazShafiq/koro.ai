@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Koro.ai
 
-## Getting Started
+Koro.ai is a voice-first tutoring application built with Next.js. The deployed
+product uses Vercel, Supabase, and Cloudflare Workers AI. Localhost runs the
+same hosted flow for development; it is not a separate product.
 
-First, run the development server:
+## Local development
 
-```bash
+Requirements: Node.js 20+, npm, a Supabase project, and Cloudflare Workers AI
+credentials.
+
+```powershell
+npm install
+Copy-Item .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000>. Sign up or log in, choose a subject and topic,
+then start a tutor session.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Required `.env.local` values:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```dotenv
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+SUPABASE_SECRET_KEY=
 
-## Learn More
+AI_PROVIDER=cloudflare
+CLOUDFLARE_ACCOUNT_ID=
+CLOUDFLARE_AI_TOKEN=
+CLOUDFLARE_AI_MODEL=@cf/meta/llama-3.1-8b-instruct-fast
+```
 
-To learn more about Next.js, take a look at the following resources:
+Cloudflare supplies both lesson generation and Aura speech. Supabase stores
+accounts, tutor state, progress, resources, and generated audio. The app is
+designed to remain within provider free allocations, but those allocations and
+limits belong to the providers and can change.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Database setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The canonical schema is in `supabase/migrations/`. Link the intended Supabase
+project and push it:
 
-## Deploy on Vercel
+```powershell
+npx supabase login
+npx supabase link --project-ref YOUR_PROJECT_REF
+npx supabase db push
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Never expose `SUPABASE_SECRET_KEY` or `CLOUDFLARE_AI_TOKEN` through a
+`NEXT_PUBLIC_` variable.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
+
+Create a Vercel project for this repository and add the same hosted environment
+variables in Vercel. Use the production Supabase URL and keys. The application
+does not require a local model or a long-running local process after deployment.
+
+An optional offline fallback still exists behind `KORO_LOCAL_MODE=true` and
+`NEXT_PUBLIC_KORO_LOCAL_MODE=true`. It is isolated from the normal deployment
+path and is not enabled by default.
+
+Outstanding engineering and release work is tracked in [ISSUES.md](./ISSUES.md).

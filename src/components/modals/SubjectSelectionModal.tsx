@@ -20,6 +20,8 @@ interface Subject {
   icon: React.ReactNode;
   gradient: string;
   description: string;
+  databaseIcon: string;
+  starterTopics: string[];
 }
 
 const availableSubjects: Subject[] = [
@@ -28,28 +30,36 @@ const availableSubjects: Subject[] = [
     name: 'Physics',
     icon: <Atom className="w-8 h-8 text-white" />,
     gradient: 'from-emerald-400 to-green-500',
-    description: 'Mechanics, Thermodynamics, Waves'
+    description: 'Mechanics, Thermodynamics, Waves',
+    databaseIcon: '⚛️',
+    starterTopics: ['Kinematics', "Newton's Laws", 'Energy and Momentum'],
   },
   {
     id: 'mathematics',
     name: 'Mathematics',
     icon: <Calculator className="w-8 h-8 text-white" />,
     gradient: 'from-blue-400 to-cyan-500',
-    description: 'Algebra, Calculus, Statistics'
+    description: 'Algebra, Calculus, Statistics',
+    databaseIcon: '📐',
+    starterTopics: ['Linear Equations', 'Functions', 'Calculus'],
   },
   {
     id: 'chemistry',
     name: 'Chemistry',
     icon: <FlaskConical className="w-8 h-8 text-white" />,
     gradient: 'from-purple-400 to-violet-500',
-    description: 'Organic, Inorganic, Physical'
+    description: 'Organic, Inorganic, Physical',
+    databaseIcon: '🧪',
+    starterTopics: ['Atomic Structure', 'Chemical Bonding', 'Stoichiometry'],
   },
   {
     id: 'biology',
     name: 'Biology',
     icon: <Dna className="w-8 h-8 text-white" />,
     gradient: 'from-orange-400 to-red-500',
-    description: 'Cell Biology, Genetics, Ecology'
+    description: 'Cell Biology, Genetics, Ecology',
+    databaseIcon: '🧬',
+    starterTopics: ['Cell Biology', 'Genetics', 'Ecology'],
   }
 ];
 
@@ -124,8 +134,9 @@ export function SubjectSelectionModal({ isOpen, onClose, onSubjectsAdded }: Subj
         return {
           name: subject?.name || '',
           description: subject?.description || '',
-          icon: subject?.id || '',
+          icon: subject?.databaseIcon || '📚',
           gradient: subject?.gradient || '',
+          total_topics: subject?.starterTopics.length || 0,
           user_id: user.id,
           created_at: new Date().toISOString()
         };
@@ -142,6 +153,31 @@ export function SubjectSelectionModal({ isOpen, onClose, onSubjectsAdded }: Subj
         console.error('Error adding subjects:', insertError);
         toast.error(`Failed to add subjects: ${insertError.message}`);
         return;
+      }
+
+      if (insertedData) {
+        const starterTopics = insertedData.flatMap((insertedSubject) => {
+          const template = availableSubjects.find(
+            (subject) => subject.name === insertedSubject.name,
+          );
+          return (template?.starterTopics || []).map((name, index) => ({
+            name,
+            subject_id: insertedSubject.id,
+            progress: 0,
+            completed: false,
+            order_index: index,
+            created_at: new Date().toISOString(),
+          }));
+        });
+
+        if (starterTopics.length > 0) {
+          const { error: topicError } = await supabase
+            .from('topics')
+            .insert(starterTopics);
+          if (topicError) {
+            throw new Error(`Subject added, but starter topics failed: ${topicError.message}`);
+          }
+        }
       }
 
       console.log('Successfully inserted subjects:', insertedData);

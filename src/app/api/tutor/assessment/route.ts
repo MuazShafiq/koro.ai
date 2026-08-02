@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import OpenAI from 'openai';
+import { hostedAI as openai, hostedAIModel } from '@/lib/services/hostedAI';
 import { logger } from '@/lib/logger';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { isLocalMode } from '@/lib/local-mode';
+import { assessLocalTutorSession } from '@/lib/local-tutor';
 
 export async function POST(request: NextRequest) {
   const requestId = crypto.randomUUID();
@@ -29,6 +27,13 @@ export async function POST(request: NextRequest) {
         { error: 'Session ID and answers array are required' },
         { status: 400 }
       );
+    }
+
+    if (isLocalMode()) {
+      const result = assessLocalTutorSession(sessionId, answers);
+      return result
+        ? NextResponse.json(result)
+        : NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
     const supabase = await createClient();
@@ -75,7 +80,7 @@ export async function POST(request: NextRequest) {
     const { data: resources, error: resourcesError } = await supabase
       .rpc('get_resources_by_topic', {
         subject_uuid: session.subject_id,
-        topic_uuid: session.topic_id
+        topic_uuid: session.topic_id as string,
       });
 
     if (resourcesError) {
@@ -125,7 +130,10 @@ export async function POST(request: NextRequest) {
     logger.info('ASSESSMENT', 'Preparing evaluation context', {}, requestId);
     const resourceContext = resources
       ?.map((r: any) => `Title: ${r.title}\nContent: ${r.content_text?.substring(0, 1000) || 'No content available'}`)
-      .join('\n\n') || 'No resources available';
+      .join('\n\n') || 'No external resources are attached. Use accurate general knowledge.';
+    const groundingRule = resources?.length
+      ? 'Use only the provided educational resources for content.'
+      : 'Use accurate, age-appropriate general knowledge because no external resources are attached.';
 
     const answersContext = answers
       .map((a: any) => `Q: ${a.question}\nA: ${a.answer}`)
@@ -138,7 +146,7 @@ export async function POST(request: NextRequest) {
     }, requestId);
 
     // Evaluate student responses and refine lesson plan
-    logger.openai('Preparing evaluation', {}, requestId);
+    logger.ai('Preparing evaluation', {}, requestId);
     const evaluationPrompt = `You are an AI tutor evaluating student responses to refine a lesson plan.
 
 Original Lesson Plan:
@@ -151,7 +159,7 @@ Student Assessment Responses:
 ${answersContext}
 
 Based on the student's responses, evaluate their understanding and refine the lesson plan.
-Use ONLY the provided educational resources for content.
+${groundingRule}
 
 Return a JSON object with:
 {
@@ -176,15 +184,15 @@ Return a JSON object with:
   }
 }`;
     
-    logger.openai('Calling API for evaluation', {
+    logger.ai('Calling AI provider for evaluation', {
       promptLength: evaluationPrompt.length
     }, requestId);
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: hostedAIModel(),
       messages: [
         {
           role: 'system',
-          content: 'You are an expert AI tutor. Always respond with valid JSON only. Adapt lessons based on student understanding while using only provided educational resources.'
+          content: `You are an expert AI tutor. Always respond with valid JSON only. Adapt lessons based on student understanding. ${groundingRule}`
         },
         {
           role: 'user',
@@ -192,10 +200,11 @@ Return a JSON object with:
         }
       ],
       temperature: 0.7,
-      max_tokens: 1500
+      max_tokens: 1500,
+      response_format: { type: 'json_object' },
     });
     
-    logger.openai('Response received', {
+    logger.ai('Response received', {
       model: completion.model,
       usage: completion.usage,
       finishReason: completion.choices[0].finish_reason
@@ -246,7 +255,10 @@ Return a JSON object with:
 
     // Update session with refined lesson plan and move to delivery phase
     logger.database('Updating session with refined lesson plan', {}, requestId);
-    const updatedResponses = [...(session.student_responses || []), ...answers];
+    const existingResponses = Array.isArray(session.student_responses)
+      ? session.student_responses
+      : [];
+    const updatedResponses = [...existingResponses, ...answers];
     
     const sessionUpdateData = {
       current_phase: 'delivery',

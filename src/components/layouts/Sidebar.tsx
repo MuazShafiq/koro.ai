@@ -11,9 +11,6 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
-  Mic,
-  Target,
-  Trophy,
   Zap,
 } from "lucide-react";
 import Link from "next/link";
@@ -44,24 +41,6 @@ const navigation = [
     href: "/analytics",
     icon: BarChart3,
     description: "Performance Insights"
-  },
-  {
-    name: "Voice Assistant",
-    href: "/voice",
-    icon: Mic,
-    description: "AI Learning Companion"
-  },
-  {
-    name: "Goals",
-    href: "/goals",
-    icon: Target,
-    description: "Learning Objectives"
-  },
-  {
-    name: "Achievements",
-    href: "/achievements",
-    icon: Trophy,
-    description: "Badges & Rewards"
   },
 ];
 
