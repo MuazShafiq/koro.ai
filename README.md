@@ -4,6 +4,8 @@ Koro.ai is a voice-first tutoring application built with Next.js. The deployed
 product uses Vercel, Supabase, and Cloudflare Workers AI. Localhost runs the
 same hosted flow for development; it is not a separate product.
 
+**Live app:** [koro-ai-lime.vercel.app](https://koro-ai-lime.vercel.app)
+
 ## Local development
 
 Requirements: Node.js 20+, npm, a Supabase project, and Cloudflare Workers AI
@@ -52,9 +54,12 @@ Never expose `SUPABASE_SECRET_KEY` or `CLOUDFLARE_AI_TOKEN` through a
 
 ## Deployment
 
-Create a Vercel project for this repository and add the same hosted environment
-variables in Vercel. Use the production Supabase URL and keys. The application
-does not require a local model or a long-running local process after deployment.
+The production app is available at
+[koro-ai-lime.vercel.app](https://koro-ai-lime.vercel.app). To deploy your own
+instance, create a Vercel project for this repository and add the same hosted
+environment variables in Vercel. Use the production Supabase URL and keys. The
+application does not require a local model or a long-running local process after
+deployment.
 
 An optional offline fallback still exists behind `KORO_LOCAL_MODE=true` and
 `NEXT_PUBLIC_KORO_LOCAL_MODE=true`. It is isolated from the normal deployment
