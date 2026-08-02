@@ -1,3 +1,11 @@
+.git/
+.github/
+.vercel/
+node_modules/
+.next/
+out/
+build/
+dist/
 .local-run/
 .koro-data/
 .trae/
