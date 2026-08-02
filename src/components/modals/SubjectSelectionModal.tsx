@@ -4,9 +4,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Atom, Calculator, FlaskConical, Dna, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useSupabase } from '../../utils/supabase/provider';
 import { toast } from 'sonner';
+import { getSubjectVisual, SubjectIcon } from '@/components/subjects/SubjectIcon';
 
 interface SubjectSelectionModalProps {
   isOpen: boolean;
@@ -17,7 +18,6 @@ interface SubjectSelectionModalProps {
 interface Subject {
   id: string;
   name: string;
-  icon: React.ReactNode;
   gradient: string;
   description: string;
   databaseIcon: string;
@@ -28,8 +28,7 @@ const availableSubjects: Subject[] = [
   {
     id: 'physics',
     name: 'Physics',
-    icon: <Atom className="w-8 h-8 text-white" />,
-    gradient: 'from-emerald-400 to-green-500',
+    gradient: getSubjectVisual('Physics').gradient,
     description: 'Mechanics, Thermodynamics, Waves',
     databaseIcon: '⚛️',
     starterTopics: ['Kinematics', "Newton's Laws", 'Energy and Momentum'],
@@ -37,8 +36,7 @@ const availableSubjects: Subject[] = [
   {
     id: 'mathematics',
     name: 'Mathematics',
-    icon: <Calculator className="w-8 h-8 text-white" />,
-    gradient: 'from-blue-400 to-cyan-500',
+    gradient: getSubjectVisual('Mathematics').gradient,
     description: 'Algebra, Calculus, Statistics',
     databaseIcon: '📐',
     starterTopics: ['Linear Equations', 'Functions', 'Calculus'],
@@ -46,8 +44,7 @@ const availableSubjects: Subject[] = [
   {
     id: 'chemistry',
     name: 'Chemistry',
-    icon: <FlaskConical className="w-8 h-8 text-white" />,
-    gradient: 'from-purple-400 to-violet-500',
+    gradient: getSubjectVisual('Chemistry').gradient,
     description: 'Organic, Inorganic, Physical',
     databaseIcon: '🧪',
     starterTopics: ['Atomic Structure', 'Chemical Bonding', 'Stoichiometry'],
@@ -55,8 +52,7 @@ const availableSubjects: Subject[] = [
   {
     id: 'biology',
     name: 'Biology',
-    icon: <Dna className="w-8 h-8 text-white" />,
-    gradient: 'from-orange-400 to-red-500',
+    gradient: getSubjectVisual('Biology').gradient,
     description: 'Cell Biology, Genetics, Ecology',
     databaseIcon: '🧬',
     starterTopics: ['Cell Biology', 'Genetics', 'Ecology'],
@@ -203,7 +199,7 @@ export function SubjectSelectionModal({ isOpen, onClose, onSubjectsAdded }: Subj
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl max-h-[85vh] w-[95vw] sm:w-[90vw] md:w-[80vw] lg:w-[70vw] overflow-y-auto bg-gradient-to-br from-background/95 to-background/90 backdrop-blur-xl border border-white/10 mx-2 sm:mx-4 my-2 sm:my-4">
+      <DialogContent className="surface-panel max-h-[85vh] w-[95vw] max-w-3xl overflow-y-auto rounded-[1.5rem] border-white/[0.09] p-5 sm:p-7">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center text-foreground">
             Add New Subjects
@@ -227,10 +223,10 @@ export function SubjectSelectionModal({ isOpen, onClose, onSubjectsAdded }: Subj
                 onClick={() => toggleSubject(subject.id)}
               >
                 <motion.div
-                  className={`p-4 sm:p-6 rounded-xl border-2 transition-all duration-300 ${
+                  className={`p-4 sm:p-6 rounded-2xl border transition-all duration-300 ${
                     isSelected 
                       ? 'border-primary bg-primary/10 shadow-lg shadow-primary/20' 
-                      : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
+                      : 'border-white/[0.07] bg-white/[0.025] hover:border-primary/30 hover:bg-white/[0.045]'
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -247,9 +243,11 @@ export function SubjectSelectionModal({ isOpen, onClose, onSubjectsAdded }: Subj
                   )}
 
                   {/* Subject icon */}
-                  <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br ${subject.gradient} flex items-center justify-center mb-3 sm:mb-4 mx-auto shadow-lg`}>
-                    {subject.icon}
-                  </div>
+                  <SubjectIcon
+                    subjectName={subject.name}
+                    size="lg"
+                    className="mb-3 sm:mb-4 mx-auto sm:h-16 sm:w-16"
+                  />
 
                   {/* Subject name */}
                   <h3 className="text-lg sm:text-xl font-bold text-center text-foreground mb-1 sm:mb-2">
@@ -271,7 +269,7 @@ export function SubjectSelectionModal({ isOpen, onClose, onSubjectsAdded }: Subj
           })}
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-white/10 gap-3 sm:gap-0 px-2 sm:px-0">
+        <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-white/[0.07] gap-3 sm:gap-0 px-2 sm:px-0">
           <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
             {selectedSubjects.length > 0 
               ? `${selectedSubjects.length} subject${selectedSubjects.length > 1 ? 's' : ''} selected`

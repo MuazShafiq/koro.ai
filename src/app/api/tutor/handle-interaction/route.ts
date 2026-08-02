@@ -3,10 +3,8 @@ import { createClient } from '@/utils/supabase/server';
 import { hostedAI as openai, hostedAIModel } from '@/lib/services/hostedAI';
 import { logger } from '@/lib/logger';
 import { convertTextToSpeech } from '@/lib/services/cloudflareSpeech';
-import { isLocalMode } from '@/lib/local-mode';
 
 export const maxDuration = 60;
-import { answerLocalTutorQuestion } from '@/lib/local-tutor';
 
 export async function POST(request: NextRequest) {
   const requestId = crypto.randomUUID();
@@ -33,13 +31,6 @@ export async function POST(request: NextRequest) {
         { error: 'Session ID and question are required' },
         { status: 400 }
       );
-    }
-
-    if (isLocalMode()) {
-      const result = await answerLocalTutorQuestion(sessionId, question);
-      return result
-        ? NextResponse.json(result)
-        : NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
     const supabase = await createClient();

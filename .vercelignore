@@ -7,7 +7,6 @@ node_modules/
 /build/
 /dist/
 /.local-run/
-/.koro-data/
 /.trae/
 /logs/
 /supabase/

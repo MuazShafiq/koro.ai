@@ -322,14 +322,15 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ classNam
   }
 
   return (
-    <div className={cn("space-y-6", className)}>
+    <div className={cn("space-y-7", className)}>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="surface-panel flex flex-col gap-5 rounded-[1.75rem] p-6 sm:flex-row sm:items-center sm:justify-between md:p-8">
         <div>
-          <h2 className="text-3xl font-bold text-foreground">Analytics Dashboard</h2>
-          <p className="text-muted-foreground">Track your learning progress and insights</p>
+          <p className="section-kicker mb-2">Learning intelligence</p>
+          <h1 className="text-gradient text-3xl font-bold tracking-tight md:text-4xl">Progress that makes sense</h1>
+          <p className="mt-2 text-sm text-muted-foreground md:text-base">See what is improving, where time is going, and what to focus on next.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex rounded-xl border border-white/[0.07] bg-white/[0.025] p-1">
           {['week', 'month', 'year'].map((period) => (
             <Button
               key={period}
@@ -337,8 +338,8 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ classNam
               size="sm"
               onClick={() => setSelectedPeriod(period)}
               className={cn(
-                "glass border-white/20",
-                selectedPeriod === period && "bg-electric-blue text-white"
+                "rounded-lg border-0 px-3",
+                selectedPeriod === period && "bg-primary text-white shadow-lg shadow-primary/15"
               )}
             >
               {period.charAt(0).toUpperCase() + period.slice(1)}
@@ -348,7 +349,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ classNam
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.title}
@@ -363,7 +364,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ classNam
 
       {/* Charts Section */}
       <Tabs defaultValue="progress" className="space-y-6">
-        <TabsList className="glass border-white/20">
+        <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto rounded-xl border border-white/[0.07] bg-white/[0.025] p-1">
           <TabsTrigger value="progress" className="flex items-center gap-2">
             <Activity className="w-4 h-4" />
             Progress

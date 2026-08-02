@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import { KoroSidebar } from "./Sidebar";
-import { cn } from "@/lib/utils";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -17,7 +16,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   // For auth pages, render without sidebar
   if (isAuthPage) {
     return (
-      <div className="min-h-screen bg-background relative">
+      <div className="app-background relative min-h-[100dvh] bg-background">
         {children}
       </div>
     );
@@ -25,14 +24,11 @@ export function AppLayout({ children }: AppLayoutProps) {
   
   // For regular pages, render with sidebar
   return (
-    <div className={cn(
-      "flex flex-col md:flex-row bg-background w-full flex-1 mx-auto overflow-hidden",
-      "h-screen relative"
-    )}>
-      <KoroSidebar />
+    <div className="app-background relative mx-auto flex h-[100dvh] min-h-0 w-full flex-1 flex-col overflow-hidden bg-background md:flex-row">
+      <KoroSidebar className="order-2 md:order-1" />
 
-      <div className="flex flex-1">
-        <div className="p-2 md:p-6 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm flex flex-col gap-2 flex-1 w-full h-full overflow-y-auto">
+      <div className="order-1 flex min-h-0 min-w-0 flex-1 overflow-hidden md:order-2">
+        <div className="flex h-full min-h-0 min-w-0 w-full flex-1 flex-col overflow-y-auto">
           {children}
         </div>
       </div>

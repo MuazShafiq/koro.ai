@@ -4,10 +4,8 @@ import { hostedAI as openai, hostedAIModel } from '@/lib/services/hostedAI';
 import { logger } from '@/lib/logger';
 import { convertTextToSpeech } from '@/lib/services/cloudflareSpeech';
 import { ProgressService } from '@/lib/services/progressService';
-import { isLocalMode } from '@/lib/local-mode';
 
 export const maxDuration = 60;
-import { deliverLocalTutorChunk } from '@/lib/local-tutor';
 
 export async function POST(request: NextRequest) {
   const requestId = crypto.randomUUID();
@@ -32,13 +30,6 @@ export async function POST(request: NextRequest) {
         { error: 'Session ID and chunk index are required' },
         { status: 400 }
       );
-    }
-
-    if (isLocalMode()) {
-      const chunk = deliverLocalTutorChunk(sessionId, Number(chunkIndex));
-      return chunk
-        ? NextResponse.json(chunk)
-        : NextResponse.json({ error: 'Session or chunk not found' }, { status: 404 });
     }
 
     const supabase = await createClient();

@@ -1,15 +1,14 @@
 'use client';
 
-import { SubjectCard } from "@/components/cards/SubjectCard";
-import { PerformanceCard } from "@/components/cards/PerformanceCard";
-import { BentoGrid, BentoGridItem } from "@/components/layouts/BentoGrid";
 import { SubjectSelectionModal } from "@/components/modals/SubjectSelectionModal";
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { BookOpen, Calculator, Atom, Globe, Target, Trophy, Clock, Zap, TrendingUp, Users, FlaskConical, Dna, Code, Loader2, X } from "lucide-react";
-import { useAppStore } from "@/lib/store";
+import { ArrowRight, BookOpen, Loader2, Plus, Sparkles, TrendingUp, Users, X } from "lucide-react";
 import { useSupabase } from "@/utils/supabase/provider";
 import { Database } from "@/utils/supabase/database.types";
-import React, { useState, useEffect, useCallback } from 'react';
+import { KoroMark } from "@/components/brand/KoroBrand";
+import { getSubjectVisual, SubjectIcon } from "@/components/subjects/SubjectIcon";
+import { useState, useEffect, useCallback } from 'react';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 type Subject = Database['public']['Tables']['subjects']['Row'];
@@ -18,10 +17,8 @@ type Topic = Database['public']['Tables']['topics']['Row'];
 type FormattedSubject = {
   id: string;
   subject: string;
-  icon: React.JSX.Element;
   progress: number;
   nextTopic: string;
-  href: string;
   gradient: string;
   completedTopics: number;
 };
@@ -107,11 +104,9 @@ export default function DashboardPage() {
           return {
             id: subject.id,
             subject: subject.name,
-            icon: getSubjectIcon(subject.name),
             progress,
             nextTopic: getNextTopic(subject.name),
-            href: `/lessons/${subject.name.toLowerCase().replace(/\s+/g, '-')}`,
-            gradient: getSubjectGradient(subject.name),
+            gradient: getSubjectVisual(subject.name).gradient,
             completedTopics
           };
         });
@@ -128,30 +123,6 @@ export default function DashboardPage() {
   useEffect(() => {
      fetchUserData();
    }, [fetchUserData]);
-
-  const getSubjectIcon = (subjectName: string) => {
-     const iconMap: { [key: string]: React.JSX.Element } = {
-      'Mathematics': <Calculator className="w-5 h-5" />,
-      'Physics': <Atom className="w-5 h-5" />,
-      'Chemistry': <FlaskConical className="w-5 h-5" />,
-      'Biology': <Dna className="w-5 h-5" />,
-      'Computer Science': <Code className="w-5 h-5" />,
-      'English': <BookOpen className="w-5 h-5" />
-    };
-    return iconMap[subjectName] || <BookOpen className="w-5 h-5" />;
-  };
-
-  const getSubjectGradient = (subjectName: string) => {
-    const gradientMap: { [key: string]: string } = {
-      'Mathematics': 'from-sky-400 to-blue-500',
-      'Physics': 'from-emerald-400 to-green-500',
-      'Chemistry': 'from-pink-400 to-fuchsia-500',
-      'Biology': 'from-emerald-400 to-green-500',
-      'Computer Science': 'from-indigo-400 to-purple-500',
-      'English': 'from-rose-400 to-red-500'
-    };
-    return gradientMap[subjectName] || 'from-gray-400 to-gray-500';
-  };
 
   const getNextTopic = (subjectName: string) => {
     const topicMap: { [key: string]: string } = {
@@ -176,314 +147,201 @@ export default function DashboardPage() {
     );
   }
 
-  const totalCompletedTopics = subjects.reduce((acc, subject) => acc + subject.completedTopics, 0);
-  const totalStudyHours = profile?.total_sessions ? (profile.total_sessions * 0.5).toFixed(1) : '0';
-  const averageProgress = subjects.length > 0 ? Math.round(subjects.reduce((acc, subject) => acc + subject.progress, 0) / subjects.length) : 0;
-
-  const performanceData = [
-    {
-      title: "Learning Streak",
-      value: profile?.streak || 0,
-      change: profile?.streak || 0,
-      period: "days",
-      icon: <Target className="w-5 h-5" />,
-      chartData: [3, 5, 4, 6, 5, 7, profile?.streak || 0],
-      target: 7
-    },
-    {
-      title: "Average Progress",
-      value: `${averageProgress}%`,
-      change: averageProgress > 75 ? 8 : averageProgress > 50 ? 5 : 2,
-      period: "overall",
-      icon: <Trophy className="w-5 h-5" />,
-      chartData: [65, 70, 75, 80, 85, 88, averageProgress]
-    },
-    {
-      title: "Study Time",
-      value: `${totalStudyHours}h`,
-      change: -5,
-      period: "this week",
-      icon: <Clock className="w-5 h-5" />,
-      chartData: [2, 3, 4, 2, 5, 3, parseFloat(totalStudyHours) % 10],
-      target: 30
-    },
-    {
-      title: "Focus Score",
-      value: `${Math.min(100, Math.max(0, averageProgress + 5))}%`,
-      change: 15,
-      period: "vs last week",
-      icon: <Zap className="w-5 h-5" />,
-      chartData: [75, 78, 82, 85, 87, 89, Math.min(100, Math.max(0, averageProgress + 5))]
-    }
-  ];
+  const totalCompletedTopics = subjects.reduce(
+    (total, subject) => total + subject.completedTopics,
+    0,
+  );
+  const averageProgress = subjects.length
+    ? Math.round(subjects.reduce((total, subject) => total + subject.progress, 0) / subjects.length)
+    : 0;
 
   const quickStats = [
     {
-      title: "Active Subjects",
+      title: "Active subjects",
       value: subjects.length,
-      icon: <BookOpen className="w-6 h-6" />,
-      color: "from-blue-500 to-cyan-500"
+      detail: subjects.length === 1 ? "learning path" : "learning paths",
+      icon: BookOpen,
+      tone: "from-blue-500 to-cyan-400",
     },
     {
-      title: "Completed Topics",
+      title: "Topics completed",
       value: totalCompletedTopics,
-      icon: <TrendingUp className="w-6 h-6" />,
-      color: "from-green-500 to-emerald-500"
+      detail: `${averageProgress}% average progress`,
+      icon: TrendingUp,
+      tone: "from-emerald-500 to-teal-400",
     },
     {
-      title: "Study Sessions",
+      title: "Tutor sessions",
       value: profile?.total_sessions || 0,
-      icon: <Users className="w-6 h-6" />,
-      color: "from-purple-500 to-pink-500"
-    }
+      detail: `${profile?.streak || 0} day streak`,
+      icon: Users,
+      tone: "from-violet-500 to-fuchsia-400",
+    },
   ];
 
   return (
-    <div className="w-full h-full overflow-auto bg-gradient-to-br from-background via-background to-background/95">
-      <main className="w-full">
-        <div className="container mx-auto p-6 space-y-8">
-          {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="space-y-3"
-          >
-            <div className="flex items-center gap-3">
-              <motion.div
-                className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg"
-                whileHover={{ scale: 1.05, rotate: 5 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Zap className="w-6 h-6 text-primary-foreground" />
-              </motion.div>
+    <div className="page-shell">
+      <main className="page-container space-y-7 pb-12">
+        <motion.section
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="surface-panel relative overflow-hidden rounded-[1.75rem] p-6 md:p-8"
+        >
+          <div className="pointer-events-none absolute -right-20 -top-28 h-72 w-72 rounded-full bg-primary/15 blur-3xl" />
+          <div className="pointer-events-none absolute bottom-0 right-1/4 h-32 w-48 rounded-full bg-secondary/10 blur-3xl" />
+          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-start gap-4 md:gap-5">
+              <div className="hidden rounded-2xl border border-white/10 bg-white/[0.045] p-2 sm:block">
+                <KoroMark priority size={58} />
+              </div>
               <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-                  {greeting}, {profile?.full_name || 'there'}! 👋
+                <p className="section-kicker mb-2">Learning command center</p>
+                <h1 className="text-gradient text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+                  {greeting}, {profile?.full_name || "there"}.
                 </h1>
-                <p className="text-muted-foreground text-lg">
-                  Ready to continue your learning journey?
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+                  Pick up where you left off, start a focused AI lesson, or see how your subjects are moving.
                 </p>
               </div>
             </div>
-          </motion.div>
+            <Button
+              onClick={() => { window.location.href = "/study"; }}
+              className="h-11 shrink-0 rounded-xl bg-gradient-to-r from-blue-500 to-violet-500 px-5 text-white shadow-lg shadow-blue-500/15 hover:from-blue-400 hover:to-violet-400"
+            >
+              Continue studying
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </motion.section>
 
-          {/* Quick Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-4"
-          >
-            {quickStats.map((stat, index) => (
+        <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {quickStats.map((stat, index) => {
+            const Icon = stat.icon;
+            return (
               <motion.div
                 key={stat.title}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: 0.1 + index * 0.1 }}
-                className="glass rounded-xl p-4 border border-white/10 bg-gradient-to-br from-card/50 to-card/30 hover:from-card/70 hover:to-card/50 transition-all duration-300"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.05 + index * 0.06 }}
+                className="surface-panel rounded-2xl p-4 md:p-5"
               >
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg bg-gradient-to-br ${stat.color} text-white`}>
-                    {stat.icon}
+                <div className="flex items-center gap-4">
+                  <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${stat.tone} text-white shadow-lg`}>
+                    <Icon className="h-5 w-5" />
                   </div>
-                  <div>
-                    <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                    <p className="text-sm text-muted-foreground">{stat.title}</p>
+                  <div className="min-w-0">
+                    <p className="text-2xl font-bold tracking-tight text-foreground">{stat.value}</p>
+                    <p className="text-sm font-medium text-foreground">{stat.title}</p>
+                    <p className="truncate text-xs text-muted-foreground">{stat.detail}</p>
                   </div>
                 </div>
               </motion.div>
-            ))}
-          </motion.div>
+            );
+          })}
+        </section>
 
-          {/* Performance Cards Grid */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="space-y-4"
-          >
-            <h2 className="text-2xl font-semibold text-foreground flex items-center gap-2">
-              <TrendingUp className="w-6 h-6 text-primary" />
-              Performance Overview
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {performanceData.map((data, index) => (
-                <PerformanceCard
-                  key={data.title}
-                  {...data}
-                  delay={0.3 + index * 0.1}
-                />
-              ))}
+        <motion.section
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.15 }}
+          className="surface-panel overflow-hidden rounded-[1.75rem] p-5 md:p-7"
+        >
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="section-kicker mb-2">AI tutor</p>
+              <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">Your subjects</h2>
+              <p className="mt-1 text-sm text-muted-foreground">Choose a subject and Koro will build the next lesson around your progress.</p>
             </div>
-          </motion.div>
+            <Button
+              variant="outline"
+              onClick={() => setIsSubjectModalOpen(true)}
+              className="rounded-xl border-white/10 bg-white/[0.035] hover:bg-white/[0.07]"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add subject
+            </Button>
+          </div>
 
-          {/* AI Tutor Subjects Grid */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="space-y-4"
-          >
-            <h2 className="text-2xl font-semibold text-foreground flex items-center gap-2">
-              <BookOpen className="w-6 h-6 text-primary" />
-              AI Tutor - Your Subjects
-            </h2>
-            <BentoGrid className="max-w-4xl mx-auto">
-              {/* Render user's selected subjects */}
+          {subjects.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
               {subjects.map((subject, index) => (
-                <BentoGridItem
+                <motion.article
                   key={subject.id}
-                  className="group cursor-pointer hover:shadow-xl transition-all duration-300"
-                  size="wide"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35, delay: 0.18 + index * 0.05 }}
+                  onClick={() => { window.location.href = "/study"; }}
+                  className="surface-panel-interactive group relative cursor-pointer overflow-hidden rounded-2xl border border-white/[0.075] bg-white/[0.025] p-5"
                 >
-                  <motion.div
-                    className="relative h-full p-6 bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl border border-primary/20 overflow-hidden"
-                    whileHover={{ y: -2 }}
-                    onClick={() => window.location.href = '/study'}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                  <div className={`pointer-events-none absolute -right-12 -top-16 h-40 w-40 rounded-full bg-gradient-to-br ${subject.gradient} opacity-[0.12] blur-3xl`} />
+                  <button
+                    type="button"
+                    aria-label={`Remove ${subject.subject}`}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleRemoveSubject(subject.id, subject.subject);
+                    }}
+                    className="absolute right-4 top-4 z-20 flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground opacity-70 transition-colors hover:bg-red-500/10 hover:text-red-400 md:opacity-0 md:group-hover:opacity-100"
                   >
-                    {/* Remove button */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveSubject(subject.id, subject.subject);
-                      }}
-                      className="absolute top-3 right-3 z-20 w-6 h-6 bg-red-500/80 hover:bg-red-500 rounded-full flex items-center justify-center transition-colors duration-200 opacity-0 group-hover:opacity-100"
-                    >
-                      <X className="w-3 h-3 text-white" />
-                    </button>
+                    <X className="h-4 w-4" />
+                  </button>
 
-                    {/* Subtle background gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-xl" />
-                    
-                    {/* Content - Optimized Horizontal Layout */}
-                    <div className="relative z-10 h-full flex gap-4">
-                      {/* Left Section - Header and Progress */}
-                      <div className="flex-1 flex flex-col justify-between min-w-0">
-                        {/* Header */}
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${subject.gradient} flex items-center justify-center shadow-lg flex-shrink-0`}>
-                            {subject.icon}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="text-lg font-bold text-foreground leading-tight">{subject.subject}</h3>
-                            <p className="text-sm text-primary font-medium">AI Tutor Ready</p>
-                          </div>
-                        </div>
-                        
-                        {/* Progress Section */}
-                        <div className="mb-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium text-muted-foreground">Progress</span>
-                            <span className="text-sm font-bold text-foreground">{subject.progress}%</span>
-                          </div>
-                          <div className="w-full bg-muted/30 rounded-full h-2">
-                            <div 
-                              className={`h-2 rounded-full bg-gradient-to-r ${subject.gradient} transition-all duration-300`}
-                              style={{ width: `${subject.progress}%` }}
-                            />
-                          </div>
-                        </div>
-                        
-                        {/* Next Topic */}
-                        <div className="p-3 bg-white/5 rounded-lg border border-white/10">
-                          <p className="text-sm text-muted-foreground mb-1">Next Topic</p>
-                          <p className="text-sm font-medium text-foreground leading-tight">{subject.nextTopic}</p>
-                        </div>
+                  <div className="relative flex items-start gap-4 pr-8">
+                    <SubjectIcon subjectName={subject.subject} size="lg" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="truncate text-lg font-bold text-foreground">{subject.subject}</h3>
+                        <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                          Ready
+                        </span>
                       </div>
-
-                      {/* Right Section - Stats Grid */}
-                      <div className="flex flex-col gap-3 min-w-[160px] flex-shrink-0">
-                        <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-5 h-5 rounded bg-orange-500 flex items-center justify-center">
-                              <span className="text-sm">🔥</span>
-                            </div>
-                            <span className="text-sm text-muted-foreground">Streak</span>
-                          </div>
-                          <p className="text-lg font-bold text-foreground">{profile?.streak || 7}</p>
-                          <p className="text-sm text-muted-foreground">days</p>
-                        </div>
-                        
-                        <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-5 h-5 rounded bg-blue-500 flex items-center justify-center">
-                              <Clock className="w-3 h-3 text-white" />
-                            </div>
-                            <span className="text-sm text-muted-foreground">Time</span>
-                          </div>
-                          <p className="text-lg font-bold text-foreground">{totalStudyHours}</p>
-                          <p className="text-sm text-muted-foreground">hours</p>
-                        </div>
-                      </div>
+                      <p className="mt-1 truncate text-sm text-muted-foreground">Next: {subject.nextTopic}</p>
                     </div>
-                  </motion.div>
-                </BentoGridItem>
-              ))}
-              
-              {/* Add Subject Card */}
-              <BentoGridItem className="group cursor-pointer hover:shadow-xl transition-all duration-300">
-                <motion.div
-                  className="flex flex-col items-center justify-center h-full p-6 text-center"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsSubjectModalOpen(true)}
-                >
-                  <motion.div
-                    className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center mb-4 group-hover:from-primary/30 group-hover:to-secondary/30 transition-all duration-300"
-                    whileHover={{ rotate: 5 }}
-                  >
-                    <BookOpen className="w-6 h-6 text-primary" />
-                  </motion.div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Add Subject</h3>
-                  <p className="text-sm text-muted-foreground text-center">Mathematics, Chemistry & more coming soon</p>
-                </motion.div>
-              </BentoGridItem>
-            </BentoGrid>
-          </motion.div>
-
-          {/* Recent Activity */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
-            className="glass rounded-xl p-6 border border-white/10 bg-gradient-to-br from-card/50 to-card/30"
-          >
-            <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Clock className="w-5 h-5 text-primary" />
-              Recent Activity
-            </h3>
-            <div className="space-y-3">
-              {[
-                { action: "Completed", subject: "Mathematics", topic: "Calculus Integration", time: "2 hours ago" },
-                { action: "Started", subject: "Physics", topic: "Quantum Mechanics", time: "Yesterday" },
-                { action: "Reviewed", subject: "Chemistry", topic: "Organic Reactions", time: "2 days ago" }
-              ].map((activity, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: 0.7 + index * 0.1 }}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-primary/5 transition-colors duration-200"
-                >
-                  <div className="w-2 h-2 rounded-full bg-primary" />
-                  <div className="flex-1">
-                    <p className="text-sm text-foreground">
-                      <span className="font-medium">{activity.action}</span> {activity.topic} in {activity.subject}
-                    </p>
-                    <p className="text-xs text-muted-foreground">{activity.time}</p>
                   </div>
-                </motion.div>
+
+                  <div className="relative mt-6">
+                    <div className="mb-2 flex items-center justify-between text-xs">
+                      <span className="font-medium text-muted-foreground">{subject.completedTopics} topics completed</span>
+                      <span className="font-bold text-foreground">{subject.progress}%</span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-white/[0.06]">
+                      <div
+                        className={`h-full rounded-full bg-gradient-to-r ${subject.gradient} transition-[width] duration-500`}
+                        style={{ width: `${subject.progress}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="relative mt-5 flex items-center justify-between border-t border-white/[0.06] pt-4">
+                    <span className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Sparkles className="h-3.5 w-3.5 text-primary" />
+                      Personalized AI lesson
+                    </span>
+                    <span className="flex items-center gap-1 text-sm font-semibold text-primary">
+                      Open
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </div>
+                </motion.article>
               ))}
             </div>
-          </motion.div>
-        </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsSubjectModalOpen(true)}
+              className="flex min-h-56 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-8 text-center transition-colors hover:border-primary/30 hover:bg-primary/[0.035]"
+            >
+              <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <Plus className="h-6 w-6" />
+              </span>
+              <span className="font-semibold text-foreground">Add your first subject</span>
+              <span className="mt-1 text-sm text-muted-foreground">Choose what you want Koro to teach you.</span>
+            </button>
+          )}
+        </motion.section>
       </main>
-      
-      {/* Subject Selection Modal */}
+
       <SubjectSelectionModal
         isOpen={isSubjectModalOpen}
         onClose={() => setIsSubjectModalOpen(false)}

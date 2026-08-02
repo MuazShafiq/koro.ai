@@ -1,5 +1,3 @@
-import { isLocalMode } from '@/lib/local-mode';
-
 export type ContentType = 'welcome' | 'assessment' | 'lesson' | 'interaction' | 'general';
 
 export interface TTSRequest {
@@ -109,13 +107,6 @@ export async function convertTextToSpeech(
   request: TTSRequest
 ): Promise<TTSResponse> {
   try {
-    if (isLocalMode()) {
-      return {
-        success: false,
-        error: 'Cloud TTS is disabled in local mode; use browser speech synthesis instead.',
-      };
-    }
-
     const {
       text,
       voiceId = 'asteria',

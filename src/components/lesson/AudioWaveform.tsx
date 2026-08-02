@@ -124,33 +124,33 @@ export function AudioWaveform({
   }, []);
 
   return (
-    <Card className="p-4 bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700">
+    <Card className="overflow-hidden rounded-2xl border-white/[0.07] bg-white/[0.025] p-4 shadow-none">
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          <h3 className="text-sm font-medium text-foreground">
             Audio Visualization
           </h3>
           <div className="flex items-center space-x-2">
             <div className={`h-2 w-2 rounded-full ${isPlaying ? 'bg-green-500 animate-pulse' : 'bg-slate-400'}`} />
-            <span className="text-xs text-slate-500">
+            <span className="text-xs text-muted-foreground">
               {isPlaying ? 'Playing' : 'Paused'}
             </span>
           </div>
         </div>
 
-        <div className="relative overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
+        <div className="relative overflow-hidden rounded-xl border border-white/[0.05] bg-slate-950/55">
           <canvas ref={canvasRef} className="block h-16 w-full" />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-white/10" />
           {!isPlaying && (
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-              <div className="rounded bg-white/80 px-2 py-1 text-xs text-slate-400 dark:bg-slate-800/80">
+              <div className="rounded-md bg-background/75 px-2 py-1 text-xs text-muted-foreground backdrop-blur-sm">
                 Waiting for audio...
               </div>
             </div>
           )}
         </div>
 
-        <div className="flex justify-between text-xs text-slate-400">
+        <div className="flex justify-between text-xs text-muted-foreground">
           <span>Voice</span>
           <span>Activity</span>
           <span>Output</span>

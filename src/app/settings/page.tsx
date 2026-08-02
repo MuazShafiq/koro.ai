@@ -10,7 +10,8 @@ import {
   Smartphone,
   Download,
   Trash2,
-  HelpCircle
+  HelpCircle,
+  Palette
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,14 +23,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { ThemeEngine } from '@/components/theme/ThemeEngine';
 import { useAppStore } from '@/lib/store';
-import { isLocalMode } from '@/lib/local-mode';
-import { LocalSettingsPage } from '@/components/settings/LocalSettingsPage';
 
 export default function SettingsPage() {
-  return isLocalMode() ? <LocalSettingsPage /> : <HostedSettingsPage />;
-}
-
-function HostedSettingsPage() {
   const { userProgress } = useAppStore();
 
   return (
@@ -37,18 +32,19 @@ function HostedSettingsPage() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gradient-to-br from-background via-background to-background/50 p-6"
+      className="page-container min-h-full pb-12"
     >
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-foreground mb-2">Settings</h1>
-        <p className="text-muted-foreground">Customize your learning experience</p>
+      <div className="surface-panel mb-7 rounded-[1.75rem] p-6 md:p-8">
+        <p className="section-kicker mb-2">Preferences</p>
+        <h1 className="text-gradient text-3xl font-bold tracking-tight md:text-4xl">Make Koro yours</h1>
+        <p className="mt-2 text-sm text-muted-foreground md:text-base">Control your experience, account, privacy, and learning preferences.</p>
       </div>
 
       <Tabs defaultValue="appearance" className="space-y-6">
-        <TabsList className="glass border-white/20 grid w-full grid-cols-5">
+        <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-xl border border-white/[0.07] bg-white/[0.025] p-1 sm:grid-cols-5">
           <TabsTrigger value="appearance" className="flex items-center gap-2">
-            <User className="w-4 h-4" />
+            <Palette className="w-4 h-4" />
             Appearance
           </TabsTrigger>
           <TabsTrigger value="account" className="flex items-center gap-2">

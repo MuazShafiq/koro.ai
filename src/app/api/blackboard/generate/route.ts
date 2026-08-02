@@ -8,8 +8,6 @@ import { logger } from '@/lib/logger';
 
 export const maxDuration = 60;
 import { createClient } from '@/utils/supabase/server';
-import { isLocalMode } from '@/lib/local-mode';
-import { generateLocalBlackboard } from '@/lib/local-tutor';
 import {
   generateDeterministicBlackboard,
   type BlackboardContentItem,
@@ -25,15 +23,6 @@ export async function POST(request: NextRequest) {
   logger.info('BLACKBOARD-GENERATE', 'Starting blackboard content generation', {}, requestId);
   
   try {
-    if (isLocalMode()) {
-      const requestBody = await request.json();
-      script = requestBody.script;
-      if (!script || typeof script !== 'string') {
-        return NextResponse.json({ error: 'Script is required' }, { status: 400 });
-      }
-      return NextResponse.json(generateLocalBlackboard(script));
-    }
-
     const supabase = await createClient();
     
     // Get current user

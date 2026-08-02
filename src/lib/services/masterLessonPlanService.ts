@@ -1,7 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { logger } from '@/lib/logger';
 import { hostedAI as openai, hostedAIModel } from '@/lib/services/hostedAI';
-import { isLocalMode } from '@/lib/local-mode';
 
 export interface LearningObjective {
   id: string;
@@ -148,10 +147,6 @@ export class MasterLessonPlanService {
     resourceContext: string,
     requestId: string
   ): Promise<MasterLessonPlan> {
-    if (isLocalMode()) {
-      throw new Error('Cloud master-plan generation is disabled in local demo mode');
-    }
-
     logger.ai('Generating master lesson plan', {}, requestId);
 
     const hasExternalResources = !resourceContext.startsWith('No external resources');

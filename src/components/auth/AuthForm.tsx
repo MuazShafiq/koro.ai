@@ -47,7 +47,7 @@ export function AuthForm() {
   };
 
   return (
-    <Card className="backdrop-blur-sm bg-gray-900/90 border border-gray-700 shadow-2xl">
+    <Card className="surface-panel rounded-[1.5rem] border-white/[0.08] shadow-2xl">
       <form onSubmit={handleSignIn}>
         <CardContent className="space-y-6 p-8">
           <div className="space-y-3">
@@ -62,7 +62,7 @@ export function AuthForm() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400"
+                className="h-12 border-white/[0.08] bg-white/[0.035] pl-10 text-white placeholder:text-muted-foreground focus:border-primary"
                 required
               />
             </div>
@@ -80,7 +80,7 @@ export function AuthForm() {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 pr-10 h-12 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-400"
+                className="h-12 border-white/[0.08] bg-white/[0.035] pl-10 pr-10 text-white placeholder:text-muted-foreground focus:border-primary"
                 required
               />
               <button
@@ -103,7 +103,7 @@ export function AuthForm() {
         <CardFooter className="flex flex-col p-8 pt-0 space-y-4">
           <Button 
             type="submit" 
-            className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-[1.02]" 
+            className="h-12 w-full rounded-xl bg-gradient-to-r from-blue-500 to-violet-500 font-medium text-white shadow-lg shadow-blue-500/15 hover:from-blue-400 hover:to-violet-400"
             disabled={loading}
           >
             {loading ? (
@@ -121,7 +121,7 @@ export function AuthForm() {
               Don't have an account?{' '}
               <Link 
                 href="/signup" 
-                className="font-medium text-purple-400 hover:text-purple-300 transition-colors"
+                className="font-medium text-primary transition-colors hover:text-blue-300"
               >
                 Sign up here
               </Link>

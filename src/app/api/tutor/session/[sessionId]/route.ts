@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { isLocalMode } from '@/lib/local-mode';
-import { getLocalTutorSession } from '@/lib/local-tutor';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321',
-  process.env.SUPABASE_SECRET_KEY ||
-    process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    'local-mode'
+  process.env.SUPABASE_SECRET_KEY || 'missing-secret-key'
 );
 
 export async function GET(
@@ -24,13 +20,6 @@ export async function GET(
         { error: 'Session ID is required' },
         { status: 400 }
       );
-    }
-
-    if (isLocalMode()) {
-      const session = getLocalTutorSession(sessionId);
-      return session
-        ? NextResponse.json(session)
-        : NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
     // Get session data with subject and topic information

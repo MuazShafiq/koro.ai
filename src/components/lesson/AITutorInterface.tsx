@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
-import { Badge } from '@/components/ui/badge';
 import { 
   Play, 
   Pause, 
@@ -25,10 +24,9 @@ import { toast } from 'sonner';
 import { Blackboard, BlackboardEntry, BlackboardItem } from './Blackboard';
 import { AudioWaveform } from './AudioWaveform';
 import { ChatMessage } from './ChatMessage';
-import { isLocalMode } from '@/lib/local-mode';
-import { useSupabase } from '@/utils/supabase/provider';
 import { uniqueAssessmentQuestions } from '@/lib/tutor-text';
 import { generateDeterministicBlackboard } from '@/lib/blackboard-content';
+import { SubjectIcon } from '@/components/subjects/SubjectIcon';
 
 let fallbackMessageSequence = 0;
 
@@ -189,10 +187,6 @@ interface SessionData {
   currentChunkIndex?: number;
   deliveredChunkIndexes?: number[];
   status?: 'active' | 'completed';
-  aiProvider?: 'ollama' | 'deterministic';
-  aiModel?: string | null;
-  groundedInLocalResources?: boolean;
-  resourceTitles?: string[];
   lessonChunks?: Array<{
     id: string;
     title: string;
@@ -229,32 +223,17 @@ export function AITutorInterface({
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState([0.85]);
   const [playbackSpeed, setPlaybackSpeed] = useState([1]);
+  const volumeRef = useRef(0.85);
+  const playbackSpeedRef = useRef(1);
   const [currentChunkIndex, setCurrentChunkIndex] = useState(0);
   const [totalChunks, setTotalChunks] = useState(sessionData?.lessonChunks?.length || 0);
-  const [aiProvider, setAIProvider] = useState<'ollama' | 'deterministic'>(
-    sessionData?.aiProvider || 'deterministic',
-  );
-  const [aiModel, setAIModel] = useState<string | null>(sessionData?.aiModel || null);
-  const [resourceTitles, setResourceTitles] = useState<string[]>(
-    sessionData?.resourceTitles || [],
-  );
   const [isTyping, setIsTyping] = useState(false);
   const [userHasInteracted, setUserHasInteracted] = useState(false);
   const [showAudioPrompt, setShowAudioPrompt] = useState(false);
-  const { supabase } = useSupabase();
-  
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
   const preferredVoiceRef = useRef<SpeechSynthesisVoice | null>(null);
-  const speechPlaybackRef = useRef<{
-    text: string;
-    charIndex: number;
-    startIndex: number;
-    startedAt: number;
-    rate: number;
-    onComplete?: () => void;
-  } | null>(null);
   const speechQueueRef = useRef<QueuedSpeech[]>([]);
   const speechGenerationPendingRef = useRef(false);
   const speechGenerationIdRef = useRef(0);
@@ -263,7 +242,6 @@ export function AITutorInterface({
     onComplete: () => void;
     onProgress: (currentTime: number, duration: number) => void;
   }>>(new Map());
-  const controlRestartTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sequentialRevealTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const teardownTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastAutoSpokenMessageIdRef = useRef<string | null>(null);
@@ -272,8 +250,6 @@ export function AITutorInterface({
   const sendInFlightRef = useRef(false);
   const audioUnlockInFlightRef = useRef(false);
   const isMountedRef = useRef(true);
-  const localMode = isLocalMode();
-
   useEffect(() => {
     if (initializedSessionIdRef.current === sessionId) return;
     initializedSessionIdRef.current = sessionId;
@@ -313,46 +289,6 @@ export function AITutorInterface({
   }, []);
 
   useEffect(() => {
-    if (currentAudio) {
-      currentAudio.playbackRate = playbackSpeed[0];
-      currentAudio.volume = volume[0];
-      return;
-    }
-
-    const activeSpeech = speechPlaybackRef.current;
-    if (
-      !activeSpeech ||
-      typeof window === 'undefined' ||
-      !window.speechSynthesis.speaking
-    ) {
-      return;
-    }
-
-    if (controlRestartTimerRef.current) {
-      clearTimeout(controlRestartTimerRef.current);
-    }
-
-    controlRestartTimerRef.current = setTimeout(() => {
-      const playback = speechPlaybackRef.current;
-      if (!playback) return;
-
-      const elapsedSeconds = Math.max(0, (performance.now() - playback.startedAt) / 1000);
-      const estimatedIndex = playback.startIndex + Math.floor(elapsedSeconds * 14 * playback.rate);
-      const resumeAt = Math.max(0, playback.charIndex, estimatedIndex);
-      speechRef.current = null;
-      speechPlaybackRef.current = null;
-      window.speechSynthesis.cancel();
-      speakWithBrowser(playback.text, false, resumeAt, playback.onComplete);
-    }, 60);
-
-    return () => {
-      if (controlRestartTimerRef.current) {
-        clearTimeout(controlRestartTimerRef.current);
-      }
-    };
-  }, [playbackSpeed, volume, currentAudio]);
-
-  useEffect(() => {
     if (teardownTimerRef.current) {
       clearTimeout(teardownTimerRef.current);
       teardownTimerRef.current = null;
@@ -369,11 +305,6 @@ export function AITutorInterface({
   }, []);
 
   const stopPlayback = (updateState = true) => {
-    if (controlRestartTimerRef.current) {
-      clearTimeout(controlRestartTimerRef.current);
-      controlRestartTimerRef.current = null;
-    }
-
     sequentialRevealTimersRef.current.forEach(clearTimeout);
     sequentialRevealTimersRef.current = [];
 
@@ -398,7 +329,6 @@ export function AITutorInterface({
     suppressedAutoSpeechIdsRef.current.clear();
     speechQueueRef.current = [];
     speechRef.current = null;
-    speechPlaybackRef.current = null;
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
     }
@@ -412,9 +342,47 @@ export function AITutorInterface({
 
   const handleEndSession = (event?: React.SyntheticEvent) => {
     event?.stopPropagation();
+    isMountedRef.current = false;
     stopPlayback();
     onEndSession();
   };
+
+  useEffect(() => {
+    const stopForNavigation = () => {
+      isMountedRef.current = false;
+      stopPlayback(false);
+    };
+
+    const handleNavigationClick = (event: MouseEvent) => {
+      if (!(event.target instanceof Element)) return;
+      const anchor = event.target.closest<HTMLAnchorElement>('a[href]');
+      if (!anchor || anchor.target === '_blank' || anchor.hasAttribute('download')) return;
+
+      try {
+        const destination = new URL(anchor.href, window.location.href);
+        const current = new URL(window.location.href);
+        if (
+          destination.origin !== current.origin ||
+          destination.pathname !== current.pathname ||
+          destination.search !== current.search
+        ) {
+          stopForNavigation();
+        }
+      } catch {
+        stopForNavigation();
+      }
+    };
+
+    document.addEventListener('click', handleNavigationClick, true);
+    window.addEventListener('popstate', stopForNavigation);
+    window.addEventListener('pagehide', stopForNavigation);
+
+    return () => {
+      document.removeEventListener('click', handleNavigationClick, true);
+      window.removeEventListener('popstate', stopForNavigation);
+      window.removeEventListener('pagehide', stopForNavigation);
+    };
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({
@@ -451,7 +419,7 @@ export function AITutorInterface({
       // Use sessionData prop if available, otherwise fetch from API
       let sessionInfo = sessionData;
       
-      if (!sessionInfo || localMode) {
+      if (!sessionInfo) {
         const response = await fetch(`/api/tutor/session/${sessionId}`);
         if (response.ok) {
           sessionInfo = await response.json();
@@ -491,9 +459,6 @@ export function AITutorInterface({
         setCurrentQuestionIndex(restoredQuestionIndex);
         setAssessmentAnswers(restoredAnswers);
         setTotalChunks(sessionInfo.lessonChunks?.length || 0);
-        setAIProvider(sessionInfo.aiProvider || 'deterministic');
-        setAIModel(sessionInfo.aiModel || null);
-        setResourceTitles(sessionInfo.resourceTitles || []);
         const restoredPhase = sessionInfo.currentPhase || 'assessment';
         const restoredChunkIndex = sessionInfo.currentChunkIndex || 0;
         setCurrentChunkIndex(restoredChunkIndex);
@@ -697,11 +662,13 @@ export function AITutorInterface({
         })
       });
 
+      const result = await response.json().catch(() => null);
       if (!response.ok) {
-        throw new Error('Failed to submit assessment');
+        throw new Error(result?.error || `Failed to submit assessment (${response.status})`);
       }
-
-      const result = await response.json();
+      if (!result?.evaluation || !result?.refinedLessonPlan) {
+        throw new Error('Assessment response was incomplete');
+      }
       window.localStorage.removeItem(assessmentProgressKey(sessionId));
       
       // Add AI response about assessment without audio initially
@@ -970,10 +937,6 @@ export function AITutorInterface({
       }
 
       const result = await response.json();
-      if (result.aiProvider) {
-        setAIProvider(result.aiProvider);
-        setAIModel(result.aiModel || null);
-      }
       
       // Generate blackboard content for the AI response
       const blackboardData = await generateBlackboardContent(result.answer);
@@ -1027,8 +990,8 @@ export function AITutorInterface({
     }
     
     const audio = new Audio(audioUrl);
-    audio.playbackRate = playbackSpeed[0];
-    audio.volume = volume[0];
+    audio.playbackRate = playbackSpeedRef.current;
+    audio.volume = volumeRef.current;
     audio.preservesPitch = true;
 
     const reportProgress = () => {
@@ -1087,57 +1050,6 @@ export function AITutorInterface({
     }
   };
 
-  const syncCompletedTopicProgress = async () => {
-    if (!localMode || !topic) return;
-
-    try {
-      await supabase
-        .from('topics')
-        .update({ completed: true, progress: 100 })
-        .eq('id', topic.id);
-
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('total_sessions, xp, level')
-        .eq('id', user.id)
-        .single();
-
-      if (profile) {
-        const nextXp = (profile.xp || 0) + 100;
-        await supabase
-          .from('profiles')
-          .update({
-            total_sessions: (profile.total_sessions || 0) + 1,
-            xp: nextXp,
-            level: Math.max(profile.level || 1, Math.floor(nextXp / 500) + 1),
-          })
-          .eq('id', user.id);
-      }
-
-      await supabase.from('study_sessions').insert({
-        user_id: user.id,
-        subject_id: subject.id,
-        topic_id: topic.id,
-        duration_minutes: 30,
-        session_type: 'study',
-        completed: true,
-        notes: `Completed local tutor session ${sessionId}`,
-      });
-      await supabase.rpc('update_daily_progress', {
-        user_uuid: user.id,
-        study_minutes: 30,
-        session_completed: true,
-        quiz_taken: false,
-        xp_gained: 100,
-      });
-    } catch (error) {
-      console.warn('Lesson completed, but local dashboard progress could not be updated:', error);
-    }
-  };
-
   const completeLesson = async () => {
     const response = await fetch('/api/tutor/validate-completion', {
       method: 'POST',
@@ -1176,7 +1088,6 @@ export function AITutorInterface({
         }],
       },
     ]);
-    await syncCompletedTopicProgress();
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem('koro-active-tutor-session');
     }
@@ -1249,37 +1160,22 @@ export function AITutorInterface({
     } else {
       utterance.lang = 'en-US';
     }
-    utterance.rate = playbackSpeed[0];
-    utterance.volume = volume[0];
+    utterance.rate = playbackSpeedRef.current;
+    utterance.volume = volumeRef.current;
     utterance.pitch = 1.02;
     utterance.onstart = () => {
       speechRef.current = utterance;
-      speechPlaybackRef.current = {
-        text: normalizedText,
-        charIndex: spokenStartIndex,
-        startIndex: spokenStartIndex,
-        startedAt: performance.now(),
-        rate: utterance.rate,
-        onComplete,
-      };
       setIsPlaying(true);
-    };
-    utterance.onboundary = (event) => {
-      if (speechRef.current === utterance && speechPlaybackRef.current) {
-        speechPlaybackRef.current.charIndex = spokenStartIndex + event.charIndex;
-      }
     };
     utterance.onend = () => {
       if (speechRef.current !== utterance) return;
       speechRef.current = null;
-      speechPlaybackRef.current = null;
       setIsPlaying(false);
       finishSpeechItem(onComplete);
     };
     utterance.onerror = (event) => {
       if (speechRef.current !== utterance) return;
       speechRef.current = null;
-      speechPlaybackRef.current = null;
       setIsPlaying(false);
       if (event.error === 'not-allowed') {
         setShowAudioPrompt(true);
@@ -1314,7 +1210,6 @@ export function AITutorInterface({
         window.speechSynthesis.cancel();
       }
       speechRef.current = null;
-      speechPlaybackRef.current = null;
       setIsPlaying(false);
     }
 
@@ -1401,7 +1296,6 @@ export function AITutorInterface({
       speechQueueRef.current = [];
       window.speechSynthesis.cancel();
       speechRef.current = null;
-      speechPlaybackRef.current = null;
       setIsPlaying(false);
       return;
     }
@@ -1445,18 +1339,22 @@ export function AITutorInterface({
 
   const handleVolumeChange = (nextValue: number[]) => {
     const nextVolume = Math.min(1, Math.max(0, nextValue[0] ?? volume[0]));
+    volumeRef.current = nextVolume;
     const activeAudio = audioRef.current;
     if (activeAudio) activeAudio.volume = nextVolume;
+    if (speechRef.current) speechRef.current.volume = nextVolume;
     setVolume([nextVolume]);
   };
 
   const handlePlaybackSpeedChange = (nextValue: number[]) => {
     const nextSpeed = Math.min(2, Math.max(0.5, nextValue[0] ?? playbackSpeed[0]));
+    playbackSpeedRef.current = nextSpeed;
     const activeAudio = audioRef.current;
     if (activeAudio) {
       activeAudio.playbackRate = nextSpeed;
       activeAudio.preservesPitch = true;
     }
+    if (speechRef.current) speechRef.current.rate = nextSpeed;
     setPlaybackSpeed([nextSpeed]);
   };
 
@@ -1471,23 +1369,21 @@ export function AITutorInterface({
 
   return (
     <div 
-      className="h-screen bg-background flex flex-col" 
+      className="h-full min-h-0 bg-transparent flex flex-col"
       onClick={!userHasInteracted ? enableAudioPlayback : undefined}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
+      <div className="flex items-center justify-between border-b border-white/[0.07] bg-card/45 p-4 backdrop-blur-xl flex-shrink-0">
         <div className="flex items-center space-x-3">
           <Button
             variant="ghost"
             size="sm"
             onClick={handleEndSession}
-            className="p-2"
+            className="rounded-xl bg-white/[0.035] p-2 hover:bg-white/[0.07]"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <div className={`p-2 rounded-lg ${subject.gradient}`}>
-            <span className="text-lg">{subject.icon}</span>
-          </div>
+          <SubjectIcon subjectName={subject.name} size="sm" />
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <div>
@@ -1501,28 +1397,6 @@ export function AITutorInterface({
         </div>
         
         <div className="flex items-center space-x-2">
-          {localMode && (
-            <Badge
-              variant="outline"
-              title={aiProvider === 'ollama'
-                ? `Generated locally with ${aiModel || 'Ollama'}`
-                : 'Built-in fallback; start Ollama to enable the local model'}
-              className={aiProvider === 'ollama'
-                ? 'border-emerald-500/40 text-emerald-400'
-                : 'border-amber-500/40 text-amber-400'}
-            >
-              {aiProvider === 'ollama' ? 'Local AI' : 'Fallback'}
-            </Badge>
-          )}
-          {localMode && resourceTitles.length > 0 && (
-            <Badge
-              variant="outline"
-              title={`Grounded in: ${resourceTitles.join(', ')}`}
-              className="border-blue-500/40 text-blue-400"
-            >
-              {resourceTitles.length} PDF source{resourceTitles.length === 1 ? '' : 's'}
-            </Badge>
-          )}
           {currentPhase !== 'assessment' && totalChunks > 0 && (
             <span className="text-xs text-muted-foreground">
               {currentPhase === 'completed'
@@ -1540,16 +1414,16 @@ export function AITutorInterface({
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden bg-background/20">
         {/* Blackboard */}
         <div className="flex-1 p-4 overflow-hidden">
           <Blackboard entries={blackboardEntries} />
         </div>
 
         {/* Right Panel */}
-        <div className="w-96 border-l flex flex-col h-full overflow-hidden">
+        <div className="w-96 border-l border-white/[0.07] bg-card/25 flex flex-col h-full overflow-hidden">
           {/* Audio Waveform */}
-          <div className="p-4 border-b flex-shrink-0">
+          <div className="p-4 border-b border-white/[0.07] bg-white/[0.015] flex-shrink-0">
             <AudioWaveform
               isPlaying={isPlaying}
               volume={volume[0]}
@@ -1634,7 +1508,7 @@ export function AITutorInterface({
             </ScrollArea>
 
             {/* Input Area */}
-            <div className="p-4 border-t flex-shrink-0">
+            <div className="p-4 border-t border-white/[0.07] bg-card/30 flex-shrink-0">
               {currentPhase === 'completed' ? (
                 <div className="space-y-3 rounded-lg border border-blue-500/30 bg-blue-500/10 p-4 text-center">
                   <CheckCircle2 className="mx-auto h-7 w-7 text-blue-400" />
@@ -1662,7 +1536,7 @@ export function AITutorInterface({
                       }
                       disabled={isLoading || currentPhase === 'delivery'}
                       maxLength={500}
-                      className="flex-1"
+                      className="flex-1 border-white/[0.08] bg-white/[0.035] focus-visible:ring-primary/40"
                     />
                     <Button
                       onClick={handleSendMessage}

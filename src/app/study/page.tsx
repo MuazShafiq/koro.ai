@@ -19,6 +19,7 @@ import { useSupabase } from '../../utils/supabase/provider';
 import { AITutorInterface } from '@/components/lesson/AITutorInterface';
 import { toast } from 'sonner';
 import { Database } from '@/utils/supabase/database.types';
+import { SubjectIcon } from '@/components/subjects/SubjectIcon';
 
 
 type Subject = Database['public']['Tables']['subjects']['Row'];
@@ -208,7 +209,7 @@ export default function StudyPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/50 p-6 flex items-center justify-center">
+      <div className="min-h-full bg-gradient-to-br from-background via-background to-background/50 p-6 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading study materials...</p>
@@ -218,19 +219,23 @@ export default function StudyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/50 p-6">
+    <div className="page-container min-h-full pb-12">
       {/* Header */}
-      <div className="mb-8">
+      <div className="surface-panel relative mb-7 overflow-hidden rounded-[1.75rem] p-6 md:p-8">
+        <div className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-primary/15 blur-3xl" />
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold text-foreground mb-2">AI-Powered Study</h1>
-            <p className="text-muted-foreground">Experience personalized learning with our AI tutor</p>
+          <div className="relative">
+            <p className="section-kicker mb-2">Tutor workspace</p>
+            <h1 className="text-gradient text-3xl font-bold tracking-tight md:text-4xl">Build your next lesson</h1>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground md:text-base">
+              Choose a subject, narrow it to a topic if you want, and Koro will adapt the session to you.
+            </p>
           </div>
           
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="border-green-500/50 text-green-400">
+            <Badge variant="outline" className="relative hidden border-primary/25 bg-primary/10 px-3 py-1.5 text-primary sm:flex">
               <Sparkles className="w-3 h-3 mr-1" />
-              AI Enhanced
+              Adaptive AI
             </Badge>
           </div>
         </div>
@@ -239,7 +244,7 @@ export default function StudyPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Subject Selection */}
         <div className="space-y-6">
-          <Card className="glass border-0">
+          <Card className="surface-panel rounded-2xl border-0">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BookOpen className="w-5 h-5" />
@@ -256,16 +261,14 @@ export default function StudyPage() {
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedSubject(subject)}
                     className={cn(
-                      "p-4 rounded-lg border cursor-pointer transition-all",
+                      "rounded-xl border p-4 cursor-pointer transition-all",
                       selectedSubject?.id === subject.id
-                        ? "bg-primary/20 border-primary/50"
-                        : "glass border-white/20 hover:bg-white/10"
+                        ? "bg-primary/10 border-primary/30 shadow-lg shadow-primary/5"
+                        : "border-white/[0.07] bg-white/[0.025] hover:border-white/15 hover:bg-white/[0.045]"
                     )}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-lg ${subject.gradient} flex items-center justify-center`}>
-                        <span className="text-lg">{subject.icon}</span>
-                      </div>
+                      <SubjectIcon subjectName={subject.name} />
                       <div className="flex-1">
                         <h3 className="font-semibold">{subject.name}</h3>
                         <p className="text-sm text-muted-foreground">{subject.description}</p>
@@ -288,7 +291,7 @@ export default function StudyPage() {
 
           {/* Topic Selection */}
           {selectedSubject && (
-            <Card className="glass border-0">
+            <Card className="surface-panel rounded-2xl border-0">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Target className="w-5 h-5" />
@@ -300,6 +303,24 @@ export default function StudyPage() {
                 {topics.length > 0 ? (
                   <>
                     <div className="space-y-2">
+                      <motion.div
+                        whileHover={{ x: 2 }}
+                        onClick={() => setSelectedTopic(null)}
+                        className={cn(
+                          "cursor-pointer rounded-xl border p-3 transition-all",
+                          !selectedTopic
+                            ? "border-primary/30 bg-primary/10"
+                            : "border-white/[0.07] bg-white/[0.025] hover:border-white/15 hover:bg-white/[0.045]"
+                        )}
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <h4 className="font-medium">All {selectedSubject.name} topics</h4>
+                            <p className="mt-1 text-xs text-muted-foreground">Let Koro choose the best place to begin</p>
+                          </div>
+                          {!selectedTopic && <div className="h-2 w-2 rounded-full bg-primary" />}
+                        </div>
+                      </motion.div>
                       {topics.map((topic) => (
                         <motion.div
                           key={topic.id}
@@ -307,10 +328,10 @@ export default function StudyPage() {
                           whileTap={{ scale: 0.99 }}
                           onClick={() => setSelectedTopic(topic)}
                           className={cn(
-                            "p-3 rounded-lg border cursor-pointer transition-all",
+                            "rounded-xl border p-3 cursor-pointer transition-all",
                             selectedTopic?.id === topic.id
-                              ? "bg-blue-500/20 border-blue-500/50"
-                              : "glass border-white/20 hover:bg-white/5"
+                              ? "bg-primary/10 border-primary/30"
+                              : "border-white/[0.07] bg-white/[0.025] hover:border-white/15 hover:bg-white/[0.045]"
                           )}
                         >
                           <div className="flex items-center justify-between">
@@ -350,7 +371,7 @@ export default function StudyPage() {
 
         {/* AI Tutor Options */}
         <div className="space-y-6">
-          <Card className="glass border-0">
+          <Card className="surface-panel rounded-2xl border-0">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Brain className="w-5 h-5" />
@@ -359,21 +380,29 @@ export default function StudyPage() {
             </CardHeader>
             
             <CardContent className="space-y-4">
-              {selectedTopic && (
+              {selectedSubject && (
                 <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="p-6 rounded-lg bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 cursor-pointer"
-                  onClick={() => selectedSubject && startAITutorSession(selectedSubject.id, selectedTopic.id)}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.995 }}
+                  className="relative cursor-pointer overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 p-6"
+                  onClick={() => startAITutorSession(selectedSubject.id, selectedTopic?.id)}
                 >
+                  <div className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-primary/20 blur-3xl" />
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
+                    <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-violet-500 shadow-lg shadow-blue-500/20">
                       <Target className="w-6 h-6 text-white" />
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-lg mb-2">Topic-Focused Session</h3>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        Deep dive into: <span className="font-medium text-foreground">{selectedTopic.name}</span>
+                    <div className="relative flex-1">
+                      <p className="section-kicker mb-1">Ready to begin</p>
+                      <h3 className="mb-2 text-lg font-semibold">
+                        {selectedTopic ? 'Topic-focused session' : `${selectedSubject.name} discovery session`}
+                      </h3>
+                      <p className="mb-2 text-sm text-muted-foreground">
+                        {selectedTopic ? (
+                          <>Deep dive into <span className="font-medium text-foreground">{selectedTopic.name}</span></>
+                        ) : (
+                          <>Koro will assess you and choose the most useful <span className="font-medium text-foreground">{selectedSubject.name}</span> starting point.</>
+                        )}
                       </p>
                       <p className="text-xs text-muted-foreground mb-3">
                         Targeted learning with assessments and interactive content
@@ -391,9 +420,9 @@ export default function StudyPage() {
                     </div>
                   </div>
                   
-                  <div className="mt-4 pt-4 border-t border-white/10">
+                  <div className="relative mt-5 border-t border-white/10 pt-4">
                     <Button 
-                      className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
+                      className="w-full rounded-xl bg-gradient-to-r from-blue-500 to-violet-500 text-white hover:from-blue-400 hover:to-violet-400"
                       disabled={isStartingSession}
                     >
                       {isStartingSession ? (
@@ -404,7 +433,7 @@ export default function StudyPage() {
                       ) : (
                         <>
                           <ArrowRight className="w-4 h-4 mr-2" />
-                          Start Topic Session
+                          Start AI Session
                         </>
                       )}
                     </Button>
@@ -422,7 +451,7 @@ export default function StudyPage() {
           </Card>
 
           {/* Study Stats */}
-          <Card className="glass border-0">
+          <Card className="surface-panel rounded-2xl border-0">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Award className="w-5 h-5" />

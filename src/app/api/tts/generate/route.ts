@@ -7,9 +7,7 @@ export const maxDuration = 60;
 
 const supabase = createSupabaseAdminClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321',
-  process.env.SUPABASE_SECRET_KEY ||
-    process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    'local-mode'
+  process.env.SUPABASE_SECRET_KEY || 'missing-secret-key'
 );
 
 async function requireUser() {

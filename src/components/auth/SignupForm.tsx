@@ -117,7 +117,7 @@ export default function SignupForm() {
   };
 
   return (
-    <Card className="w-full shadow-2xl border border-gray-700 bg-gray-900/90 backdrop-blur-sm">
+    <Card className="surface-panel w-full rounded-[1.5rem] border-white/[0.08] shadow-2xl">
       <CardHeader className="text-center pb-4">
         <CardTitle className="text-2xl font-bold text-gray-100">
           {step === 1 ? 'Create Account' : 'Tell us about yourself'}

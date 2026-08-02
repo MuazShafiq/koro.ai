@@ -137,6 +137,34 @@ interface ThemeEngineProps {
   className?: string;
 }
 
+function cssHslValue(hex: string): string {
+  const normalized = hex.replace('#', '');
+  if (!/^[0-9a-f]{6}$/i.test(normalized)) return hex;
+
+  const red = parseInt(normalized.slice(0, 2), 16) / 255;
+  const green = parseInt(normalized.slice(2, 4), 16) / 255;
+  const blue = parseInt(normalized.slice(4, 6), 16) / 255;
+  const max = Math.max(red, green, blue);
+  const min = Math.min(red, green, blue);
+  const lightness = (max + min) / 2;
+  const delta = max - min;
+  let hue = 0;
+
+  if (delta !== 0) {
+    if (max === red) hue = ((green - blue) / delta) % 6;
+    else if (max === green) hue = (blue - red) / delta + 2;
+    else hue = (red - green) / delta + 4;
+    hue *= 60;
+    if (hue < 0) hue += 360;
+  }
+
+  const saturation = delta === 0
+    ? 0
+    : delta / (1 - Math.abs(2 * lightness - 1));
+
+  return `${Math.round(hue)} ${Math.round(saturation * 100)}% ${Math.round(lightness * 100)}%`;
+}
+
 export const ThemeEngine: React.FC<ThemeEngineProps> = ({ className }) => {
   const { 
     theme, 
@@ -161,18 +189,18 @@ export const ThemeEngine: React.FC<ThemeEngineProps> = ({ className }) => {
     const root = document.documentElement;
     
     if (previewMode) {
-      root.style.setProperty('--primary', selectedTheme.primary);
-      root.style.setProperty('--secondary', selectedTheme.secondary);
-      root.style.setProperty('--accent', selectedTheme.accent);
+      root.style.setProperty('--primary', cssHslValue(selectedTheme.primary));
+      root.style.setProperty('--secondary', cssHslValue(selectedTheme.secondary));
+      root.style.setProperty('--accent', cssHslValue(selectedTheme.accent));
       root.style.setProperty('--glass-opacity', glassIntensity.toString());
     }
   }, [selectedTheme, glassIntensity, previewMode]);
 
   const applyTheme = () => {
     const root = document.documentElement;
-    root.style.setProperty('--primary', selectedTheme.primary);
-    root.style.setProperty('--secondary', selectedTheme.secondary);
-    root.style.setProperty('--accent', selectedTheme.accent);
+    root.style.setProperty('--primary', cssHslValue(selectedTheme.primary));
+    root.style.setProperty('--secondary', cssHslValue(selectedTheme.secondary));
+    root.style.setProperty('--accent', cssHslValue(selectedTheme.accent));
     root.style.setProperty('--glass-opacity', glassIntensity.toString());
     
     // Motion intensity is no longer supported
@@ -188,9 +216,9 @@ export const ThemeEngine: React.FC<ThemeEngineProps> = ({ className }) => {
     setPreviewMode(false);
     
     const root = document.documentElement;
-    root.style.setProperty('--primary', '#3B82F6');
-    root.style.setProperty('--secondary', '#8B5CF6');
-    root.style.setProperty('--accent', '#06B6D4');
+    root.style.setProperty('--primary', cssHslValue('#3B82F6'));
+    root.style.setProperty('--secondary', cssHslValue('#8B5CF6'));
+    root.style.setProperty('--accent', cssHslValue('#06B6D4'));
     root.style.setProperty('--glass-opacity', '0.7');
   };
 

@@ -27,10 +27,8 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 SUPABASE_SECRET_KEY=
 
-AI_PROVIDER=cloudflare
 CLOUDFLARE_ACCOUNT_ID=
 CLOUDFLARE_AI_TOKEN=
-CLOUDFLARE_AI_MODEL=@cf/meta/llama-3.1-8b-instruct-fast
 ```
 
 Cloudflare supplies both lesson generation and Aura speech. Supabase stores
@@ -60,9 +58,7 @@ instance, create a Vercel project for this repository and add the same hosted
 environment variables in Vercel. Use the production Supabase URL and keys. The
 application does not require a local model or a long-running local process after
 deployment.
-
-An optional offline fallback still exists behind `KORO_LOCAL_MODE=true` and
-`NEXT_PUBLIC_KORO_LOCAL_MODE=true`. It is isolated from the normal deployment
-path and is not enabled by default.
+Cloudflare Workers AI is the only configured AI provider; the model is selected
+in code so deployment environments stay consistent.
 
 Outstanding engineering and release work is tracked in [ISSUES.md](./ISSUES.md).

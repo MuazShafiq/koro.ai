@@ -2,22 +2,19 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  Home,
-  BookOpen,
   BarChart3,
-  Settings,
-  User,
+  BookOpen,
   ChevronLeft,
   ChevronRight,
-  Zap,
+  Home,
+  Settings,
+  User,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { useStore } from "@/lib/store";
-
+import { KoroBrand, KoroMark } from "@/components/brand/KoroBrand";
 
 interface SidebarProps {
   className?: string;
@@ -28,331 +25,191 @@ const navigation = [
     name: "Dashboard",
     href: "/dashboard",
     icon: Home,
-    description: "Overview & Progress"
+    description: "Your learning overview",
   },
   {
     name: "Study",
     href: "/study",
     icon: BookOpen,
-    description: "Learning Materials"
+    description: "Start an AI lesson",
   },
   {
     name: "Analytics",
     href: "/analytics",
     icon: BarChart3,
-    description: "Performance Insights"
+    description: "Progress and insights",
   },
 ];
 
 const bottomNavigation = [
-  {
-    name: "Profile",
-    href: "/profile",
-    icon: User,
-  },
-  {
-    name: "Settings",
-    href: "/settings",
-    icon: Settings,
-  },
+  { name: "Profile", href: "/profile", icon: User },
+  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function KoroSidebar({ className }: SidebarProps) {
+  const pathname = usePathname();
   const { sidebarExpanded, setSidebarExpanded, userProgress } = useStore();
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const goalTarget = Math.max(1, userProgress.weeklyGoal.target);
+  const goalProgress = Math.min(100, (userProgress.weeklyGoal.current / goalTarget) * 100);
+
+  const isActive = (href: string) =>
+    pathname === href || (href !== "/dashboard" && pathname.startsWith(`${href}/`));
 
   return (
-    <motion.div
-      animate={{
-        width: sidebarExpanded ? 320 : 80,
-      }}
-      transition={{
-        duration: 0.4,
-        ease: [0.4, 0, 0.2, 1],
-      }}
+    <aside
       className={cn(
-        "relative flex h-screen flex-col",
-        "glass border-r border-white/10",
-        "bg-gradient-to-b from-card/80 to-card/60",
-        "backdrop-blur-xl",
-        className
+        "relative z-30 flex h-16 w-full shrink-0 border-t border-white/[0.07] bg-[#090c14]/95 backdrop-blur-2xl transition-[width] duration-300 md:h-full md:flex-col md:border-r md:border-t-0",
+        sidebarExpanded ? "md:w-[272px]" : "md:w-[76px]",
+        className,
       )}
     >
-      {/* Animated background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-secondary/5 opacity-50" />
-      
-      {/* Header */}
-      <div className="relative z-10 flex h-20 items-center justify-between px-4">
-        <AnimatePresence mode="wait">
-          {sidebarExpanded && (
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className="flex items-center gap-3"
-            >
-              <motion.div 
-                className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg"
-                whileHover={{ scale: 1.05, rotate: 5 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Zap className="h-5 w-5 text-primary-foreground" />
-              </motion.div>
-              <div>
-                <span className="font-bold text-xl text-foreground">Koro.ai</span>
-                <p className="text-xs text-muted-foreground">AI Learning Platform</p>
-              </div>
-            </motion.div>
+      <div className="pointer-events-none absolute inset-0 hidden bg-[radial-gradient(circle_at_20%_0%,rgba(59,130,246,0.13),transparent_38%)] md:block" />
+
+      <div className="relative hidden h-full min-h-0 flex-col md:flex">
+        <div className={cn("flex h-[76px] shrink-0 items-center", sidebarExpanded ? "px-4" : "justify-center px-2")}>
+          {sidebarExpanded ? (
+            <KoroBrand href="/dashboard" priority size={42} showSubtitle />
+          ) : (
+            <Link href="/dashboard" aria-label="Koro.ai dashboard">
+              <KoroMark priority size={40} />
+            </Link>
           )}
-        </AnimatePresence>
-        
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setSidebarExpanded(!sidebarExpanded)}
-          className="h-10 w-10 rounded-xl glass border border-white/10 text-muted-foreground hover:text-foreground hover:bg-primary/10 transition-all duration-300"
-        >
-          <motion.div
-            animate={{ rotate: sidebarExpanded ? 0 : 180 }}
-            transition={{ duration: 0.3 }}
-          >
-            {sidebarExpanded ? (
+
+          {sidebarExpanded && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSidebarExpanded(false)}
+              aria-label="Collapse sidebar"
+              className="ml-auto h-9 w-9 rounded-xl text-muted-foreground hover:bg-white/[0.06] hover:text-foreground"
+            >
               <ChevronLeft className="h-4 w-4" />
-            ) : (
-              <ChevronRight className="h-4 w-4" />
-            )}
-          </motion.div>
-        </Button>
-      </div>
+            </Button>
+          )}
+        </div>
 
-      {/* User Progress Summary */}
-      {sidebarExpanded && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mx-4 mb-6 p-4 rounded-xl glass border border-white/10 bg-gradient-to-br from-primary/10 to-secondary/10"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-foreground">Weekly Goal</span>
-            <span className="text-xs text-muted-foreground">{userProgress.weeklyGoal.current}/{userProgress.weeklyGoal.target}h</span>
-          </div>
-          <div className="w-full bg-muted/20 rounded-full h-2">
-            <motion.div
-              className="h-2 bg-gradient-to-r from-primary to-secondary rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: `${(userProgress.weeklyGoal.current / userProgress.weeklyGoal.target) * 100}%` }}
-              transition={{ duration: 1, delay: 0.5 }}
-            />
-          </div>
-        </motion.div>
-      )}
+        {!sidebarExpanded && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setSidebarExpanded(true)}
+            aria-label="Expand sidebar"
+            className="mx-auto mb-3 h-9 w-9 rounded-xl text-muted-foreground hover:bg-white/[0.06] hover:text-foreground"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        )}
 
-      {/* Navigation */}
-      <ScrollArea className="flex-1 px-3">
-        <nav className="space-y-2 py-2">
-          {navigation.map((item, index) => {
+        {sidebarExpanded && (
+          <div className="mx-3 mb-5 rounded-2xl border border-white/[0.07] bg-white/[0.035] p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">Weekly goal</p>
+                <p className="mt-1 text-sm font-medium text-foreground">
+                  {userProgress.weeklyGoal.current} of {userProgress.weeklyGoal.target} hours
+                </p>
+              </div>
+              <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
+                {Math.round(goalProgress)}%
+              </span>
+            </div>
+            <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-blue-500 via-cyan-400 to-violet-500 transition-[width] duration-500"
+                style={{ width: `${goalProgress}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        <nav className="flex-1 space-y-1 overflow-y-auto px-3">
+          {navigation.map((item) => {
             const Icon = item.icon;
-            const isHovered = hoveredItem === item.name;
-            
+            const active = isActive(item.href);
             return (
-              <Link key={item.name} href={item.href}>
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                  whileHover={{ 
-                    scale: 1.02,
-                    x: 4,
-                    transition: { duration: 0.2, ease: "easeOut" }
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                  onHoverStart={() => setHoveredItem(item.name)}
-                  onHoverEnd={() => setHoveredItem(null)}
-                  className={cn(
-                    "relative flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium",
-                    "text-muted-foreground transition-all duration-300 ease-out",
-                    "group cursor-pointer overflow-hidden",
-                    "hover:text-foreground hover:bg-gradient-to-r hover:from-primary/8 hover:to-secondary/8",
-                    "hover:border hover:border-white/10 hover:shadow-lg hover:shadow-primary/5"
-                  )}
-                >
-                  {/* Unified hover background */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl border border-transparent"
-                    initial={{ opacity: 0 }}
-                    animate={{ 
-                      opacity: isHovered ? 1 : 0,
-                      borderColor: isHovered ? "rgba(255,255,255,0.1)" : "transparent"
-                    }}
-                    transition={{ duration: 0.25, ease: "easeOut" }}
-                  />
-                  
-                  {/* Icon */}
-                  <motion.div
-                    className="relative z-10 p-2 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 transition-all duration-300 ease-out"
-                    animate={{
-                      background: isHovered 
-                        ? "linear-gradient(135deg, rgba(var(--primary), 0.3), rgba(var(--secondary), 0.3))"
-                        : "linear-gradient(135deg, rgba(var(--primary), 0.2), rgba(var(--secondary), 0.2))",
-                      rotate: isHovered ? 5 : 0
-                    }}
-                    transition={{ duration: 0.25, ease: "easeOut" }}
-                  >
-                    <Icon className="h-4 w-4 flex-shrink-0" />
-                  </motion.div>
-                  
-                  {/* Text */}
-                  <AnimatePresence mode="wait">
-                    {sidebarExpanded && (
-                      <motion.div
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -10 }}
-                        transition={{ duration: 0.2 }}
-                        className="relative z-10 flex-1"
-                      >
-                        <div className="font-medium transition-colors duration-300">{item.name}</div>
-                        <div className="text-xs text-muted-foreground transition-colors duration-300">
-                          {item.description}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
+              <Link
+                key={item.name}
+                href={item.href}
+                title={!sidebarExpanded ? item.name : undefined}
+                className={cn(
+                  "group relative flex items-center rounded-xl border px-3 py-2.5 transition-colors",
+                  sidebarExpanded ? "gap-3" : "justify-center",
+                  active
+                    ? "border-primary/20 bg-primary/[0.10] text-foreground"
+                    : "border-transparent text-muted-foreground hover:bg-white/[0.045] hover:text-foreground",
+                )}
+              >
+                {active && <span className="absolute -left-3 h-6 w-0.5 rounded-r-full bg-primary" />}
+                <span className={cn(
+                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors",
+                  active ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-white/[0.045] group-hover:bg-white/[0.075]",
+                )}>
+                  <Icon className="h-[18px] w-[18px]" />
+                </span>
+                {sidebarExpanded && (
+                  <span className="min-w-0">
+                    <span className="block text-sm font-semibold">{item.name}</span>
+                    <span className="block truncate text-xs text-muted-foreground">{item.description}</span>
+                  </span>
+                )}
               </Link>
             );
           })}
         </nav>
-      </ScrollArea>
 
-      {/* Bottom Navigation */}
-      <div className="relative z-10 border-t border-white/10 p-4 space-y-2">
-
-        
-        {bottomNavigation.map((item) => {
-          const Icon = item.icon;
-          return (
-            <Link key={item.name} href={item.href}>
-              <motion.div
-                whileHover={{ 
-                  scale: 1.02, 
-                  x: 4,
-                  transition: { duration: 0.2, ease: "easeOut" }
-                }}
-                whileTap={{ scale: 0.98 }}
+        <div className="space-y-1 border-t border-white/[0.06] p-3">
+          {bottomNavigation.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                title={!sidebarExpanded ? item.name : undefined}
                 className={cn(
-                  "flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium",
-                  "text-muted-foreground transition-all duration-300 ease-out",
-                  "hover:text-foreground hover:bg-gradient-to-r hover:from-primary/8 hover:to-secondary/8",
-                  "hover:border hover:border-white/10 hover:shadow-md hover:shadow-primary/5",
-                  "group cursor-pointer border border-transparent"
+                  "flex items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                  sidebarExpanded ? "gap-3" : "justify-center",
+                  active ? "bg-white/[0.07] text-foreground" : "text-muted-foreground hover:bg-white/[0.045] hover:text-foreground",
                 )}
               >
-                <Icon className="h-4 w-4 flex-shrink-0 transition-colors duration-300" />
-                <AnimatePresence mode="wait">
-                  {sidebarExpanded && (
-                    <motion.span
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -10 }}
-                      transition={{ duration: 0.2 }}
-                      className="truncate transition-colors duration-300"
-                    >
-                      {item.name}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </motion.div>
+                <Icon className="h-[18px] w-[18px] shrink-0" />
+                {sidebarExpanded && <span>{item.name}</span>}
+              </Link>
+            );
+          })}
+          {sidebarExpanded && (
+            <p className="px-3 pt-3 text-[11px] text-muted-foreground/60">Koro.ai · Voice-first learning</p>
+          )}
+        </div>
+      </div>
+
+      <nav className="relative flex h-full w-full items-center justify-around px-2 md:hidden">
+        {[...navigation, ...bottomNavigation].map((item) => {
+          const Icon = item.icon;
+          const active = isActive(item.href);
+          return (
+            <Link
+              key={item.name}
+              href={item.href}
+              aria-label={item.name}
+              className={cn(
+                "flex h-11 min-w-11 items-center justify-center rounded-xl transition-colors",
+                active ? "bg-primary/15 text-primary" : "text-muted-foreground hover:bg-white/[0.05] hover:text-foreground",
+              )}
+            >
+              <Icon className="h-5 w-5" />
             </Link>
           );
         })}
-      </div>
-
-      {/* Footer */}
-      <div className="relative z-10 border-t border-white/10 p-4">
-        <AnimatePresence mode="wait">
-          {sidebarExpanded && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.3 }}
-              className="text-xs text-muted-foreground space-y-1"
-            >
-              <p className="font-medium">© 2024 Koro.ai</p>
-              <p className="text-muted-foreground/60">Version 2.0.0 Beta</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-      
-      {/* Floating particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(5)].map((_, i) => {
-          // Use deterministic values based on index to prevent hydration mismatch
-          const positions = [15.15, 41.04, 61.82, 57.37, 80.77];
-          const durations = [8, 9, 10, 11, 12];
-          const delays = [0, 1, 2, 3, 4];
-          
-          return (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-primary/20 rounded-full"
-              initial={{ 
-                x: positions[i] + '%',
-                y: '100%',
-                opacity: 0
-              }}
-              animate={{
-                y: '-10%',
-                opacity: [0, 0.4, 0],
-              }}
-              transition={{
-                duration: durations[i],
-                repeat: Infinity,
-                delay: delays[i],
-                ease: 'easeOut'
-              }}
-            />
-          );
-        })}
-      </div>
-    </motion.div>
+      </nav>
+    </aside>
   );
 }
 
-// Export for backward compatibility
-export const Logo = () => {
-  return (
-    <Link
-      href="/dashboard"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
-    >
-      <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-        <span className="text-white font-bold text-sm">K</span>
-      </div>
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="font-medium text-black dark:text-white whitespace-pre"
-      >
-        Koro.ai
-      </motion.span>
-    </Link>
-  );
-};
+export const Logo = () => <KoroBrand showSubtitle={false} size={32} />;
 
-export const LogoIcon = () => {
-  return (
-    <Link
-      href="/dashboard"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
-    >
-      <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-        <span className="text-white font-bold text-sm">K</span>
-      </div>
-    </Link>
-  );
-};
+export const LogoIcon = () => (
+  <Link href="/dashboard" aria-label="Koro.ai home" className="relative z-20 inline-flex py-1">
+    <KoroMark size={32} />
+  </Link>
+);

@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { logger } from '@/lib/logger';
 import { ProgressService } from '@/lib/services/progressService';
-import { isLocalMode } from '@/lib/local-mode';
-import { getLocalTutorProgress, validateLocalTutorCompletion } from '@/lib/local-tutor';
 
 export async function POST(request: NextRequest) {
   const requestId = crypto.randomUUID();
@@ -24,13 +22,6 @@ export async function POST(request: NextRequest) {
         { error: 'Session ID is required' },
         { status: 400 }
       );
-    }
-
-    if (isLocalMode()) {
-      const result = validateLocalTutorCompletion(sessionId);
-      return result
-        ? NextResponse.json(result)
-        : NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
     const supabase = await createClient();
@@ -89,7 +80,12 @@ export async function POST(request: NextRequest) {
 
     // Get progress summary
     logger.info('VALIDATE-COMPLETION', 'Fetching progress summary', {}, requestId);
-    let progressSummary;
+    let progressSummary = {
+      progressPercentage: 0,
+      deliveredConcepts: 0,
+      totalConcepts: 0,
+      equationsCount: 0,
+    };
     try {
       progressSummary = await progressService.getProgressSummary(sessionId);
       logger.info('VALIDATE-COMPLETION', 'Progress summary retrieved', {
@@ -99,10 +95,11 @@ export async function POST(request: NextRequest) {
         equationsCount: progressSummary.equationsCount
       }, requestId);
     } catch (progressError) {
-      logger.error('VALIDATE-COMPLETION', 'Failed to get progress summary', { progressError }, requestId);
-      return NextResponse.json(
-        { error: 'Failed to retrieve progress data' },
-        { status: 500 }
+      logger.warn(
+        'VALIDATE-COMPLETION',
+        'Progress summary unavailable; validating delivered sections instead',
+        { progressError },
+        requestId,
       );
     }
 
@@ -151,187 +148,56 @@ export async function POST(request: NextRequest) {
       totalInteractions: interactions?.length || 0
     }, requestId);
 
-    // Calculate engagement score based on interactions and time spent
-    logger.info('VALIDATE-COMPLETION', 'Calculating engagement score', {}, requestId);
+    // Completion is based on lesson delivery. Interaction counts, extracted
+    // concepts, resources, and elapsed time are useful analytics, but they must
+    // never block a student who has reached the end of every planned section.
     const sessionStartTime = new Date(session.created_at).getTime();
     const currentTime = Date.now();
     const sessionDurationMinutes = (currentTime - sessionStartTime) / (1000 * 60);
-    
+
     const totalInteractions = interactions?.length || 0;
-    const chunksDelivered = deliveredChunks?.length || 0;
-    const totalChunks = lessonPlan.lesson_chunks?.length || 1;
-    
-    // Engagement score calculation (0-1 scale)
-    let engagementScore = 0;
-    
-    // Base score from chunk completion
-    engagementScore += (chunksDelivered / totalChunks) * 0.4;
-    
-    // Score from interactions (questions asked)
-    const interactionScore = Math.min(totalInteractions / 3, 1) * 0.3; // Max score at 3+ interactions
-    engagementScore += interactionScore;
-    
-    // Score from time spent (optimal range: 10-30 minutes)
-    let timeScore = 0;
-    if (sessionDurationMinutes >= 5) {
-      timeScore = Math.min(sessionDurationMinutes / 20, 1) * 0.3; // Max score at 20+ minutes
-    }
-    engagementScore += timeScore;
-    
-    engagementScore = Math.min(engagementScore, 1); // Cap at 1.0
-    
-    logger.info('VALIDATE-COMPLETION', 'Engagement score calculated', {
-      engagementScore,
-      sessionDurationMinutes,
-      totalInteractions,
-      chunksDelivered,
-      totalChunks
-    }, requestId);
-
-    // Define completion criteria based on lesson complexity
-    const complexity = lessonPlan.complexity_level || 'intermediate';
-    let criteria = {
-      conceptCoverageThreshold: 0.7,
-      equationCoverageThreshold: 0.6,
-      resourceSectionsThreshold: 2,
-      engagementThreshold: 0.5,
-      minimumChunksThreshold: 0.6
-    };
-    
-    // Adjust thresholds based on complexity
-    if (complexity === 'beginner') {
-      criteria = {
-        conceptCoverageThreshold: 0.6,
-        equationCoverageThreshold: 0.5,
-        resourceSectionsThreshold: 1,
-        engagementThreshold: 0.4,
-        minimumChunksThreshold: 0.5
-      };
-    } else if (complexity === 'advanced') {
-      criteria = {
-        conceptCoverageThreshold: 0.8,
-        equationCoverageThreshold: 0.7,
-        resourceSectionsThreshold: 3,
-        engagementThreshold: 0.6,
-        minimumChunksThreshold: 0.7
-      };
-    }
-    
-    logger.info('VALIDATE-COMPLETION', 'Completion criteria set', {
-      complexity,
-      criteria
-    }, requestId);
-
-    // Calculate validation results
-    logger.info('VALIDATE-COMPLETION', 'Calculating validation results', {}, requestId);
-    const conceptCoverage = progressSummary.progressPercentage / 100;
-    const equationCoverage = progressSummary.equationsCount > 0 ? 
-      Math.min(progressSummary.deliveredConcepts / progressSummary.equationsCount, 1) : 1;
-    const chunkCompletion = chunksDelivered / totalChunks;
+    const totalChunks = lessonPlan.lesson_chunks?.length || 0;
+    const deliveredChunkIndexes = new Set(
+      (deliveredChunks || []).map((chunk) => chunk.chunk_index),
+    );
+    const missingChunkIndexes = Array.from(
+      { length: totalChunks },
+      (_, index) => index,
+    ).filter((index) => !deliveredChunkIndexes.has(index));
+    const chunksDelivered = Math.max(0, totalChunks - missingChunkIndexes.length);
+    const chunkCompletion = totalChunks > 0 ? chunksDelivered / totalChunks : 0;
+    const isReadyForCompletion = totalChunks > 0 && missingChunkIndexes.length === 0;
     const resourceUtilization = uniqueResourcesUsed.size;
-    
+    const engagementScore = Math.min(
+      chunkCompletion * 0.8 + Math.min(totalInteractions / 3, 1) * 0.2,
+      1,
+    );
+
     const validationResults = {
-      conceptCoverage: {
-        current: conceptCoverage,
-        required: criteria.conceptCoverageThreshold,
-        met: conceptCoverage >= criteria.conceptCoverageThreshold
-      },
-      equationCoverage: {
-        current: equationCoverage,
-        required: criteria.equationCoverageThreshold,
-        met: equationCoverage >= criteria.equationCoverageThreshold
-      },
       chunkCompletion: {
         current: chunkCompletion,
-        required: criteria.minimumChunksThreshold,
-        met: chunkCompletion >= criteria.minimumChunksThreshold
+        required: 1,
+        met: isReadyForCompletion,
       },
-      resourceSections: {
-        current: resourceUtilization,
-        required: criteria.resourceSectionsThreshold,
-        met: resourceUtilization >= criteria.resourceSectionsThreshold
-      },
-      engagementScore: {
-        current: engagementScore,
-        required: criteria.engagementThreshold,
-        met: engagementScore >= criteria.engagementThreshold
-      }
     };
-    
-    logger.info('VALIDATE-COMPLETION', 'Validation results calculated', validationResults, requestId);
 
-    // Determine overall completion status
-    const allCriteriaMet = Object.values(validationResults).every(result => result.met);
-    
-    // Calculate missing requirements and recommendations
     const missingRequirements = [];
     const recommendations = [];
-    
-    if (!validationResults.conceptCoverage.met) {
-      const missingPercentage = Math.round((criteria.conceptCoverageThreshold - conceptCoverage) * 100);
-      missingRequirements.push(`Cover ${missingPercentage}% more concepts`);
-      recommendations.push('Continue with the next lesson chunks to cover more concepts');
+    const remainingChunks = missingChunkIndexes.length;
+    if (!isReadyForCompletion) {
+      missingRequirements.push(
+        `Complete ${remainingChunks} more lesson section${remainingChunks === 1 ? '' : 's'}`,
+      );
+      recommendations.push('Continue through the remaining lesson sections');
     }
-    
-    if (!validationResults.equationCoverage.met) {
-      missingRequirements.push('Practice more mathematical equations');
-      recommendations.push('Ask questions about equations or request examples');
-    }
-    
-    if (!validationResults.chunkCompletion.met) {
-      const missingChunks = Math.ceil((criteria.minimumChunksThreshold * totalChunks) - chunksDelivered);
-      missingRequirements.push(`Complete ${missingChunks} more lesson chunks`);
-      recommendations.push('Continue with the lesson to complete more sections');
-    }
-    
-    if (!validationResults.resourceSections.met) {
-      const missingResources = criteria.resourceSectionsThreshold - resourceUtilization;
-      missingRequirements.push(`Engage with ${missingResources} more resource sections`);
-      recommendations.push('Ask questions to explore different aspects of the topic');
-    }
-    
-    if (!validationResults.engagementScore.met) {
-      missingRequirements.push('Increase engagement with the lesson');
-      if (totalInteractions < 2) {
-        recommendations.push('Ask more questions about the lesson content');
-      }
-      if (sessionDurationMinutes < 10) {
-        recommendations.push('Spend more time reviewing the lesson material');
-      }
-    }
-    
-    logger.info('VALIDATE-COMPLETION', 'Missing requirements calculated', {
-      missingCount: missingRequirements.length,
-      recommendationsCount: recommendations.length
-    }, requestId);
 
-    // Check minimum lesson duration (at least 5 minutes)
-    const minimumDurationMet = sessionDurationMinutes >= 5;
-    if (!minimumDurationMet) {
-      missingRequirements.push('Spend at least 5 minutes in the lesson');
-      recommendations.push('Take more time to absorb the lesson content');
-    }
-    
-    // Calculate estimated time to completion
-    let estimatedTimeToCompletion = 0;
-    if (!allCriteriaMet) {
-      const remainingChunks = Math.max(0, Math.ceil((criteria.minimumChunksThreshold * totalChunks) - chunksDelivered));
-      const averageChunkTime = chunksDelivered > 0 ? sessionDurationMinutes / chunksDelivered : 3;
-      estimatedTimeToCompletion = remainingChunks * averageChunkTime;
-      
-      // Add time for engagement if needed
-      if (!validationResults.engagementScore.met) {
-        estimatedTimeToCompletion += 5; // Additional 5 minutes for engagement
-      }
-    }
-    
-    logger.info('VALIDATE-COMPLETION', 'Time estimation calculated', {
-      estimatedTimeToCompletion,
-      minimumDurationMet
-    }, requestId);
+    const averageChunkTime = chunksDelivered > 0
+      ? sessionDurationMinutes / chunksDelivered
+      : 0;
+    const estimatedTimeToCompletion = remainingChunks * averageChunkTime;
 
     // Update session status if ready for completion
-    if (allCriteriaMet && minimumDurationMet) {
+    if (isReadyForCompletion) {
       logger.database('Updating session status to ready for completion', {}, requestId);
       const { error: updateError } = await supabase
         .from('lesson_sessions')
@@ -350,14 +216,14 @@ export async function POST(request: NextRequest) {
 
     const responseData = {
       sessionId,
-      isReadyForCompletion: allCriteriaMet && minimumDurationMet,
+      isReadyForCompletion,
       validationResults,
       missingRequirements,
       recommendations,
       progressSummary: {
-        conceptsDelivered: progressSummary.deliveredConcepts,
-        totalConcepts: progressSummary.totalConcepts,
-        progressPercentage: progressSummary.progressPercentage,
+        conceptsDelivered: chunksDelivered,
+        totalConcepts: totalChunks,
+        progressPercentage: Math.round(chunkCompletion * 100),
         equationsCount: progressSummary.equationsCount
       },
       sessionMetrics: {
@@ -369,7 +235,7 @@ export async function POST(request: NextRequest) {
         engagementScore: Math.round(engagementScore * 100) / 100
       },
       estimatedTimeToCompletion: Math.round(estimatedTimeToCompletion),
-      criteria
+      criteria: { minimumChunksThreshold: 1 },
     };
     
     logger.info('VALIDATE-COMPLETION', 'Validation completed successfully', {
@@ -409,19 +275,6 @@ export async function GET(request: NextRequest) {
         { error: 'Session ID is required' },
         { status: 400 }
       );
-    }
-
-    if (isLocalMode()) {
-      const result = getLocalTutorProgress(sessionId);
-      return result
-        ? NextResponse.json({
-            sessionId,
-            status: result.status,
-            isValidated: result.status === 'completed',
-            validatedAt: result.completedAt,
-            progress: result.progress,
-          })
-        : NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
     const supabase = await createClient();

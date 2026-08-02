@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useSupabase } from '../../utils/supabase/provider';
 import { Database } from '../../utils/supabase/database.types';
-import { isLocalMode } from '@/lib/local-mode';
+import { toast } from 'sonner';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
@@ -63,10 +63,6 @@ export function UserProfile() {
   }, [supabase, router]);
 
   const handleSignOut = async () => {
-    if (isLocalMode()) {
-      router.push('/settings');
-      return;
-    }
     await supabase.auth.signOut();
     router.push('/login');
     router.refresh();
@@ -102,7 +98,7 @@ export function UserProfile() {
         setError(error.message);
       } else {
         setProfile(prev => ({ ...prev!, ...updates }));
-        alert('Profile updated successfully!');
+        toast.success('Profile updated');
       }
     } catch (err) {
       console.error('Error updating profile:', err);
@@ -117,10 +113,10 @@ export function UserProfile() {
   }
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="surface-panel mx-auto w-full max-w-3xl rounded-[1.5rem] border-0">
       <CardHeader>
         <div className="flex items-center space-x-4">
-          <Avatar className="h-16 w-16">
+          <Avatar className="h-16 w-16 border-2 border-primary/25 shadow-lg shadow-primary/10">
             <AvatarImage src={avatarUrl} alt={fullName || 'User'} />
             <AvatarFallback>{(fullName || 'User').substring(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
@@ -176,10 +172,10 @@ export function UserProfile() {
               </Button>
               <Button
                 type="button"
-                variant={isLocalMode() ? 'outline' : 'destructive'}
+                variant="destructive"
                 onClick={handleSignOut}
               >
-                {isLocalMode() ? 'Manage Local Data' : 'Sign Out'}
+                Sign Out
               </Button>
             </div>
           </div>

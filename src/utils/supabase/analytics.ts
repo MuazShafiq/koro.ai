@@ -1,6 +1,5 @@
 import { createClient } from './client';
 import { Database } from './database.types';
-import { isLocalMode } from '@/lib/local-mode';
 
 type StudySession = Database['public']['Tables']['study_sessions']['Row'];
 type QuizAttempt = Database['public']['Tables']['quiz_attempts']['Row'];
@@ -158,50 +157,6 @@ export class AnalyticsService {
 
   async getSubjectProgress(userId: string): Promise<any[]> {
     try {
-      if (isLocalMode()) {
-        const { data: subjects } = await this.supabase
-          .from('subjects')
-          .select('*')
-          .eq('user_id', userId);
-        const subjectIds = (subjects || []).map((subject) => subject.id);
-        const { data: topics } = subjectIds.length > 0
-          ? await this.supabase.from('topics').select('*').in('subject_id', subjectIds)
-          : { data: [] };
-        const { data: sessions } = await this.supabase
-          .from('study_sessions')
-          .select('*')
-          .eq('user_id', userId);
-
-        return (subjects || []).map((subject) => {
-          const subjectTopics = (topics || []).filter(
-            (topic) => topic.subject_id === subject.id,
-          );
-          const subjectSessions = (sessions || []).filter(
-            (session) => session.subject_id === subject.id,
-          );
-          return {
-            id: subject.id,
-            name: subject.name,
-            icon: subject.icon || '📚',
-            gradient: subject.gradient || 'from-blue-500 to-purple-600',
-            totalTime: subjectSessions.reduce(
-              (sum, session) => sum + Number(session.duration_minutes || 0),
-              0,
-            ),
-            completedSessions: subjectSessions.filter((session) => session.completed).length,
-            totalSessions: subjectSessions.length,
-            completedTopics: subjectTopics.filter((topic) => topic.completed).length,
-            totalTopics: subjectTopics.length,
-            progress: subjectTopics.length > 0
-              ? Math.round(
-                  (subjectTopics.filter((topic) => topic.completed).length /
-                    subjectTopics.length) * 100,
-                )
-              : 0,
-          };
-        });
-      }
-
       const { data, error } = await this.supabase
         .from('study_sessions')
         .select(`

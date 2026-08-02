@@ -4,10 +4,8 @@ import { withAuthRetry, withDatabaseRetry } from '@/utils/supabase/retry';
 import { logger } from '@/lib/logger';
 import { ProgressService } from '@/lib/services/progressService';
 import { MasterLessonPlanService } from '@/lib/services/masterLessonPlanService';
-import { isLocalMode } from '@/lib/local-mode';
 
 export const maxDuration = 60;
-import { createLocalTutorSession } from '@/lib/local-tutor';
 import type { Json } from '@/utils/supabase/database.types';
 import { formatAssessmentQuestion } from '@/lib/tutor-text';
 
@@ -25,13 +23,6 @@ export async function POST(request: NextRequest) {
         { error: 'Subject ID is required' },
         { status: 400 }
       );
-    }
-
-    if (isLocalMode()) {
-      const session = await createLocalTutorSession(subjectId, topicId);
-      return session
-        ? NextResponse.json(session)
-        : NextResponse.json({ error: 'Subject not found' }, { status: 404 });
     }
 
     const supabase = await createClient();

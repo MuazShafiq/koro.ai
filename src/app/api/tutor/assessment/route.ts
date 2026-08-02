@@ -4,8 +4,79 @@ import { hostedAI as openai, hostedAIModel } from '@/lib/services/hostedAI';
 import { logger } from '@/lib/logger';
 
 export const maxDuration = 60;
-import { isLocalMode } from '@/lib/local-mode';
-import { assessLocalTutorSession } from '@/lib/local-tutor';
+
+type AssessmentAnswer = {
+  question: string;
+  answer: string;
+};
+
+type StudentEvaluation = {
+  understanding_level: 'beginner' | 'intermediate' | 'advanced';
+  strengths: string[];
+  areas_for_focus: string[];
+  learning_style_indicators: string;
+};
+
+function createFallbackEvaluation(answers: AssessmentAnswer[]): StudentEvaluation {
+  const averageWords = answers.reduce(
+    (total, item) => total + item.answer.trim().split(/\s+/).filter(Boolean).length,
+    0,
+  ) / Math.max(1, answers.length);
+
+  const understandingLevel = averageWords >= 35
+    ? 'advanced'
+    : averageWords >= 14
+      ? 'intermediate'
+      : 'beginner';
+
+  return {
+    understanding_level: understandingLevel,
+    strengths: ['Engaged with the initial knowledge check'],
+    areas_for_focus: ['Build confidence through clear examples and guided practice'],
+    learning_style_indicators: 'Use concise explanations followed by worked examples.',
+  };
+}
+
+function normalizeLessonPlan(plan: any, evaluation: StudentEvaluation) {
+  const sourceChunks = Array.isArray(plan?.lesson_chunks)
+    ? plan.lesson_chunks
+    : Array.isArray(plan?.chunks)
+      ? plan.chunks
+      : [];
+
+  const lessonChunks = sourceChunks.map((chunk: any, index: number) => ({
+    ...chunk,
+    chunk_index: Number.isFinite(chunk?.chunk_index) ? chunk.chunk_index : index,
+    topic: chunk?.topic || chunk?.title || `Lesson section ${index + 1}`,
+    title: chunk?.title || chunk?.topic || `Lesson section ${index + 1}`,
+    content_outline: chunk?.content_outline || chunk?.content || '',
+    content: chunk?.content || chunk?.content_outline || '',
+    duration_minutes: chunk?.duration_minutes || chunk?.duration || 2,
+  }));
+
+  if (lessonChunks.length === 0) {
+    const overview = typeof plan?.overview === 'string'
+      ? plan.overview
+      : plan?.overview?.description || 'A guided introduction to the selected subject.';
+    lessonChunks.push({
+      chunk_index: 0,
+      topic: 'Core concepts',
+      title: 'Core concepts',
+      content_outline: overview,
+      content: overview,
+      duration_minutes: 2,
+    });
+  }
+
+  return {
+    ...plan,
+    lesson_overview: plan?.lesson_overview || plan?.overview?.description || plan?.overview || '',
+    key_concepts: plan?.key_concepts || plan?.keyConcepts || [],
+    lesson_chunks: lessonChunks,
+    interaction_points: Array.isArray(plan?.interaction_points) ? plan.interaction_points : [],
+    student_evaluation: evaluation,
+  };
+}
 
 export async function POST(request: NextRequest) {
   const requestId = crypto.randomUUID();
@@ -19,7 +90,16 @@ export async function POST(request: NextRequest) {
       isArray: Array.isArray(answers)
     }, requestId);
 
-    if (!sessionId || !answers || !Array.isArray(answers)) {
+    if (
+      !sessionId ||
+      !Array.isArray(answers) ||
+      answers.length === 0 ||
+      answers.some(answer => (
+        !answer ||
+        typeof answer.question !== 'string' ||
+        typeof answer.answer !== 'string'
+      ))
+    ) {
       logger.error('ASSESSMENT', 'Missing required parameters', {
         hasSessionId: !!sessionId,
         hasAnswers: !!answers,
@@ -29,13 +109,6 @@ export async function POST(request: NextRequest) {
         { error: 'Session ID and answers array are required' },
         { status: 400 }
       );
-    }
-
-    if (isLocalMode()) {
-      const result = assessLocalTutorSession(sessionId, answers);
-      return result
-        ? NextResponse.json(result)
-        : NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
     const supabase = await createClient();
@@ -74,71 +147,66 @@ export async function POST(request: NextRequest) {
       hasLessonPlan: !!session.lesson_plan
     }, requestId);
 
-    // Get resources for context
-    logger.database('Fetching resources', {
-      subjectId: session.subject_id,
-      topicId: session.topic_id
-    }, requestId);
-    const { data: resources, error: resourcesError } = await supabase
-      .rpc('get_resources_by_topic', {
-        subject_uuid: session.subject_id,
-        topic_uuid: session.topic_id as string,
-      });
+    // Topic selection is optional. Match the startup path and only query the
+    // topic-scoped RPC when a topic actually exists.
+    let resources: Array<{ title: string; content_text: string | null }> = [];
+    if (session.topic_id) {
+      logger.database('Fetching resources', {
+        subjectId: session.subject_id,
+        topicId: session.topic_id
+      }, requestId);
+      const { data: resourceRows, error: resourcesError } = await supabase
+        .rpc('get_resources_by_topic', {
+          subject_uuid: session.subject_id,
+          topic_uuid: session.topic_id,
+        });
 
-    if (resourcesError) {
-      logger.error('ASSESSMENT', 'Error fetching resources', { resourcesError }, requestId);
-      return NextResponse.json(
-        { error: 'Failed to fetch educational resources' },
-        { status: 500 }
-      );
+      if (resourcesError) {
+        logger.warn('ASSESSMENT', 'Continuing without educational resources', {
+          resourcesError,
+        }, requestId);
+      } else {
+        resources = resourceRows || [];
+      }
     }
     logger.database('Resources fetched', {
-      count: resources?.length || 0,
-      titles: resources?.map((r: any) => r.title) || []
+      count: resources.length,
+      titles: resources.map((resource) => resource.title)
     }, requestId);
 
     // Store student assessments
     logger.database('Storing student assessments', {
       assessmentCount: answers.length
     }, requestId);
-    const assessmentPromises = answers.map(async (answer: any, index: number) => {
-      logger.database(`Storing assessment ${index + 1}`, {
-        questionPreview: answer.question?.substring(0, 50) + '...',
-        answerLength: answer.answer?.length || 0
-      }, requestId);
-      return supabase
-        .from('student_assessments')
-        .insert({
-          session_id: sessionId,
-          question: answer.question,
-          student_answer: answer.answer,
-          assessment_type: 'understanding'
-        });
-    });
+    const { error: assessmentInsertError } = await supabase
+      .from('student_assessments')
+      .insert((answers as AssessmentAnswer[]).map(answer => ({
+        session_id: sessionId,
+        user_id: user.id,
+        question: answer.question,
+        student_answer: answer.answer,
+        assessment_type: 'understanding',
+      })));
 
-    const assessmentResults = await Promise.all(assessmentPromises);
-    logger.database('All assessments stored', {}, requestId);
-    
-    // Check for any errors in storing assessments
-    const assessmentErrors = assessmentResults.filter(result => result.error);
-    if (assessmentErrors.length > 0) {
-      logger.error('ASSESSMENT', 'Some assessment storage errors', {
-        errorCount: assessmentErrors.length,
-        errors: assessmentErrors
+    if (assessmentInsertError) {
+      // Assessment persistence should not strand the learner before a lesson.
+      // The session itself still stores the submitted responses below.
+      logger.warn('ASSESSMENT', 'Continuing after assessment storage failed', {
+        assessmentInsertError,
       }, requestId);
     }
 
     // Prepare context for AI evaluation
     logger.info('ASSESSMENT', 'Preparing evaluation context', {}, requestId);
     const resourceContext = resources
-      ?.map((r: any) => `Title: ${r.title}\nContent: ${r.content_text?.substring(0, 1000) || 'No content available'}`)
+      .map((resource) => `Title: ${resource.title}\nContent: ${resource.content_text?.substring(0, 1000) || 'No content available'}`)
       .join('\n\n') || 'No external resources are attached. Use accurate general knowledge.';
-    const groundingRule = resources?.length
+    const groundingRule = resources.length
       ? 'Use only the provided educational resources for content.'
       : 'Use accurate, age-appropriate general knowledge because no external resources are attached.';
 
-    const answersContext = answers
-      .map((a: any) => `Q: ${a.question}\nA: ${a.answer}`)
+    const answersContext = (answers as AssessmentAnswer[])
+      .map(answer => `Q: ${answer.question}\nA: ${answer.answer}`)
       .join('\n\n');
       
     logger.info('ASSESSMENT', 'Context prepared', {
@@ -149,10 +217,7 @@ export async function POST(request: NextRequest) {
 
     // Evaluate student responses and refine lesson plan
     logger.ai('Preparing evaluation', {}, requestId);
-    const evaluationPrompt = `You are an AI tutor evaluating student responses to refine a lesson plan.
-
-Original Lesson Plan:
-${JSON.stringify(session.lesson_plan, null, 2)}
+    const evaluationPrompt = `You are an AI tutor evaluating a short student knowledge check.
 
 Available Educational Resources:
 ${resourceContext}
@@ -160,58 +225,20 @@ ${resourceContext}
 Student Assessment Responses:
 ${answersContext}
 
-Based on the student's responses, evaluate their understanding and refine the lesson plan.
+Based on the student's responses, evaluate their current understanding.
 ${groundingRule}
 
-Return a JSON object with:
+Return only this compact JSON object:
 {
-  "student_evaluation": {
-    "understanding_level": "beginner|intermediate|advanced",
-    "strengths": ["area1", "area2"],
-    "areas_for_focus": ["area1", "area2"],
-    "learning_style_indicators": "Brief assessment of how they learn best"
-  },
-  "refined_lesson_plan": {
-    "lesson_overview": "Updated overview based on student level",
-    "key_concepts": ["prioritized concepts based on student needs"],
-    "lesson_chunks": [
-      {
-        "chunk_index": 1,
-        "topic": "Chunk topic",
-        "content_outline": "What will be covered",
-        "duration_minutes": 2
-      }
-    ],
-    "interaction_points": ["Points where student can ask questions"]
-  }
+  "understanding_level": "beginner|intermediate|advanced",
+  "strengths": ["area1", "area2"],
+  "areas_for_focus": ["area1", "area2"],
+  "learning_style_indicators": "Brief assessment of how they learn best"
 }`;
     
     logger.ai('Calling AI provider for evaluation', {
       promptLength: evaluationPrompt.length
     }, requestId);
-    const completion = await openai.chat.completions.create({
-      model: hostedAIModel(),
-      messages: [
-        {
-          role: 'system',
-          content: `You are an expert AI tutor. Always respond with valid JSON only. Adapt lessons based on student understanding. ${groundingRule}`
-        },
-        {
-          role: 'user',
-          content: evaluationPrompt
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 1500,
-      response_format: { type: 'json_object' },
-    });
-    
-    logger.ai('Response received', {
-      model: completion.model,
-      usage: completion.usage,
-      finishReason: completion.choices[0].finish_reason
-    }, requestId);
-
     // Helper function to extract JSON from markdown code blocks
     const extractJsonFromMarkdown = (content: string): string => {
       // Remove markdown code block formatting
@@ -223,8 +250,28 @@ Return a JSON object with:
       return content.trim();
     };
 
-    let evaluation;
+    let studentEvaluation = createFallbackEvaluation(answers as AssessmentAnswer[]);
     try {
+      const completion = await openai.chat.completions.create({
+        model: hostedAIModel(),
+        messages: [
+          {
+            role: 'system',
+            content: `You are an expert AI tutor. Always respond with valid JSON only. ${groundingRule}`
+          },
+          {
+            role: 'user',
+            content: evaluationPrompt
+          }
+        ],
+        temperature: 0.3,
+        max_tokens: 450,
+        response_format: { type: 'json_object' },
+      }, {
+        timeout: 20_000,
+        maxRetries: 0,
+      });
+
       const rawContent = completion.choices[0].message.content || '{}';
       logger.info('ASSESSMENT', 'Parsing evaluation results', {
         length: rawContent.length,
@@ -236,24 +283,30 @@ Return a JSON object with:
         cleanedLength: cleanedContent.length
       }, requestId);
       
-      evaluation = JSON.parse(cleanedContent);
+      const parsedEvaluation = JSON.parse(cleanedContent);
+      const candidate = parsedEvaluation.student_evaluation || parsedEvaluation;
+      const level = candidate.understanding_level;
+      if (level === 'beginner' || level === 'intermediate' || level === 'advanced') {
+        studentEvaluation = {
+          understanding_level: level,
+          strengths: Array.isArray(candidate.strengths) ? candidate.strengths : studentEvaluation.strengths,
+          areas_for_focus: Array.isArray(candidate.areas_for_focus) ? candidate.areas_for_focus : studentEvaluation.areas_for_focus,
+          learning_style_indicators: typeof candidate.learning_style_indicators === 'string'
+            ? candidate.learning_style_indicators
+            : studentEvaluation.learning_style_indicators,
+        };
+      }
       logger.info('ASSESSMENT', 'Evaluation parsed successfully', {
-        hasStudentEvaluation: !!evaluation.student_evaluation,
-        understandingLevel: evaluation.student_evaluation?.understanding_level,
-        hasRefinedPlan: !!evaluation.refined_lesson_plan,
-        chunksCount: evaluation.refined_lesson_plan?.lesson_chunks?.length || 0
+        understandingLevel: studentEvaluation.understanding_level,
       }, requestId);
-    } catch (parseError) {
-      const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
-      logger.error('ASSESSMENT', 'Failed to parse evaluation JSON', {
-        error: errorMessage,
-        rawContent: completion.choices[0].message.content
+    } catch (evaluationError) {
+      logger.warn('ASSESSMENT', 'Using deterministic evaluation fallback', {
+        error: evaluationError instanceof Error ? evaluationError.message : String(evaluationError),
+        fallbackLevel: studentEvaluation.understanding_level,
       }, requestId);
-      return NextResponse.json(
-        { error: 'Failed to evaluate responses' },
-        { status: 500 }
-      );
     }
+
+    const refinedLessonPlan = normalizeLessonPlan(session.lesson_plan, studentEvaluation);
 
     // Update session with refined lesson plan and move to delivery phase
     logger.database('Updating session with refined lesson plan', {}, requestId);
@@ -264,14 +317,15 @@ Return a JSON object with:
     
     const sessionUpdateData = {
       current_phase: 'delivery',
-      lesson_plan: evaluation.refined_lesson_plan,
+      lesson_plan: refinedLessonPlan,
       student_responses: updatedResponses
     };
     
     logger.database('Session update data prepared', {
       newPhase: sessionUpdateData.current_phase,
       hasRefinedPlan: !!sessionUpdateData.lesson_plan,
-      responsesCount: sessionUpdateData.student_responses.length
+      responsesCount: sessionUpdateData.student_responses.length,
+      chunksCount: refinedLessonPlan.lesson_chunks.length,
     }, requestId);
     
     const { error: updateError } = await supabase
@@ -291,14 +345,14 @@ Return a JSON object with:
 
     // Store AI evaluation in assessments
     logger.database('Storing AI evaluations', {}, requestId);
-    const evaluationPromises = answers.map(async (answer: any, index: number) => {
+    const evaluationPromises = (answers as AssessmentAnswer[]).map(async (answer, index) => {
       logger.database(`Updating evaluation for question ${index + 1}`, {}, requestId);
       return supabase
         .from('student_assessments')
         .update({
           ai_evaluation: {
-            understanding_level: evaluation.student_evaluation.understanding_level,
-            feedback: `Based on this response, the student shows ${evaluation.student_evaluation.understanding_level} understanding.`
+            understanding_level: studentEvaluation.understanding_level,
+            feedback: `Based on this response, the student shows ${studentEvaluation.understanding_level} understanding.`
           }
         })
         .eq('session_id', sessionId)
@@ -319,8 +373,8 @@ Return a JSON object with:
 
     const responseData = {
       sessionId,
-      evaluation: evaluation.student_evaluation,
-      refinedLessonPlan: evaluation.refined_lesson_plan,
+      evaluation: studentEvaluation,
+      refinedLessonPlan,
       nextPhase: 'delivery',
       message: 'Assessment completed. Ready to begin lesson delivery.'
     };
