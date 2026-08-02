@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import OpenAI from 'openai';
+import { hostedAI as openai, hostedAIModel } from '@/lib/services/hostedAI';
 import { logger } from '@/lib/logger';
-import { convertTextToSpeech } from '@/lib/services/unrealSpeech';
-import { progressService } from '@/lib/services/progressService';
+import { convertTextToSpeech } from '@/lib/services/cloudflareSpeech';
+import { ProgressService } from '@/lib/services/progressService';
+import { isLocalMode } from '@/lib/local-mode';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+export const maxDuration = 60;
+import { deliverLocalTutorChunk } from '@/lib/local-tutor';
 
 export async function POST(request: NextRequest) {
   const requestId = crypto.randomUUID();
@@ -34,7 +34,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (isLocalMode()) {
+      const chunk = deliverLocalTutorChunk(sessionId, Number(chunkIndex));
+      return chunk
+        ? NextResponse.json(chunk)
+        : NextResponse.json({ error: 'Session or chunk not found' }, { status: 404 });
+    }
+
     const supabase = await createClient();
+    const progressService = new ProgressService(supabase);
     
     // Get current user
     logger.auth('Authenticating user', {}, requestId);
@@ -104,7 +112,7 @@ export async function POST(request: NextRequest) {
     const { data: resources, error: resourcesError } = await supabase
       .rpc('get_resources_by_topic', {
         subject_uuid: session.subject_id,
-        topic_uuid: session.topic_id
+        topic_uuid: session.topic_id as string,
       });
 
     if (resourcesError) {
@@ -123,13 +131,16 @@ export async function POST(request: NextRequest) {
     logger.info('DELIVER-CHUNK', 'Preparing resource context', {}, requestId);
     const resourceContext = resources
       ?.map((r: any) => `Title: ${r.title}\nContent: ${r.content_text?.substring(0, 1500) || 'No content available'}`)
-      .join('\n\n') || 'No resources available';
+      .join('\n\n') || 'No external resources are attached. Use accurate general knowledge.';
+    const groundingRule = resources?.length
+      ? 'Uses only information from the provided educational resources'
+      : 'Uses accurate, age-appropriate general knowledge';
     
     logger.info('DELIVER-CHUNK', 'Resource context prepared', {
       contextLength: resourceContext.length
     }, requestId);
 
-    const lessonPlan = session.lesson_plan;
+    const lessonPlan = session.lesson_plan as any;
     logger.info('DELIVER-CHUNK', 'Analyzing lesson plan structure', {
       hasLessonPlan: !!lessonPlan,
       hasLessonChunks: !!lessonPlan?.lesson_chunks,
@@ -156,7 +167,7 @@ export async function POST(request: NextRequest) {
     }, requestId);
 
     // Generate script for this chunk
-    logger.openai('Preparing script generation', {}, requestId);
+    logger.ai('Preparing script generation', {}, requestId);
     const scriptPrompt = `You are an AI tutor delivering a lesson chunk.
 
 Lesson Context:
@@ -168,15 +179,17 @@ ${JSON.stringify(targetChunk, null, 2)}
 Available Educational Resources:
 ${resourceContext}
 
-Student Understanding Level: ${session.lesson_plan?.student_evaluation?.understanding_level || 'intermediate'}
+Student Understanding Level: ${lessonPlan?.student_evaluation?.understanding_level || 'intermediate'}
 
-Generate a 2-3 minute spoken script for this lesson chunk that:
-1. Uses ONLY information from the provided educational resources
+Generate a focused 45-60 second spoken script (roughly 650-900 characters) for this lesson chunk that:
+1. ${groundingRule}
 2. Is conversational and engaging for audio delivery
 3. Explains concepts clearly at the student's level
 4. Includes natural pauses for comprehension
 5. Ends with a transition or question to maintain engagement
 6. Uses simple language suitable for text-to-speech
+7. Contains 2-4 short teaching beats that can be shown as sequential chat messages
+8. Stays under 900 characters; do not repeat the lesson introduction or pad the response
 
 **IMPORTANT - Reduce Confirmations:**
 - Avoid asking "Does this make sense?" or "Do you understand?" after explanations
@@ -188,17 +201,17 @@ Generate a 2-3 minute spoken script for this lesson chunk that:
 
 Return ONLY the script text, no JSON or formatting. The script should be ready for direct text-to-speech conversion.`;
     
-    logger.openai('Script prompt prepared', {
+    logger.ai('Script prompt prepared', {
       promptLength: scriptPrompt.length
     }, requestId);
 
-    logger.openai('Calling OpenAI API', {}, requestId);
+    logger.ai('Calling AI provider', {}, requestId);
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: hostedAIModel(),
       messages: [
         {
           role: 'system',
-          content: 'You are an expert AI tutor creating spoken lesson content. Generate clear, engaging scripts suitable for text-to-speech conversion. Use only provided educational resources.'
+          content: `You are an expert AI tutor creating spoken lesson content. Generate clear, engaging scripts suitable for text-to-speech conversion. ${groundingRule}.`
         },
         {
           role: 'user',
@@ -206,17 +219,17 @@ Return ONLY the script text, no JSON or formatting. The script should be ready f
         }
       ],
       temperature: 0.7,
-      max_tokens: 800
+      max_tokens: 300
     });
 
-    logger.openai('OpenAI response received', {
+    logger.ai('AI response received', {
       model: completion.model,
       usage: completion.usage,
       finishReason: completion.choices[0].finish_reason
     }, requestId);
 
     const scriptContent = completion.choices[0].message.content || '';
-    logger.openai('Script generated', {
+    logger.ai('Script generated', {
       length: scriptContent.length,
       preview: scriptContent.substring(0, 100) + '...'
     }, requestId);
@@ -275,15 +288,15 @@ Return ONLY the script text, no JSON or formatting. The script should be ready f
       // Continue without concept tracking if extraction fails
     }
 
-    // Generate audio using Unreal Speech API with chunking support
-    logger.unrealSpeech('Starting audio generation with chunking', {
+    // Generate audio using Cloudflare Workers AI.
+    logger.speech('Starting audio generation', {
       textLength: scriptContent.length
     }, requestId);
     let audioUrl = null;
     try {
       const ttsResponse = await convertTextToSpeech({
         text: scriptContent,
-        voiceId: 'Scarlett',
+        voiceId: 'asteria',
         bitrate: '192k',
         speed: '0',
         pitch: '1',
@@ -293,7 +306,7 @@ Return ONLY the script text, no JSON or formatting. The script should be ready f
       });
       
       if (ttsResponse.success && ttsResponse.audioBuffer) {
-        logger.unrealSpeech('Audio generation successful', {
+        logger.speech('Audio generation successful', {
           bufferSize: ttsResponse.audioBuffer.byteLength,
           chunksProcessed: ttsResponse.chunksProcessed || 1
         }, requestId);

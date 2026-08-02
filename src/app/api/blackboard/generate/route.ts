@@ -1,36 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import {
+  hasHostedAIConfig,
+  hostedAI as openai,
+  hostedAIModel,
+} from '@/lib/services/hostedAI';
 import { logger } from '@/lib/logger';
+
+export const maxDuration = 60;
 import { createClient } from '@/utils/supabase/server';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-interface BlackboardItem {
-  type: 'text' | 'equation' | 'diagram' | 'step-by-step' | 'definition' | 'example';
-  label: string;
-  content?: string;
-  description?: string;
-  steps?: string[];
-}
+import { isLocalMode } from '@/lib/local-mode';
+import { generateLocalBlackboard } from '@/lib/local-tutor';
+import {
+  generateDeterministicBlackboard,
+  type BlackboardContentItem,
+} from '@/lib/blackboard-content';
 
 interface BlackboardResponse {
-  blackboard: BlackboardItem[];
+  blackboard: BlackboardContentItem[];
 }
 
 export async function POST(request: NextRequest) {
   const requestId = crypto.randomUUID();
+  let script = '';
   logger.info('BLACKBOARD-GENERATE', 'Starting blackboard content generation', {}, requestId);
   
   try {
+    if (isLocalMode()) {
+      const requestBody = await request.json();
+      script = requestBody.script;
+      if (!script || typeof script !== 'string') {
+        return NextResponse.json({ error: 'Script is required' }, { status: 400 });
+      }
+      return NextResponse.json(generateLocalBlackboard(script));
+    }
+
     const supabase = await createClient();
     
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
-      logger.error('BLACKBOARD-GENERATE', 'Authentication failed', { authError }, requestId);
+      logger.warn('BLACKBOARD-GENERATE', 'Authentication required', { authError }, requestId);
       return NextResponse.json(
         { error: 'Authentication failed. Please try again.' },
         { status: 401 }
@@ -40,7 +50,8 @@ export async function POST(request: NextRequest) {
     logger.info('BLACKBOARD-GENERATE', 'User authenticated', { userId: user.id }, requestId);
 
     // Parse request body
-    const { script } = await request.json();
+    const requestBody = await request.json();
+    script = requestBody.script;
     
     if (!script || typeof script !== 'string') {
       return NextResponse.json(
@@ -49,7 +60,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    logger.openai('Generating blackboard content', {
+    logger.ai('Generating blackboard content', {
       userId: user.id,
       scriptLength: script.length
     });
@@ -116,14 +127,14 @@ Example output format:
     // Call OpenAI GPT-4o
     let completion;
     try {
-      logger.info('BLACKBOARD-GENERATE', 'Calling OpenAI API', { 
-        model: 'gpt-4o',
-        hasApiKey: !!process.env.OPENAI_API_KEY,
+      logger.info('BLACKBOARD-GENERATE', 'Calling AI provider', {
+        model: hostedAIModel(),
+        hasApiKey: hasHostedAIConfig(),
         scriptLength: script.length 
       }, requestId);
       
       completion = await openai.chat.completions.create({
-        model: 'gpt-4o',
+        model: hostedAIModel(),
         messages: [
           {
             role: 'system',
@@ -136,14 +147,15 @@ Example output format:
         ],
         temperature: 0.3,
         max_tokens: 2000,
+        response_format: { type: 'json_object' },
       });
       
-      logger.info('BLACKBOARD-GENERATE', 'OpenAI API call successful', {
+      logger.info('BLACKBOARD-GENERATE', 'AI provider call successful', {
         model: completion.model,
         usage: completion.usage
       }, requestId);
     } catch (openaiError) {
-      logger.error('BLACKBOARD-GENERATE', 'OpenAI API call failed', {
+      logger.error('BLACKBOARD-GENERATE', 'AI provider call failed', {
         error: openaiError instanceof Error ? openaiError.message : String(openaiError),
         stack: openaiError instanceof Error ? openaiError.stack : undefined
       }, requestId);
@@ -160,46 +172,48 @@ Example output format:
     let blackboardData: BlackboardResponse;
     try {
       // Log the raw response for debugging
-      logger.info('BLACKBOARD-GENERATE', `Raw OpenAI response for user ${user.id}`, {
+      logger.info('BLACKBOARD-GENERATE', `Raw AI response for user ${user.id}`, {
         content: responseContent,
         contentLength: responseContent.length,
         contentType: typeof responseContent
       }, requestId);
       
-      // Clean the response content - remove markdown code blocks if present
+      // Models occasionally wrap valid JSON in explanatory prose or a fenced
+      // block despite JSON mode. Extract the outer object instead of treating
+      // that harmless wrapping as a server error.
       let cleanedContent = responseContent.trim();
-      if (cleanedContent.startsWith('```json')) {
-        cleanedContent = cleanedContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-        logger.info('BLACKBOARD-GENERATE', 'Removed markdown code blocks from response', {
-          originalLength: responseContent.length,
-          cleanedLength: cleanedContent.length
-        }, requestId);
+      const objectStart = cleanedContent.indexOf('{');
+      const objectEnd = cleanedContent.lastIndexOf('}');
+      if (objectStart >= 0 && objectEnd > objectStart) {
+        cleanedContent = cleanedContent.slice(objectStart, objectEnd + 1);
       }
       
       blackboardData = JSON.parse(cleanedContent);
     } catch (parseError) {
-      logger.error('BLACKBOARD-GENERATE', 'Failed to parse OpenAI response as JSON', {
+      logger.warn('BLACKBOARD-GENERATE', 'Using deterministic content after malformed AI JSON', {
         userId: user.id,
         error: parseError instanceof Error ? parseError.message : String(parseError),
-        stack: parseError instanceof Error ? parseError.stack : undefined,
-        rawContent: responseContent,
-        contentLength: responseContent.length,
         contentPreview: responseContent.substring(0, 500)
       }, requestId);
-      throw new Error('Invalid JSON response from OpenAI');
+      return NextResponse.json(generateDeterministicBlackboard(script));
     }
 
     // Validate the response structure
     if (!blackboardData.blackboard || !Array.isArray(blackboardData.blackboard)) {
-      throw new Error('Invalid blackboard data structure');
+      logger.warn('BLACKBOARD-GENERATE', 'Using deterministic content after invalid AI structure', {}, requestId);
+      return NextResponse.json(generateDeterministicBlackboard(script));
     }
 
-    logger.openai('Blackboard content generated successfully', {
+    logger.ai('Blackboard content generated successfully', {
       userId: user.id,
       itemCount: blackboardData.blackboard.length
     });
 
-    return NextResponse.json(blackboardData);
+    return NextResponse.json(
+      blackboardData.blackboard.length > 0
+        ? blackboardData
+        : generateDeterministicBlackboard(script),
+    );
 
   } catch (error) {
     logger.error('BLACKBOARD-GENERATE', 'Error generating blackboard content', {
@@ -207,9 +221,8 @@ Example output format:
       stack: error instanceof Error ? error.stack : undefined
     }, requestId);
 
-    return NextResponse.json(
-      { error: 'Failed to generate blackboard content' },
-      { status: 500 }
-    );
+    // Blackboard generation must never block lesson delivery. A deterministic
+    // extractor still writes equations, definitions, examples, or a key idea.
+    return NextResponse.json(generateDeterministicBlackboard(script));
   }
 }

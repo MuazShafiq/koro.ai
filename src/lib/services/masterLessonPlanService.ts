@@ -1,10 +1,7 @@
-import { createClient } from '@/utils/supabase/client';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { logger } from '@/lib/logger';
-import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { hostedAI as openai, hostedAIModel } from '@/lib/services/hostedAI';
+import { isLocalMode } from '@/lib/local-mode';
 
 export interface LearningObjective {
   id: string;
@@ -12,7 +9,6 @@ export interface LearningObjective {
   level: 'basic' | 'intermediate' | 'advanced';
   assessmentCriteria: string[];
 }
-
 export interface ConceptNode {
   id: string;
   name: string;
@@ -81,7 +77,7 @@ export interface MasterLessonPlan {
 }
 
 export class MasterLessonPlanService {
-  private supabase = createClient();
+  constructor(private readonly supabase: SupabaseClient<any>) {}
 
   /**
    * Get existing master lesson plan or create a new one
@@ -152,7 +148,16 @@ export class MasterLessonPlanService {
     resourceContext: string,
     requestId: string
   ): Promise<MasterLessonPlan> {
-    logger.openai('Generating master lesson plan', {}, requestId);
+    if (isLocalMode()) {
+      throw new Error('Cloud master-plan generation is disabled in local demo mode');
+    }
+
+    logger.ai('Generating master lesson plan', {}, requestId);
+
+    const hasExternalResources = !resourceContext.startsWith('No external resources');
+    const groundingRule = hasExternalResources
+      ? 'Use only the provided educational resources above as your knowledge base'
+      : 'No external resources are attached; use accurate, age-appropriate general knowledge';
 
     const prompt = `You are an expert educational designer creating a comprehensive MASTER LESSON PLAN for "${topicName}" in ${subjectName}.
 
@@ -160,7 +165,7 @@ export class MasterLessonPlanService {
 ${resourceContext || 'No specific resources provided - use your general knowledge.'}
 
 **CRITICAL REQUIREMENTS:**
-- Use ONLY the provided educational resources above as your knowledge base
+- ${groundingRule}
 - Create a detailed, reusable master plan that can be stored and referenced
 - Design for variable chunk delivery (2-8 chunks based on complexity):
   * Simple topics: 2-3 chunks (8-12 minutes each)
@@ -238,7 +243,7 @@ ${resourceContext || 'No specific resources provided - use your general knowledg
       "realWorldContext": "Real-world scenario"
     }
   ],
-  "recommendedChunkCount": "2-8 based on complexity",
+  "recommendedChunkCount": 4,
   "chunkStructure": [
     {
       "chunkIndex": 0,
@@ -268,7 +273,7 @@ ${resourceContext || 'No specific resources provided - use your general knowledg
 }`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: hostedAIModel(),
       messages: [
         {
           role: 'system',
@@ -280,14 +285,21 @@ ${resourceContext || 'No specific resources provided - use your general knowledg
         }
       ],
       temperature: 0.3, // Lower temperature for more consistent, structured output
-      max_tokens: 4000
+      max_tokens: 4000,
+      response_format: { type: 'json_object' },
     });
 
-    logger.openai('Master plan generation completed', {
+    logger.ai('Master plan generation completed', {
       model: completion.model,
       usage: completion.usage
     }, requestId);
 
+    const fallbackPlan = this.createFallbackMasterPlan(
+      subjectId,
+      topicId,
+      subjectName,
+      topicName,
+    );
     let masterPlan: Partial<MasterLessonPlan>;
     try {
       const rawContent = completion.choices[0].message.content || '{}';
@@ -295,19 +307,39 @@ ${resourceContext || 'No specific resources provided - use your general knowledg
       masterPlan = JSON.parse(cleanedContent);
     } catch (parseError) {
       logger.error('MASTER-LESSON-PLAN', 'Failed to parse master plan JSON', {
-        error: parseError,
-        rawContent: completion.choices[0].message.content
+        error: parseError
       }, requestId);
-      throw new Error('Failed to generate master lesson plan');
+      masterPlan = fallbackPlan;
     }
 
-    // Add metadata
+    const generatedChunkCount = Number(masterPlan.recommendedChunkCount);
+    const generatedDuration = Number(masterPlan.estimatedDurationMinutes);
+
+    // Normalize model output before it reaches typed application code or SQL.
     const completeMasterPlan: MasterLessonPlan = {
+      ...fallbackPlan,
       ...masterPlan,
       subjectId,
       topicId,
+      title: masterPlan.title || fallbackPlan.title,
+      description: masterPlan.description || fallbackPlan.description,
+      estimatedDurationMinutes: Number.isFinite(generatedDuration) && generatedDuration > 0
+        ? Math.round(generatedDuration)
+        : fallbackPlan.estimatedDurationMinutes,
+      recommendedChunkCount: Number.isFinite(generatedChunkCount)
+        ? Math.max(2, Math.min(8, Math.round(generatedChunkCount)))
+        : fallbackPlan.recommendedChunkCount,
+      learningObjectives: Array.isArray(masterPlan.learningObjectives)
+        ? masterPlan.learningObjectives
+        : fallbackPlan.learningObjectives,
+      chunkStructure: Array.isArray(masterPlan.chunkStructure) && masterPlan.chunkStructure.length > 0
+        ? masterPlan.chunkStructure
+        : fallbackPlan.chunkStructure,
+      assessmentCriteria: Array.isArray(masterPlan.assessmentCriteria) && masterPlan.assessmentCriteria.length > 0
+        ? masterPlan.assessmentCriteria
+        : fallbackPlan.assessmentCriteria,
       version: 1
-    } as MasterLessonPlan;
+    };
 
     // Save to database - match actual schema structure
     const { data: savedPlan, error } = await this.supabase
@@ -320,7 +352,11 @@ ${resourceContext || 'No specific resources provided - use your general knowledg
         description: completeMasterPlan.description,
         difficulty_level: completeMasterPlan.difficultyLevel,
         estimated_duration_minutes: completeMasterPlan.estimatedDurationMinutes,
-        learning_objectives: completeMasterPlan.learningObjectives?.map(obj => obj.description) || [],
+        learning_objectives: completeMasterPlan.learningObjectives?.map(
+          objective => typeof objective === 'string'
+            ? objective
+            : objective.description,
+        ) || [],
         prerequisite_concepts: completeMasterPlan.prerequisiteConcepts,
         core_concepts: completeMasterPlan.coreConcepts,
         concept_hierarchy: completeMasterPlan.conceptHierarchy,
@@ -358,6 +394,124 @@ ${resourceContext || 'No specific resources provided - use your general knowledg
     }, requestId);
 
     return { ...completeMasterPlan, id: savedPlan.id };
+  }
+
+  private createFallbackMasterPlan(
+    subjectId: string,
+    topicId: string,
+    subjectName: string,
+    topicName: string,
+  ): MasterLessonPlan {
+    const conceptId = topicName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+    return {
+      subjectId,
+      topicId,
+      title: `${topicName} Fundamentals`,
+      description: `A guided introduction to the essential ideas and applications of ${topicName} in ${subjectName}.`,
+      difficultyLevel: 'beginner',
+      estimatedDurationMinutes: 30,
+      learningObjectives: [
+        {
+          id: 'objective-1',
+          description: `Explain the core ideas of ${topicName} in your own words`,
+          level: 'basic',
+          assessmentCriteria: [`Give a clear explanation of ${topicName}`],
+        },
+        {
+          id: 'objective-2',
+          description: `Apply ${topicName} to a practical example`,
+          level: 'intermediate',
+          assessmentCriteria: [`Solve or analyze one ${topicName} example`],
+        },
+      ],
+      prerequisiteConcepts: [],
+      coreConcepts: [
+        {
+          id: conceptId,
+          name: topicName,
+          description: `The foundational principles of ${topicName}.`,
+          prerequisites: [],
+          dependents: [],
+          importance: 'core',
+        },
+      ],
+      conceptHierarchy: { [conceptId]: [] },
+      contentSections: [
+        {
+          id: 'section-1',
+          title: `Understanding ${topicName}`,
+          description: `Definitions, intuition, and key relationships in ${topicName}.`,
+          concepts: [conceptId],
+          estimatedMinutes: 10,
+          resourceReferences: [],
+        },
+        {
+          id: 'section-2',
+          title: `${topicName} in Practice`,
+          description: `Worked examples and real-world applications of ${topicName}.`,
+          concepts: [conceptId],
+          estimatedMinutes: 12,
+          resourceReferences: [],
+        },
+      ],
+      keyEquations: [],
+      practicalApplications: [
+        {
+          id: 'application-1',
+          title: `Applying ${topicName}`,
+          description: `Use the core principles of ${topicName} in a realistic situation.`,
+          realWorldContext: `A practical ${subjectName} scenario`,
+        },
+      ],
+      recommendedChunkCount: 3,
+      chunkStructure: [
+        {
+          chunkIndex: 0,
+          title: `Introduction to ${topicName}`,
+          objectives: ['objective-1'],
+          concepts: [conceptId],
+          contentSections: ['section-1'],
+          estimatedMinutes: 8,
+          chunkType: 'introduction',
+          prerequisites: [],
+        },
+        {
+          chunkIndex: 1,
+          title: `${topicName} Concepts and Examples`,
+          objectives: ['objective-1', 'objective-2'],
+          concepts: [conceptId],
+          contentSections: ['section-1', 'section-2'],
+          estimatedMinutes: 12,
+          chunkType: 'core_content',
+          prerequisites: ['chunk-0'],
+        },
+        {
+          chunkIndex: 2,
+          title: `${topicName} Practice`,
+          objectives: ['objective-2'],
+          concepts: [conceptId],
+          contentSections: ['section-2'],
+          estimatedMinutes: 10,
+          chunkType: 'practice',
+          prerequisites: ['chunk-1'],
+        },
+      ],
+      assessmentCriteria: [
+        `What do you already know about ${topicName}?`,
+        `Where have you encountered ${topicName} in real life?`,
+      ],
+      knowledgeCheckpoints: [
+        {
+          chunkIndex: 1,
+          checkpointType: 'understanding',
+          criteria: [`Explain one key idea from ${topicName}`],
+        },
+      ],
+      resourceReferences: [],
+      contentCoverageMap: {},
+      version: 1,
+    };
   }
 
   /**
@@ -400,5 +554,3 @@ ${resourceContext || 'No specific resources provided - use your general knowledg
     return content.trim();
   }
 }
-
-export const masterLessonPlanService = new MasterLessonPlanService();

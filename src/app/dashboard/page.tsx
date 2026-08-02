@@ -5,7 +5,7 @@ import { PerformanceCard } from "@/components/cards/PerformanceCard";
 import { BentoGrid, BentoGridItem } from "@/components/layouts/BentoGrid";
 import { SubjectSelectionModal } from "@/components/modals/SubjectSelectionModal";
 import { motion } from "framer-motion";
-import { BookOpen, Calculator, Atom, Globe, Target, Trophy, Clock, Zap, TrendingUp, Users, FlaskConical, Dna, Code, Loader2, X, Brain, Sparkles } from "lucide-react";
+import { BookOpen, Calculator, Atom, Globe, Target, Trophy, Clock, Zap, TrendingUp, Users, FlaskConical, Dna, Code, Loader2, X } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { useSupabase } from "@/utils/supabase/provider";
 import { Database } from "@/utils/supabase/database.types";
@@ -99,9 +99,9 @@ export default function DashboardPage() {
         .eq('user_id', user.id);
       
       if (subjectsData) {
-        const formattedSubjects = subjectsData.map((subject: Subject & { topics?: Topic[] }) => {
+        const formattedSubjects = subjectsData.map((subject) => {
           const totalTopics = subject.topics?.length || 0;
-          const completedTopics = subject.topics?.filter((topic: Topic) => topic.completed).length || 0;
+          const completedTopics = subject.topics?.filter((topic) => topic.completed).length || 0;
           const progress = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
           
           return {
@@ -330,72 +330,6 @@ export default function DashboardPage() {
               AI Tutor - Your Subjects
             </h2>
             <BentoGrid className="max-w-4xl mx-auto">
-              {/* AI Tutor Feature Card - Hidden for now */}
-              {/* <BentoGridItem className="group cursor-pointer hover:shadow-xl transition-all duration-300" size="wide">
-                <motion.div
-                  className="relative h-48 p-6 bg-gradient-to-br from-purple-500/10 via-blue-500/10 to-indigo-500/10 rounded-xl border border-purple-200/30 overflow-hidden"
-                  whileHover={{ y: -2 }}
-                  onClick={() => window.location.href = '/ai-tutor'}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-xl" />
-                  
-                  <div className="relative z-10 h-full flex gap-4">
-                    <div className="flex-1 flex flex-col justify-between min-w-0">
-                      <div className="flex items-center gap-4 mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-lg flex-shrink-0">
-                          <Brain className="w-6 h-6 text-white" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-bold text-foreground leading-tight">AI-Led Tutoring</h3>
-                          <p className="text-sm text-purple-600 font-medium">Personalized Learning Experience</p>
-                        </div>
-                      </div>
-                      
-                      <div className="mb-4">
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                          Get personalized lessons with AI-generated content, audio narration, and adaptive learning paths tailored to your subjects.
-                        </p>
-                      </div>
-                      
-                      <div className="p-3 bg-white/5 rounded-lg border border-white/10">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Sparkles className="w-4 h-4 text-purple-500" />
-                          <span className="text-sm font-medium text-foreground">AI-Generated Content</span>
-                        </div>
-                        <p className="text-xs text-muted-foreground">Audio lessons • Adaptive difficulty • Progress tracking</p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-3 min-w-[140px]">
-                      <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-5 h-5 rounded bg-purple-500 flex items-center justify-center">
-                            <Brain className="w-3 h-3 text-white" />
-                          </div>
-                          <span className="text-sm text-muted-foreground">Ready</span>
-                        </div>
-                        <p className="text-lg font-bold text-foreground">{subjects.length}</p>
-                        <p className="text-sm text-muted-foreground">subjects</p>
-                      </div>
-                      
-                      <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-5 h-5 rounded bg-blue-500 flex items-center justify-center">
-                            <Sparkles className="w-3 h-3 text-white" />
-                          </div>
-                          <span className="text-sm text-muted-foreground">AI</span>
-                        </div>
-                        <p className="text-lg font-bold text-foreground">GPT</p>
-                        <p className="text-sm text-muted-foreground">powered</p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              </BentoGridItem> */}
-              
               {/* Render user's selected subjects */}
               {subjects.map((subject, index) => (
                 <BentoGridItem

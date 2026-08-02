@@ -1,216 +1,127 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 
 interface AudioWaveformProps {
-  audioRef: React.RefObject<HTMLAudioElement | null>;
   isPlaying: boolean;
+  volume?: number;
 }
 
-export function AudioWaveform({ audioRef, isPlaying }: AudioWaveformProps) {
+export function AudioWaveform({
+  isPlaying,
+  volume = 1,
+}: AudioWaveformProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number | undefined>(undefined);
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
-  const [dataArray, setDataArray] = useState<Uint8Array | null>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
-  const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const animationRef = useRef<number | null>(null);
 
-  // Re-initialize audio context whenever audioRef.current changes
-  useEffect(() => {
-    if (audioRef.current) {
-      initializeAudioContext();
-    }
-  }, [audioRef.current]);
-
-  useEffect(() => {
-    if (isPlaying && analyser && dataArray) {
-      startAnimation();
-    } else {
-      stopAnimation();
-      if (!isPlaying) {
-        drawStaticWaveform();
-      }
-    }
-
-    return () => stopAnimation();
-  }, [isPlaying, analyser, dataArray]);
-
-  // Cleanup audio context on unmount
-  useEffect(() => {
-    return () => {
-      if (audioContext) {
-        audioContext.close();
-      }
+  const canvasSize = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+    return {
+      canvas,
+      context: canvas.getContext('2d'),
+      width: canvas.clientWidth,
+      height: canvas.clientHeight,
     };
-  }, []);
-
-  const initializeAudioContext = async () => {
-    try {
-      // Clean up previous audio context if it exists
-      if (audioContext) {
-        await audioContext.close();
-      }
-      
-      const context = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const analyserNode = context.createAnalyser();
-      
-      analyserNode.fftSize = 256;
-      const bufferLength = analyserNode.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
-      
-      if (audioRef.current) {
-        try {
-          // Disconnect previous source if it exists
-          if (sourceRef.current) {
-            sourceRef.current.disconnect();
-          }
-          
-          const source = context.createMediaElementSource(audioRef.current);
-          source.connect(analyserNode);
-          analyserNode.connect(context.destination);
-          
-          sourceRef.current = source;
-          setAudioContext(context);
-          setAnalyser(analyserNode);
-          setDataArray(dataArray);
-          setIsInitialized(true);
-          
-          // Draw initial static waveform
-          drawStaticWaveform();
-        } catch (sourceError) {
-          console.warn('Could not create media element source:', sourceError);
-          // Still set up the context for potential future use
-          setAudioContext(context);
-          setAnalyser(analyserNode);
-          setDataArray(dataArray);
-          setIsInitialized(true);
-          drawStaticWaveform();
-        }
-      }
-    } catch (error) {
-      console.error('Error initializing audio context:', error);
-      // Fallback to static waveform
-      drawStaticWaveform();
-    }
   };
 
-  const startAnimation = () => {
-    if (!analyser || !dataArray) return;
-    
-    const animate = () => {
-      analyser.getByteFrequencyData(dataArray);
-      drawWaveform(dataArray);
-      animationRef.current = requestAnimationFrame(animate);
-    };
-    
-    animate();
+  const drawBars = (values: number[], active: boolean) => {
+    const metrics = canvasSize();
+    if (!metrics?.context) return;
+
+    const { context, width, height } = metrics;
+    context.clearRect(0, 0, width, height);
+
+    const gradient = context.createLinearGradient(0, 0, width, 0);
+    if (active) {
+      gradient.addColorStop(0, '#10b981');
+      gradient.addColorStop(0.5, '#22d3ee');
+      gradient.addColorStop(1, '#3b82f6');
+    } else {
+      gradient.addColorStop(0, '#334155');
+      gradient.addColorStop(0.5, '#475569');
+      gradient.addColorStop(1, '#64748b');
+    }
+    context.fillStyle = gradient;
+
+    const gap = 2;
+    const barWidth = Math.max(2, (width - gap * (values.length - 1)) / values.length);
+    values.forEach((value, index) => {
+      const barHeight = Math.max(3, value * height * 0.88);
+      const x = index * (barWidth + gap);
+      const y = (height - barHeight) / 2;
+      context.beginPath();
+      context.roundRect(x, y, barWidth, barHeight, Math.min(barWidth / 2, 3));
+      context.fill();
+    });
+  };
+
+  const drawStatic = () => {
+    const values = Array.from({ length: 44 }, (_, index) => {
+      const envelope = 0.12 + Math.sin((index / 43) * Math.PI) * 0.1;
+      return envelope + (index % 5) * 0.008;
+    });
+    drawBars(values, false);
   };
 
   const stopAnimation = () => {
-    if (animationRef.current) {
+    if (animationRef.current !== null) {
       cancelAnimationFrame(animationRef.current);
-    }
-  };
-
-  const drawWaveform = (frequencyData: Uint8Array) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    
-    const width = canvas.width;
-    const height = canvas.height;
-    
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
-    
-    // Create gradient
-    const gradient = ctx.createLinearGradient(0, 0, width, 0);
-    gradient.addColorStop(0, '#10b981'); // emerald-500
-    gradient.addColorStop(0.5, '#06d6a0'); // custom teal
-    gradient.addColorStop(1, '#3b82f6'); // blue-500
-    
-    ctx.fillStyle = gradient;
-    
-    const barWidth = width / frequencyData.length;
-    
-    for (let i = 0; i < frequencyData.length; i++) {
-      const barHeight = (frequencyData[i] / 255) * height * 0.8;
-      const x = i * barWidth;
-      const y = height - barHeight;
-      
-      // Add some smoothing and minimum height
-      const smoothedHeight = Math.max(barHeight, 4);
-      
-      ctx.fillRect(x, height - smoothedHeight, barWidth - 1, smoothedHeight);
-    }
-  };
-
-  const drawStaticWaveform = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    
-    const width = canvas.width;
-    const height = canvas.height;
-    
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
-    
-    // Create gradient
-    const gradient = ctx.createLinearGradient(0, 0, width, 0);
-    gradient.addColorStop(0, '#374151'); // gray-700
-    gradient.addColorStop(0.5, '#4b5563'); // gray-600
-    gradient.addColorStop(1, '#6b7280'); // gray-500
-    
-    ctx.fillStyle = gradient;
-    
-    // Draw static bars with random heights
-    const numBars = 64;
-    const barWidth = width / numBars;
-    
-    for (let i = 0; i < numBars; i++) {
-      // Create a wave-like pattern
-      const waveHeight = Math.sin(i * 0.2) * 0.3 + 0.4;
-      const randomVariation = Math.random() * 0.3;
-      const barHeight = (waveHeight + randomVariation) * height * 0.6;
-      
-      const x = i * barWidth;
-      const y = height - barHeight;
-      
-      ctx.fillRect(x, y, barWidth - 1, barHeight);
+      animationRef.current = null;
     }
   };
 
   useEffect(() => {
+    stopAnimation();
+
+    if (!isPlaying) {
+      drawStatic();
+      return;
+    }
+
+    const startedAt = performance.now();
+    const animate = (timestamp: number) => {
+      const time = (timestamp - startedAt) / 1000;
+      const values = Array.from({ length: 44 }, (_, index) => {
+        const lowPulse = Math.sin(time * 7.2 + index * 0.34);
+        const voiceTexture = Math.sin(time * 13.7 - index * 0.21);
+        const envelope = 0.46 + 0.34 * Math.sin(time * 3.1 + index * 0.08);
+        const energy = 0.18 + Math.abs(lowPulse * 0.48 + voiceTexture * 0.22) * envelope;
+        return Math.min(0.95, energy * volume);
+      });
+      drawBars(values, true);
+
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+    return stopAnimation;
+  }, [isPlaying, volume]);
+
+  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
-    const resizeCanvas = () => {
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * window.devicePixelRatio;
-      canvas.height = rect.height * window.devicePixelRatio;
-      
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-      }
-      
-      if (!isPlaying) {
-        drawStaticWaveform();
-      }
+
+    const resize = () => {
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = Math.round(width * ratio);
+      canvas.height = Math.round(height * ratio);
+      canvas.getContext('2d')?.setTransform(ratio, 0, 0, ratio, 0, 0);
+      if (!isPlaying) drawStatic();
     };
-    
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    
-    return () => window.removeEventListener('resize', resizeCanvas);
+
+    resize();
+    const observer = new ResizeObserver(resize);
+    observer.observe(canvas);
+    return () => observer.disconnect();
   }, [isPlaying]);
+
+  useEffect(() => {
+    return stopAnimation;
+  }, []);
 
   return (
     <Card className="p-4 bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700">
@@ -220,41 +131,29 @@ export function AudioWaveform({ audioRef, isPlaying }: AudioWaveformProps) {
             Audio Visualization
           </h3>
           <div className="flex items-center space-x-2">
-            <div className={`w-2 h-2 rounded-full ${
-              isPlaying 
-                ? 'bg-green-500 animate-pulse' 
-                : 'bg-slate-400'
-            }`}></div>
+            <div className={`h-2 w-2 rounded-full ${isPlaying ? 'bg-green-500 animate-pulse' : 'bg-slate-400'}`} />
             <span className="text-xs text-slate-500">
               {isPlaying ? 'Playing' : 'Paused'}
             </span>
           </div>
         </div>
-        
-        <div className="relative">
-          <canvas
-            ref={canvasRef}
-            className="w-full h-16 rounded-lg bg-slate-100 dark:bg-slate-800"
-            style={{ width: '100%', height: '64px' }}
-          />
-          
-          {/* Overlay effects */}
-          <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-transparent via-transparent to-white/10 pointer-events-none"></div>
-          
+
+        <div className="relative overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
+          <canvas ref={canvasRef} className="block h-16 w-full" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-white/10" />
           {!isPlaying && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="text-xs text-slate-400 bg-white/80 dark:bg-slate-800/80 px-2 py-1 rounded">
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+              <div className="rounded bg-white/80 px-2 py-1 text-xs text-slate-400 dark:bg-slate-800/80">
                 Waiting for audio...
               </div>
             </div>
           )}
         </div>
-        
-        {/* Frequency bands indicator */}
+
         <div className="flex justify-between text-xs text-slate-400">
-          <span>Low</span>
-          <span>Mid</span>
-          <span>High</span>
+          <span>Voice</span>
+          <span>Activity</span>
+          <span>Output</span>
         </div>
       </div>
     </Card>

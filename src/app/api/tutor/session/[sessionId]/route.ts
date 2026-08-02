@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { isLocalMode } from '@/lib/local-mode';
+import { getLocalTutorSession } from '@/lib/local-tutor';
 
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321',
+  process.env.SUPABASE_SECRET_KEY ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    'local-mode'
 );
 
 export async function GET(
@@ -20,6 +24,13 @@ export async function GET(
         { error: 'Session ID is required' },
         { status: 400 }
       );
+    }
+
+    if (isLocalMode()) {
+      const session = getLocalTutorSession(sessionId);
+      return session
+        ? NextResponse.json(session)
+        : NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
     // Get session data with subject and topic information
@@ -44,28 +55,29 @@ export async function GET(
       );
     }
 
-    // Generate assessment questions based on the topic
-    const assessmentQuestions = [
-      {
-        id: 1,
-        question: `What do you already know about ${sessionData.topics?.name || 'this topic'}?`,
-        type: 'open_ended',
-        audioUrl: '/api/tts/generate?text=' + encodeURIComponent(`What do you already know about ${sessionData.topics?.name || 'this topic'}?`)
-      },
-      {
-        id: 2,
-        question: `On a scale of 1-10, how confident do you feel about ${sessionData.topics?.name || 'this topic'}?`,
-        type: 'scale',
-        options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
-        audioUrl: '/api/tts/generate?text=' + encodeURIComponent(`On a scale of 1 to 10, how confident do you feel about ${sessionData.topics?.name || 'this topic'}?`)
-      },
-      {
-        id: 3,
-        question: `What specific aspects of ${sessionData.topics?.name || 'this topic'} would you like to focus on today?`,
-        type: 'open_ended',
-        audioUrl: '/api/tts/generate?text=' + encodeURIComponent(`What specific aspects of ${sessionData.topics?.name || 'this topic'} would you like to focus on today?`)
-      }
-    ];
+    const assessmentQuestions = Array.isArray(sessionData.assessment_questions)
+      ? sessionData.assessment_questions
+      : [];
+    const storedPlan = sessionData.lesson_plan && typeof sessionData.lesson_plan === 'object'
+      ? sessionData.lesson_plan
+      : {};
+    const rawChunks = Array.isArray(storedPlan.chunks)
+      ? storedPlan.chunks
+      : Array.isArray(storedPlan.lesson_chunks)
+        ? storedPlan.lesson_chunks
+        : [];
+    const lessonChunks = rawChunks.map((chunk: any, index: number) => ({
+      id: chunk.id || `session-${sessionId}-chunk-${index}`,
+      title: chunk.title || `Section ${index + 1}`,
+      content: chunk.content || chunk.script || chunk.script_content || '',
+      order: chunk.order ?? chunk.chunk_index ?? index,
+    }));
+    const { data: deliveredChunks } = await supabase
+      .from('lesson_chunks')
+      .select('chunk_index')
+      .eq('session_id', sessionId)
+      .not('delivered_at', 'is', null);
+    const deliveredChunkIndexes = (deliveredChunks || []).map(chunk => chunk.chunk_index);
 
     // Create welcome message
     const welcomeMessage = `Welcome to your ${sessionData.subjects?.name || 'study'} session! Today we'll be exploring ${sessionData.topics?.name || 'an interesting topic'}. Let's start with a quick assessment to understand your current knowledge level.`;
@@ -83,8 +95,13 @@ export async function GET(
       subject: sessionData.subjects,
       topic: sessionData.topics,
       welcomeMessage,
-      welcomeAudioUrl: '/api/tts/generate?text=' + encodeURIComponent(welcomeMessage),
+      // The client generates this with the same Cloudflare voice used everywhere
+      // else. A JSON API URL is not itself a playable audio file.
+      welcomeAudioUrl: null,
       assessmentQuestions,
+      lessonChunks,
+      deliveredChunkIndexes,
+      currentChunkIndex: sessionData.current_chunk_index || 0,
       estimatedDuration: 30, // 30 minutes
       lessonOverview: `In this session, you'll learn about ${sessionData.topics?.name || 'the selected topic'}. We'll start with an assessment, then move through interactive lessons tailored to your knowledge level.`
     };

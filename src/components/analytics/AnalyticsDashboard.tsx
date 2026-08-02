@@ -242,7 +242,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ classNam
     description: achievement.description,
     icon: achievement.icon || '🏆',
     date: new Date(achievement.created_at).toLocaleDateString(),
-    rarity: (achievement.rarity as 'bronze' | 'silver' | 'gold') || 'bronze' as const,
+    rarity: 'bronze' as const,
   })) : [
     {
       id: 1,
@@ -512,7 +512,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ classNam
                       outerRadius={100}
                       fill="#8884d8"
                       dataKey="value"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
                     >
                       {subjectDistribution.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />

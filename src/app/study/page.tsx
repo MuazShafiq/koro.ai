@@ -3,17 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Play,
   BookOpen,
   Brain,
   Target,
-  Clock,
   Award,
   ArrowRight,
   Sparkles,
-  Users,
-  MessageCircle,
-  Zap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -37,15 +32,7 @@ interface AITutorSession {
   sessionData?: any; // Store the full session data from API
 }
 
-interface StudyOption {
-  id: string;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  gradient: string;
-  features: string[];
-  action: () => void;
-}
+const ACTIVE_LOCAL_SESSION_KEY = 'koro-active-tutor-session';
 
 export default function StudyPage() {
   const { currentSubject, userProgress } = useStore();
@@ -57,6 +44,17 @@ export default function StudyPage() {
   const [aiSession, setAiSession] = useState<AITutorSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [isStartingSession, setIsStartingSession] = useState(false);
+
+  useEffect(() => {
+    try {
+      const savedSession = window.localStorage.getItem(ACTIVE_LOCAL_SESSION_KEY);
+      if (savedSession) {
+        setAiSession(JSON.parse(savedSession));
+      }
+    } catch (error) {
+      console.warn('Could not restore the active local lesson:', error);
+    }
+  }, []);
   
   // Fetch subjects and topics from Supabase
   useEffect(() => {
@@ -131,32 +129,14 @@ export default function StudyPage() {
         .from('topics')
         .select('*')
         .eq('subject_id', subjectId)
+        .order('order_index', { ascending: true })
         .order('created_at', { ascending: true });
       
       if (error) throw error;
-      
-      // Filter topics to only show those with available resources
-      const topicsWithResources = [];
-      if (topicsData) {
-        for (const topic of topicsData) {
-          try {
-            const { data: resources, error: resourceError } = await supabase
-              .rpc('get_resources_by_topic', {
-                subject_uuid: subjectId,
-                topic_uuid: topic.id
-              });
-            
-            // Only include topics that have resources
-            if (!resourceError && resources && resources.length > 0) {
-              topicsWithResources.push(topic);
-            }
-          } catch (resourceError) {
-            console.warn(`Failed to check resources for topic ${topic.name}:`, resourceError);
-          }
-        }
-      }
-      
-      setTopics(topicsWithResources);
+
+      // Uploaded resources improve grounding, but they are not required.
+      // The hosted AI can teach a starter topic from its general knowledge.
+      setTopics(topicsData || []);
       setSelectedTopic(null); // Reset topic selection
     } catch (error) {
       console.error('Error fetching topics:', error);
@@ -181,19 +161,20 @@ export default function StudyPage() {
         })
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to start session');
-      }
-
       const sessionData = await response.json();
+      if (!response.ok) {
+        throw new Error(sessionData.error || 'Failed to start session');
+      }
       
-      setAiSession({
+      const nextSession: AITutorSession = {
         sessionId: sessionData.sessionId,
         subject: selectedSubject,
         topic: selectedTopic,
         isActive: true,
         sessionData: sessionData // Store the full session data
-      });
+      };
+      setAiSession(nextSession);
+      window.localStorage.setItem(ACTIVE_LOCAL_SESSION_KEY, JSON.stringify(nextSession));
       
       toast.success('AI Tutor session started!');
       
@@ -208,6 +189,7 @@ export default function StudyPage() {
   const endAITutorSession = () => {
     setAiSession(null);
     setSelectedTopic(null);
+    window.localStorage.removeItem(ACTIVE_LOCAL_SESSION_KEY);
     toast.success('Session ended successfully');
   };
 
@@ -377,62 +359,6 @@ export default function StudyPage() {
             </CardHeader>
             
             <CardContent className="space-y-4">
-              {/* General AI Tutoring - Hidden for now, keeping only topic-focused sessions */}
-              {/* <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="p-6 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 cursor-pointer"
-                onClick={() => selectedSubject && startAITutorSession(selectedSubject.id)}
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
-                    <Brain className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-lg mb-2">General AI Tutoring</h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Start a comprehensive learning session with our AI tutor
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline" className="text-xs">
-                        <MessageCircle className="w-3 h-3 mr-1" />
-                        Interactive Chat
-                      </Badge>
-                      <Badge variant="outline" className="text-xs">
-                        <Zap className="w-3 h-3 mr-1" />
-                        Adaptive Learning
-                      </Badge>
-                      <Badge variant="outline" className="text-xs">
-                        <Users className="w-3 h-3 mr-1" />
-                        Personalized
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-                
-                {selectedSubject && (
-                  <div className="mt-4 pt-4 border-t border-white/10">
-                    <Button 
-                      className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                      disabled={isStartingSession}
-                    >
-                      {isStartingSession ? (
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                          Starting Session...
-                        </div>
-                      ) : (
-                        <>
-                          <Play className="w-4 h-4 mr-2" />
-                          Start AI Tutoring
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                )}
-              </motion.div> */}
-
-              {/* Topic-Specific Tutoring */}
               {selectedTopic && (
                 <motion.div
                   whileHover={{ scale: 1.02 }}

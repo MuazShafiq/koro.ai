@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import OpenAI from 'openai';
+import { hostedAI as openai, hostedAIModel } from '@/lib/services/hostedAI';
 import { logger } from '@/lib/logger';
-import { convertTextToSpeech } from '@/lib/services/unrealSpeech';
+import { convertTextToSpeech } from '@/lib/services/cloudflareSpeech';
+import { isLocalMode } from '@/lib/local-mode';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+export const maxDuration = 60;
+import { answerLocalTutorQuestion } from '@/lib/local-tutor';
 
 export async function POST(request: NextRequest) {
   const requestId = crypto.randomUUID();
@@ -33,6 +33,13 @@ export async function POST(request: NextRequest) {
         { error: 'Session ID and question are required' },
         { status: 400 }
       );
+    }
+
+    if (isLocalMode()) {
+      const result = await answerLocalTutorQuestion(sessionId, question);
+      return result
+        ? NextResponse.json(result)
+        : NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
     const supabase = await createClient();
@@ -79,7 +86,7 @@ export async function POST(request: NextRequest) {
     const { data: resources, error: resourcesError } = await supabase
       .rpc('get_resources_by_topic', {
         subject_uuid: session.subject_id,
-        topic_uuid: session.topic_id
+        topic_uuid: session.topic_id as string,
       });
 
     if (resourcesError) {
@@ -97,7 +104,10 @@ export async function POST(request: NextRequest) {
     logger.info('HANDLE-INTERACTION', 'Preparing context', {}, requestId);
     const resourceContext = resources
       ?.map((r: any) => `Title: ${r.title}\nContent: ${r.content_text?.substring(0, 1500) || 'No content available'}`)
-      .join('\n\n') || 'No resources available';
+      .join('\n\n') || 'No external resources are attached. Use accurate general knowledge.';
+    const groundingRule = resources?.length
+      ? 'Uses only information from the provided educational resources'
+      : 'Uses accurate, age-appropriate general knowledge';
     
     const lessonContext = session.lesson_plan ? JSON.stringify(session.lesson_plan, null, 2) : 'No lesson plan available';
     
@@ -107,7 +117,7 @@ export async function POST(request: NextRequest) {
     }, requestId);
 
     // Generate AI response
-    logger.openai('Preparing AI response generation', {}, requestId);
+    logger.ai('Preparing AI response generation', {}, requestId);
     const responsePrompt = `You are an AI tutor helping a student during a lesson. The student has asked a question.
 
 Lesson Context:
@@ -120,13 +130,13 @@ Student Question: "${question}"
 
 Provide a helpful, accurate response that:
 1. Directly answers the student's question
-2. Uses ONLY information from the provided educational resources
+2. ${groundingRule}
 3. Is appropriate for the lesson context
 4. Is conversational and encouraging
 5. Suggests how this relates to the current lesson if relevant
 6. Is suitable for text-to-speech conversion (clear, natural language)
 
-If the question is outside the scope of available resources, politely redirect to the lesson content.
+If external resources are attached and the question is outside their scope, politely redirect to the lesson content.
 
 Respond in this JSON format:
 {
@@ -135,17 +145,17 @@ Respond in this JSON format:
   "lesson_adaptation": "Optional suggestion for how this question might inform lesson pacing or focus"
 }`;
     
-    logger.openai('Response prompt prepared', {
+    logger.ai('Response prompt prepared', {
       promptLength: responsePrompt.length
     }, requestId);
 
-    logger.openai('Calling OpenAI API', {}, requestId);
+    logger.ai('Calling AI provider', {}, requestId);
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: hostedAIModel(),
       messages: [
         {
           role: 'system',
-          content: 'You are an expert AI tutor. Provide helpful, accurate responses based only on provided educational resources. Always respond in the requested JSON format.'
+          content: `You are an expert AI tutor. ${groundingRule}. Always respond in the requested JSON format.`
         },
         {
           role: 'user',
@@ -153,17 +163,18 @@ Respond in this JSON format:
         }
       ],
       temperature: 0.7,
-      max_tokens: 600
+      max_tokens: 600,
+      response_format: { type: 'json_object' },
     });
 
-    logger.openai('OpenAI response received', {
+    logger.ai('AI response received', {
       model: completion.model,
       usage: completion.usage,
       finishReason: completion.choices[0].finish_reason
     }, requestId);
 
     const responseContent = completion.choices[0].message.content || '';
-    logger.openai('Response generated', {
+    logger.ai('Response generated', {
       length: responseContent.length,
       preview: responseContent.substring(0, 100) + '...'
     }, requestId);
@@ -262,14 +273,14 @@ Respond in this JSON format:
     }
 
     // Generate audio for the response
-    logger.unrealSpeech('Starting audio generation for response', {
+    logger.speech('Starting audio generation for response', {
       textLength: parsedResponse.answer.length
     }, requestId);
     let audioUrl = null;
     try {
       const ttsResponse = await convertTextToSpeech({
         text: parsedResponse.answer,
-        voiceId: 'Scarlett',
+        voiceId: 'asteria',
         bitrate: '192k',
         speed: '0',
         pitch: '1',
@@ -279,7 +290,7 @@ Respond in this JSON format:
       });
       
       if (ttsResponse.success && ttsResponse.audioBuffer) {
-        logger.unrealSpeech('Audio generation successful', {
+        logger.speech('Audio generation successful', {
           bufferSize: ttsResponse.audioBuffer.byteLength
         }, requestId);
         

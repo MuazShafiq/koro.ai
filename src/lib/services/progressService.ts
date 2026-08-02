@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/client';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { logger } from '@/lib/logger';
 
 export interface ConceptProgress {
@@ -12,7 +12,6 @@ export interface ConceptProgress {
   understandingVerified?: boolean;
   notes?: string;
 }
-
 export interface ProgressSummary {
   sessionId: string;
   progressPercentage: number;
@@ -55,8 +54,8 @@ export interface CompletionReadiness {
   missingRequirements: string[];
 }
 
-class ProgressService {
-  private supabase = createClient();
+export class ProgressService {
+  constructor(private readonly supabase: SupabaseClient<any>) {}
 
   /**
    * Analyze RAG content to extract concepts, equations, and structure
@@ -429,6 +428,3 @@ class ProgressService {
     }
   }
 }
-
-export const progressService = new ProgressService();
-export default progressService;

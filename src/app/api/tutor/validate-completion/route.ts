@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { logger } from '@/lib/logger';
-import { progressService } from '@/lib/services/progressService';
+import { ProgressService } from '@/lib/services/progressService';
+import { isLocalMode } from '@/lib/local-mode';
+import { getLocalTutorProgress, validateLocalTutorCompletion } from '@/lib/local-tutor';
 
 export async function POST(request: NextRequest) {
   const requestId = crypto.randomUUID();
@@ -24,7 +26,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (isLocalMode()) {
+      const result = validateLocalTutorCompletion(sessionId);
+      return result
+        ? NextResponse.json(result)
+        : NextResponse.json({ error: 'Session not found' }, { status: 404 });
+    }
+
     const supabase = await createClient();
+    const progressService = new ProgressService(supabase);
     
     // Get current user
     logger.auth('Authenticating user', {}, requestId);
@@ -62,7 +72,7 @@ export async function POST(request: NextRequest) {
     }, requestId);
 
     // Get lesson plan for validation criteria
-    const lessonPlan = session.lesson_plan;
+    const lessonPlan = session.lesson_plan as any;
     if (!lessonPlan) {
       logger.error('VALIDATE-COMPLETION', 'No lesson plan found', {}, requestId);
       return NextResponse.json(
@@ -399,6 +409,19 @@ export async function GET(request: NextRequest) {
         { error: 'Session ID is required' },
         { status: 400 }
       );
+    }
+
+    if (isLocalMode()) {
+      const result = getLocalTutorProgress(sessionId);
+      return result
+        ? NextResponse.json({
+            sessionId,
+            status: result.status,
+            isValidated: result.status === 'completed',
+            validatedAt: result.completedAt,
+            progress: result.progress,
+          })
+        : NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
     const supabase = await createClient();
