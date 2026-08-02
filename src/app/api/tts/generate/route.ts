@@ -3,6 +3,8 @@ import { convertTextToSpeech, type ContentType } from '@/lib/services/cloudflare
 import { createClient as createSupabaseAdminClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/utils/supabase/server';
 
+export const maxDuration = 60;
+
 const supabase = createSupabaseAdminClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321',
   process.env.SUPABASE_SECRET_KEY ||

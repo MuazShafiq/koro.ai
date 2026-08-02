@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { hostedAI as openai, hostedAIModel } from '@/lib/services/hostedAI';
 import { logger } from '@/lib/logger';
+
+export const maxDuration = 60;
 import { isLocalMode } from '@/lib/local-mode';
 import { assessLocalTutorSession } from '@/lib/local-tutor';
 

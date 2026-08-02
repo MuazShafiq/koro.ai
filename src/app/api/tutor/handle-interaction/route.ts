@@ -4,6 +4,8 @@ import { hostedAI as openai, hostedAIModel } from '@/lib/services/hostedAI';
 import { logger } from '@/lib/logger';
 import { convertTextToSpeech } from '@/lib/services/cloudflareSpeech';
 import { isLocalMode } from '@/lib/local-mode';
+
+export const maxDuration = 60;
 import { answerLocalTutorQuestion } from '@/lib/local-tutor';
 
 export async function POST(request: NextRequest) {

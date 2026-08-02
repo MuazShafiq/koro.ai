@@ -5,6 +5,8 @@ import {
   hostedAIModel,
 } from '@/lib/services/hostedAI';
 import { logger } from '@/lib/logger';
+
+export const maxDuration = 60;
 import { createClient } from '@/utils/supabase/server';
 import { isLocalMode } from '@/lib/local-mode';
 import { generateLocalBlackboard } from '@/lib/local-tutor';

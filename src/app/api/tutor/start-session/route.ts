@@ -5,6 +5,8 @@ import { logger } from '@/lib/logger';
 import { ProgressService } from '@/lib/services/progressService';
 import { MasterLessonPlanService } from '@/lib/services/masterLessonPlanService';
 import { isLocalMode } from '@/lib/local-mode';
+
+export const maxDuration = 60;
 import { createLocalTutorSession } from '@/lib/local-tutor';
 import type { Json } from '@/utils/supabase/database.types';
 import { formatAssessmentQuestion } from '@/lib/tutor-text';

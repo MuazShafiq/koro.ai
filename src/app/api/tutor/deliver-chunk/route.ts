@@ -5,6 +5,8 @@ import { logger } from '@/lib/logger';
 import { convertTextToSpeech } from '@/lib/services/cloudflareSpeech';
 import { ProgressService } from '@/lib/services/progressService';
 import { isLocalMode } from '@/lib/local-mode';
+
+export const maxDuration = 60;
 import { deliverLocalTutorChunk } from '@/lib/local-tutor';
 
 export async function POST(request: NextRequest) {
