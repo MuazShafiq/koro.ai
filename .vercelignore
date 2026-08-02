@@ -3,6 +3,7 @@
 /.vercel/
 node_modules/
 /.next/
+/.next.stale-*/
 /out/
 /build/
 /dist/
