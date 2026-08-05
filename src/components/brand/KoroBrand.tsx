@@ -25,6 +25,7 @@ export function KoroMark({ className, priority = false, size = 40 }: KoroMarkPro
 interface KoroBrandProps extends KoroMarkProps {
   href?: string;
   showSubtitle?: boolean;
+  subtitleClassName?: string;
 }
 
 export function KoroBrand({
@@ -33,6 +34,7 @@ export function KoroBrand({
   priority = false,
   showSubtitle = true,
   size = 40,
+  subtitleClassName,
 }: KoroBrandProps) {
   return (
     <Link
@@ -44,7 +46,9 @@ export function KoroBrand({
       <span className="text-left">
         <span className="block text-xl font-bold leading-tight text-foreground">Koro.ai</span>
         {showSubtitle && (
-          <span className="block text-xs text-muted-foreground">AI Learning Platform</span>
+          <span className={cn("block text-xs text-muted-foreground", subtitleClassName)}>
+            AI Learning Platform
+          </span>
         )}
       </span>
     </Link>

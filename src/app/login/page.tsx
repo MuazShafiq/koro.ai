@@ -14,23 +14,22 @@ export default async function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden p-4">
+    <div className="relative flex h-full min-h-0 items-center justify-center overflow-hidden p-3 focus-within:overflow-y-auto sm:p-4">
       <div className="pointer-events-none absolute -left-40 top-[-10rem] h-[32rem] w-[32rem] rounded-full bg-primary/20 blur-3xl" />
       <div className="pointer-events-none absolute -right-40 bottom-[-12rem] h-[34rem] w-[34rem] rounded-full bg-secondary/15 blur-3xl" />
       <div className="relative w-full max-w-md">
-        <div className="text-center mb-8">
+        <div className="mb-3 text-center sm:mb-8">
           <KoroBrand
-            href="/login"
+            href="/"
             priority
-            size={56}
-            className="mb-6 justify-center"
+            size={48}
+            className="justify-center sm:mb-6"
           />
-          <p className="section-kicker mb-2">Welcome back</p>
-          <h1 className="text-gradient mb-2 text-4xl font-bold tracking-tight">
-            Welcome Back
+          <h1 className="text-gradient mb-3 hidden text-4xl font-bold tracking-tight sm:block">
+            Pick up where you left off
           </h1>
-          <p className="text-muted-foreground">
-            Sign in to continue your learning journey
+          <p className="hidden text-muted-foreground sm:block">
+            Sign in and get back to learning with Koro.
           </p>
         </div>
         <AuthForm />

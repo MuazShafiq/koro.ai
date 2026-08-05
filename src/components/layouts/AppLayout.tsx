@@ -9,14 +9,23 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   const pathname = usePathname();
+  const isLandingPage = pathname === '/';
   
   // Check if current page is an auth page (login/signup)
   const isAuthPage = pathname === '/login' || pathname === '/signup';
+
+  if (isLandingPage) {
+    return (
+      <div className="app-background relative h-[100dvh] overflow-hidden bg-background">
+        {children}
+      </div>
+    );
+  }
   
   // For auth pages, render without sidebar
   if (isAuthPage) {
     return (
-      <div className="app-background relative min-h-[100dvh] bg-background">
+      <div className="app-background relative h-[100dvh] min-h-0 overflow-hidden bg-background">
         {children}
       </div>
     );

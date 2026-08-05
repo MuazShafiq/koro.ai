@@ -35,7 +35,7 @@ export function AuthForm() {
       if (error) {
         setError(error.message);
       } else {
-        router.push('/');
+        router.push('/dashboard');
         router.refresh();
       }
     } catch (err) {
@@ -47,10 +47,10 @@ export function AuthForm() {
   };
 
   return (
-    <Card className="surface-panel rounded-[1.5rem] border-white/[0.08] shadow-2xl">
+    <Card className="surface-panel rounded-[1.25rem] border-white/[0.08] shadow-2xl sm:rounded-[1.5rem]">
       <form onSubmit={handleSignIn}>
-        <CardContent className="space-y-6 p-8">
-          <div className="space-y-3">
+        <CardContent className="space-y-4 p-5 sm:space-y-6 sm:p-8">
+          <div className="space-y-2 sm:space-y-3">
             <Label htmlFor="email" className="text-sm font-medium text-gray-200">
               Email Address
             </Label>
@@ -62,13 +62,13 @@ export function AuthForm() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-12 border-white/[0.08] bg-white/[0.035] pl-10 text-white placeholder:text-muted-foreground focus:border-primary"
+                className="h-11 border-white/[0.08] bg-white/[0.035] pl-10 text-white placeholder:text-muted-foreground focus:border-primary sm:h-12"
                 required
               />
             </div>
           </div>
           
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             <Label htmlFor="password" className="text-sm font-medium text-gray-200">
               Password
             </Label>
@@ -80,12 +80,13 @@ export function AuthForm() {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="h-12 border-white/[0.08] bg-white/[0.035] pl-10 pr-10 text-white placeholder:text-muted-foreground focus:border-primary"
+                className="h-11 border-white/[0.08] bg-white/[0.035] pl-10 pr-10 text-white placeholder:text-muted-foreground focus:border-primary sm:h-12"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -100,10 +101,10 @@ export function AuthForm() {
           )}
         </CardContent>
         
-        <CardFooter className="flex flex-col p-8 pt-0 space-y-4">
+        <CardFooter className="flex flex-col space-y-3 p-5 pt-0 sm:space-y-4 sm:p-8 sm:pt-0">
           <Button 
             type="submit" 
-            className="h-12 w-full rounded-xl bg-gradient-to-r from-blue-500 to-violet-500 font-medium text-white shadow-lg shadow-blue-500/15 hover:from-blue-400 hover:to-violet-400"
+            className="h-11 w-full rounded-xl bg-gradient-to-r from-blue-500 to-violet-500 font-medium text-white shadow-lg shadow-blue-500/15 hover:from-blue-400 hover:to-violet-400 sm:h-12"
             disabled={loading}
           >
             {loading ? (
