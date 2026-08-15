@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321',
-  process.env.SUPABASE_SECRET_KEY || 'missing-secret-key'
-);
+import { createClient } from '@/utils/supabase/server';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ sessionId: string }> }
 ) {
   try {
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { sessionId } = await params;
     console.log('Session endpoint called with sessionId:', sessionId);
 
@@ -47,20 +49,35 @@ export async function GET(
     const assessmentQuestions = Array.isArray(sessionData.assessment_questions)
       ? sessionData.assessment_questions
       : [];
-    const storedPlan = sessionData.lesson_plan && typeof sessionData.lesson_plan === 'object'
-      ? sessionData.lesson_plan
+    const storedPlan = sessionData.lesson_plan
+      && typeof sessionData.lesson_plan === 'object'
+      && !Array.isArray(sessionData.lesson_plan)
+      ? sessionData.lesson_plan as Record<string, unknown>
       : {};
     const rawChunks = Array.isArray(storedPlan.chunks)
       ? storedPlan.chunks
       : Array.isArray(storedPlan.lesson_chunks)
         ? storedPlan.lesson_chunks
         : [];
-    const lessonChunks = rawChunks.map((chunk: any, index: number) => ({
-      id: chunk.id || `session-${sessionId}-chunk-${index}`,
-      title: chunk.title || `Section ${index + 1}`,
-      content: chunk.content || chunk.script || chunk.script_content || '',
-      order: chunk.order ?? chunk.chunk_index ?? index,
-    }));
+    const lessonChunks = rawChunks.map((chunkValue, index: number) => {
+      const chunk = chunkValue
+        && typeof chunkValue === 'object'
+        && !Array.isArray(chunkValue)
+        ? chunkValue as Record<string, unknown>
+        : {};
+
+      return {
+        id: typeof chunk.id === 'string' ? chunk.id : `session-${sessionId}-chunk-${index}`,
+        title: typeof chunk.title === 'string' ? chunk.title : `Section ${index + 1}`,
+        content: [chunk.content, chunk.script, chunk.script_content]
+          .find((value): value is string => typeof value === 'string') ?? '',
+        order: typeof chunk.order === 'number'
+          ? chunk.order
+          : typeof chunk.chunk_index === 'number'
+            ? chunk.chunk_index
+            : index,
+      };
+    });
     const { data: deliveredChunks } = await supabase
       .from('lesson_chunks')
       .select('chunk_index')

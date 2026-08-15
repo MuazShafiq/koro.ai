@@ -1,0 +1,1 @@
+-- Superseded by the least-privilege wrapper in 0003_auth_rls_wrapper.sql.

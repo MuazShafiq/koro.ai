@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { uploadAudio } from '@/lib/storage/audio';
 import { hostedAI as openai, hostedAIModel } from '@/lib/services/hostedAI';
 import { logger } from '@/lib/logger';
 import { convertTextToSpeech } from '@/lib/services/cloudflareSpeech';
@@ -302,29 +303,12 @@ Return ONLY the script text, no JSON or formatting. The script should be ready f
           chunksProcessed: ttsResponse.chunksProcessed || 1
         }, requestId);
         
-        // Upload audio to Supabase Storage
+        // Store generated audio in Vercel Blob.
         const fileName = `lesson-audio/${sessionId}/chunk-${chunkIndex}-${Date.now()}.mp3`;
-        logger.storage('Uploading to Supabase storage', { fileName }, requestId);
-        
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('lessons')
-          .upload(fileName, ttsResponse.audioBuffer, {
-            contentType: 'audio/mpeg',
-            cacheControl: '3600'
-          });
-
-        if (uploadError) {
-          logger.error('DELIVER-CHUNK', 'Error uploading audio', { uploadError }, requestId);
-        } else {
-          logger.storage('Audio uploaded successfully', { path: uploadData.path }, requestId);
-          // Get public URL
-          const { data: urlData } = supabase.storage
-            .from('lessons')
-            .getPublicUrl(fileName);
-          
-          audioUrl = urlData.publicUrl;
-          logger.storage('Audio URL generated', { audioUrl }, requestId);
-        }
+        logger.storage('Uploading to Vercel Blob', { fileName }, requestId);
+        const blob = await uploadAudio(fileName, ttsResponse.audioBuffer);
+        audioUrl = blob.url;
+        logger.storage('Audio uploaded successfully', { path: blob.pathname, audioUrl }, requestId);
       } else {
         logger.error('DELIVER-CHUNK', 'Audio generation failed', {
           error: ttsResponse.error

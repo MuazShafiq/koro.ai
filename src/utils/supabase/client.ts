@@ -1,16 +1,36 @@
-import { createBrowserClient } from "@supabase/ssr";
-import { SupabaseClient } from "@supabase/supabase-js";
+import { createAuthClient } from '@neondatabase/auth';
+import { SupabaseAuthAdapter } from '@neondatabase/auth/vanilla/adapters';
+import { createClient as createNeonClient } from '@neondatabase/neon-js';
 import { Database } from "./database.types";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+const authUrl =
+  typeof window === 'undefined'
+    ? 'http://localhost:3000/api/auth'
+    : `${window.location.origin}/api/auth`;
+const dataApiUrl =
+  process.env.NEXT_PUBLIC_NEON_DATA_API_URL ??
+  'https://not-configured.apirest.invalid/neondb/rest/v1';
 
-export const createClient = (): SupabaseClient<Database> => {
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error(
-      'Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.',
-    );
-  }
+export const createClient = () => {
+  const auth = createAuthClient(authUrl, {
+    adapter: SupabaseAuthAdapter(),
+  });
+  const data = createNeonClient<Database>({
+    dataApi: {
+      url: dataApiUrl,
+      getToken: async () => {
+        const response = await fetch(`${authUrl}/token`, {
+          credentials: 'include',
+        });
 
-  return createBrowserClient<Database>(supabaseUrl, supabaseKey);
+        if (!response.ok) return null;
+        const result = (await response.json()) as { token?: string };
+        return result.token ?? null;
+      },
+    },
+  });
+
+  return Object.assign(data, { auth });
 };
+
+export type BrowserDataClient = ReturnType<typeof createClient>;

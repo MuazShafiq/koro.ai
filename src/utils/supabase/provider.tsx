@@ -2,16 +2,14 @@
 
 import { createContext, useContext, useState, useEffect } from 'react';
 import { createClient } from './client';
-import { type SupabaseClient } from '@supabase/supabase-js';
-import { type Database } from './database.types';
 
-type SupabaseContext = {
-  supabase: SupabaseClient<Database>;
+type NeonContext = {
+  supabase: ReturnType<typeof createClient>;
 };
 
-const Context = createContext<SupabaseContext | undefined>(undefined);
+const Context = createContext<NeonContext | undefined>(undefined);
 
-export default function SupabaseProvider({
+export default function NeonProvider({
   children,
 }: {
   children: React.ReactNode;
@@ -38,10 +36,10 @@ export default function SupabaseProvider({
   );
 }
 
-export const useSupabase = () => {
+export const useNeon = () => {
   const context = useContext(Context);
   if (context === undefined) {
-    throw new Error('useSupabase must be used inside SupabaseProvider');
+    throw new Error('useNeon must be used inside NeonProvider');
   }
   return context;
 };

@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppLayout } from "@/components/layouts/AppLayout";
 import { ThemeProvider } from "@/components/theme/theme-provider";
-import SupabaseProvider from "@/utils/supabase/provider";
+import NeonProvider from "@/utils/supabase/provider";
 import { Toaster } from "sonner";
 
 const geistSans = Geist({
@@ -46,12 +46,12 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <SupabaseProvider>
+          <NeonProvider>
             <AppLayout>
               {children}
             </AppLayout>
             <Toaster richColors position="top-right" />
-          </SupabaseProvider>
+          </NeonProvider>
         </ThemeProvider>
       </body>
     </html>

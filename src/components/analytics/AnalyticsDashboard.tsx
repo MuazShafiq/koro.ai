@@ -40,7 +40,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
-import { useSupabase } from '../../utils/supabase/provider';
+import { useNeon } from '../../utils/supabase/provider';
 import { Database } from '../../utils/supabase/database.types';
 import { analyticsService, UserAnalytics, WeeklyProgressData } from '../../utils/supabase/analytics';
 
@@ -121,7 +121,7 @@ interface AnalyticsDashboardProps {
 
 export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) => {
   const { userProgress } = useStore();
-  const { supabase } = useSupabase();
+  const { supabase } = useNeon();
   const [selectedPeriod, setSelectedPeriod] = useState('week');
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState<Profile | null>(null);

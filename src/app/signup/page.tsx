@@ -1,4 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
+
+export const dynamic = 'force-dynamic';
 import { redirect } from 'next/navigation';
 import SignupForm from '@/components/auth/SignupForm';
 import { KoroBrand } from '@/components/brand/KoroBrand';

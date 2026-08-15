@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
-import { useSupabase } from '../../utils/supabase/provider';
+import { useNeon } from '../../utils/supabase/provider';
 import { toast } from 'sonner';
 import { getSubjectVisual, SubjectIcon } from '@/components/subjects/SubjectIcon';
 
@@ -62,7 +62,7 @@ const availableSubjects: Subject[] = [
 export function SubjectSelectionModal({ isOpen, onClose, onSubjectsAdded }: SubjectSelectionModalProps) {
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { supabase } = useSupabase();
+  const { supabase } = useNeon();
 
   const toggleSubject = (subjectId: string) => {
     setSelectedSubjects(prev => 
