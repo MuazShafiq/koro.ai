@@ -4,7 +4,7 @@ import { SubjectSelectionModal } from "@/components/modals/SubjectSelectionModal
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Loader2, Plus, Sparkles, TrendingUp, Users, X } from "lucide-react";
-import { useSupabase } from "@/utils/supabase/provider";
+import { useNeon } from "@/utils/supabase/provider";
 import { Database } from "@/utils/supabase/database.types";
 import { KoroMark } from "@/components/brand/KoroBrand";
 import { getSubjectVisual, SubjectIcon } from "@/components/subjects/SubjectIcon";
@@ -29,7 +29,7 @@ export default function DashboardPage() {
   const [subjects, setSubjects] = useState<FormattedSubject[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
-  const { supabase } = useSupabase();
+  const { supabase } = useNeon();
 
   useEffect(() => {
     const hour = new Date().getHours();

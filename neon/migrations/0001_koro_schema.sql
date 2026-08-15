@@ -1,7 +1,18 @@
--- Koro canonical Supabase baseline.
--- This migration intentionally replaces the conflicted 2024 development history.
+-- Koro canonical Neon Postgres baseline.
+-- Run this after enabling Neon Auth and the Neon Data API for the branch.
+-- Generated audio is stored separately in Vercel Blob.
 
-create extension if not exists pgcrypto with schema extensions;
+create extension if not exists pgcrypto;
+
+create or replace function public.current_user_id()
+returns text
+language sql
+stable
+security definer
+set search_path = auth, pg_catalog
+as $$
+  select auth.user_id();
+$$;
 
 create or replace function public.touch_updated_at()
 returns trigger
@@ -15,7 +26,7 @@ end;
 $$;
 
 create table public.profiles (
-  id uuid primary key references auth.users(id) on delete cascade,
+  id text primary key,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   username text unique,
@@ -44,7 +55,7 @@ create table public.subjects (
   icon text not null default '📚',
   gradient text not null default 'from-blue-500 to-cyan-500',
   total_topics integer not null default 0 check (total_topics >= 0),
-  user_id uuid not null references public.profiles(id) on delete cascade,
+  user_id text not null references public.profiles(id) on delete cascade,
   unique (user_id, name)
 );
 
@@ -68,14 +79,14 @@ create table public.achievements (
   description text not null,
   icon text not null,
   unlocked boolean not null default false,
-  user_id uuid not null references public.profiles(id) on delete cascade,
+  user_id text not null references public.profiles(id) on delete cascade,
   unique (name, user_id)
 );
 
 create table public.study_sessions (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
-  user_id uuid not null references public.profiles(id) on delete cascade,
+  user_id text not null references public.profiles(id) on delete cascade,
   subject_id uuid references public.subjects(id) on delete set null,
   topic_id uuid references public.topics(id) on delete set null,
   duration_minutes integer not null default 0 check (duration_minutes >= 0),
@@ -90,7 +101,7 @@ create table public.study_sessions (
 create table public.quiz_attempts (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
-  user_id uuid not null references public.profiles(id) on delete cascade,
+  user_id text not null references public.profiles(id) on delete cascade,
   subject_id uuid references public.subjects(id) on delete set null,
   topic_id uuid references public.topics(id) on delete set null,
   score integer not null,
@@ -103,7 +114,7 @@ create table public.quiz_attempts (
 create table public.daily_progress (
   id uuid primary key default gen_random_uuid(),
   date date not null default current_date,
-  user_id uuid not null references public.profiles(id) on delete cascade,
+  user_id text not null references public.profiles(id) on delete cascade,
   study_time_minutes integer not null default 0 check (study_time_minutes >= 0),
   sessions_completed integer not null default 0 check (sessions_completed >= 0),
   quizzes_taken integer not null default 0 check (quizzes_taken >= 0),
@@ -115,7 +126,7 @@ create table public.daily_progress (
 create table public.learning_analytics (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
-  user_id uuid not null references public.profiles(id) on delete cascade,
+  user_id text not null references public.profiles(id) on delete cascade,
   metric_type text not null
     check (metric_type in ('time_spent', 'accuracy', 'completion_rate', 'streak', 'level_up')),
   metric_value numeric not null,
@@ -126,7 +137,7 @@ create table public.learning_analytics (
 
 create table public.user_preferences (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null unique references public.profiles(id) on delete cascade,
+  user_id text not null unique references public.profiles(id) on delete cascade,
   theme text not null default 'dark',
   notifications_enabled boolean not null default true,
   study_reminders boolean not null default true,
@@ -151,7 +162,7 @@ create table public.resources (
 
 create table public.lessons (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
+  user_id text not null references public.profiles(id) on delete cascade,
   subject_id uuid references public.subjects(id) on delete set null,
   topic_id uuid references public.topics(id) on delete set null,
   lesson_content text not null,
@@ -165,7 +176,7 @@ create table public.lessons (
 
 create table public.lesson_sessions (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
+  user_id text not null references public.profiles(id) on delete cascade,
   subject_id uuid not null references public.subjects(id) on delete cascade,
   topic_id uuid references public.topics(id) on delete set null,
   current_phase text not null default 'assessment'
@@ -208,7 +219,7 @@ create table public.lesson_chunks (
 create table public.student_assessments (
   id uuid primary key default gen_random_uuid(),
   session_id uuid not null references public.lesson_sessions(id) on delete cascade,
-  user_id uuid references auth.users(id) on delete cascade,
+  user_id text references public.profiles(id) on delete cascade,
   question text not null,
   student_answer text,
   ai_evaluation jsonb,
@@ -270,7 +281,7 @@ create table public.master_lesson_plans (
   key_concepts jsonb not null default '[]'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  created_by uuid references auth.users(id) on delete set null,
+  created_by text references public.profiles(id) on delete set null,
   version integer not null default 1 check (version >= 1),
   is_active boolean not null default true,
   unique (subject_id, topic_id, version)
@@ -320,56 +331,90 @@ create trigger master_lesson_plans_touch_updated_at
   before update on public.master_lesson_plans
   for each row execute function public.touch_updated_at();
 
-create or replace function public.handle_new_user()
-returns trigger
+create or replace function public.initialize_user_profile(profile_data jsonb default '{}'::jsonb)
+returns void
 language plpgsql
-security definer
+security invoker
 set search_path = public, auth
 as $$
+declare
+  current_user_id text := public.current_user_id();
 begin
+  if current_user_id is null then
+    raise exception 'Authentication required' using errcode = '42501';
+  end if;
+
+  if profile_data ? 'user_id' and profile_data ->> 'user_id' <> current_user_id then
+    raise exception 'Access denied' using errcode = '42501';
+  end if;
+
   insert into public.profiles (
     id,
     full_name,
-    avatar_url,
+    age,
+    location,
+    school,
+    grade_level,
     subjects_of_interest,
-    learning_goals
+    learning_goals,
+    bio
   )
   values (
-    new.id,
-    new.raw_user_meta_data ->> 'full_name',
-    new.raw_user_meta_data ->> 'avatar_url',
-    case
-      when new.raw_user_meta_data ->> 'subjects_of_interest' is null then '{}'::text[]
-      else string_to_array(new.raw_user_meta_data ->> 'subjects_of_interest', ',')
-    end,
-    new.raw_user_meta_data ->> 'learning_goals'
+    current_user_id,
+    nullif(profile_data ->> 'full_name', ''),
+    nullif(profile_data ->> 'age', '')::integer,
+    nullif(profile_data ->> 'location', ''),
+    nullif(profile_data ->> 'school', ''),
+    nullif(profile_data ->> 'grade_level', ''),
+    coalesce(
+      array(select jsonb_array_elements_text(coalesce(profile_data -> 'subjects_of_interest', '[]'::jsonb))),
+      '{}'::text[]
+    ),
+    nullif(profile_data ->> 'learning_goals', ''),
+    nullif(profile_data ->> 'bio', '')
   )
-  on conflict (id) do nothing;
+  on conflict (id) do update set
+    full_name = coalesce(excluded.full_name, public.profiles.full_name),
+    age = coalesce(excluded.age, public.profiles.age),
+    location = coalesce(excluded.location, public.profiles.location),
+    school = coalesce(excluded.school, public.profiles.school),
+    grade_level = coalesce(excluded.grade_level, public.profiles.grade_level),
+    subjects_of_interest = case
+      when cardinality(excluded.subjects_of_interest) > 0 then excluded.subjects_of_interest
+      else public.profiles.subjects_of_interest
+    end,
+    learning_goals = coalesce(excluded.learning_goals, public.profiles.learning_goals),
+    bio = coalesce(excluded.bio, public.profiles.bio);
 
   insert into public.user_preferences (user_id)
-  values (new.id)
+  values (current_user_id)
   on conflict (user_id) do nothing;
 
-  return new;
+  with default_subjects(name, icon, gradient, topics) as (
+    values
+      ('Mathematics', '📐', 'from-blue-500 to-cyan-500', array['Algebra', 'Geometry', 'Calculus', 'Statistics', 'Trigonometry']),
+      ('Physics', '⚛️', 'from-red-500 to-orange-500', array['Kinematics', 'Dynamics', 'Thermodynamics', 'Electromagnetism', 'Optics']),
+      ('Science', '🔬', 'from-green-500 to-emerald-500', array['Chemistry', 'Biology', 'Astronomy', 'Earth Science', 'Environmental Science']),
+      ('Computer Science', '💻', 'from-purple-500 to-violet-500', array['Programming', 'Data Structures', 'Algorithms', 'Web Development', 'Machine Learning'])
+  ),
+  inserted_subjects as (
+    insert into public.subjects (name, icon, gradient, total_topics, user_id)
+    select name, icon, gradient, cardinality(topics), current_user_id
+    from default_subjects
+    on conflict (user_id, name) do update set
+      icon = excluded.icon,
+      gradient = excluded.gradient,
+      total_topics = excluded.total_topics
+    returning id, name
+  )
+  insert into public.topics (name, subject_id)
+  select topic_name, inserted_subjects.id
+  from inserted_subjects
+  join default_subjects using (name)
+  cross join lateral unnest(default_subjects.topics) as topic_name
+  on conflict (subject_id, name) do nothing;
 end;
 $$;
-
-create trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute function public.handle_new_user();
-
--- Backfill profiles when the project already has users before this migration.
-insert into public.profiles (id, full_name, avatar_url)
-select
-  id,
-  raw_user_meta_data ->> 'full_name',
-  raw_user_meta_data ->> 'avatar_url'
-from auth.users
-on conflict (id) do nothing;
-
-insert into public.user_preferences (user_id)
-select id from auth.users
-on conflict (user_id) do nothing;
 
 create or replace function public.is_subject_owner(subject_uuid uuid)
 returns boolean
@@ -382,7 +427,7 @@ as $$
     select 1
     from public.subjects
     where id = subject_uuid
-      and user_id = auth.uid()
+      and user_id = public.current_user_id()
   );
 $$;
 
@@ -397,7 +442,7 @@ as $$
     select 1
     from public.lesson_sessions
     where id = session_uuid
-      and user_id = auth.uid()
+      and user_id = public.current_user_id()
   );
 $$;
 
@@ -419,18 +464,20 @@ alter table public.lesson_progress enable row level security;
 alter table public.master_lesson_plans enable row level security;
 
 create policy profiles_select_own on public.profiles
-  for select to authenticated using (id = auth.uid());
+  for select to authenticated using (id = public.current_user_id());
+create policy profiles_insert_own on public.profiles
+  for insert to authenticated with check (id = public.current_user_id());
 create policy profiles_update_own on public.profiles
-  for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
+  for update to authenticated using (id = public.current_user_id()) with check (id = public.current_user_id());
 
 create policy subjects_select_own on public.subjects
-  for select to authenticated using (user_id = auth.uid());
+  for select to authenticated using (user_id = public.current_user_id());
 create policy subjects_insert_own on public.subjects
-  for insert to authenticated with check (user_id = auth.uid());
+  for insert to authenticated with check (user_id = public.current_user_id());
 create policy subjects_update_own on public.subjects
-  for update to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+  for update to authenticated using (user_id = public.current_user_id()) with check (user_id = public.current_user_id());
 create policy subjects_delete_own on public.subjects
-  for delete to authenticated using (user_id = auth.uid());
+  for delete to authenticated using (user_id = public.current_user_id());
 
 create policy topics_select_own on public.topics
   for select to authenticated using (public.is_subject_owner(subject_id));
@@ -443,17 +490,17 @@ create policy topics_delete_own on public.topics
   for delete to authenticated using (public.is_subject_owner(subject_id));
 
 create policy achievements_own on public.achievements
-  for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+  for all to authenticated using (user_id = public.current_user_id()) with check (user_id = public.current_user_id());
 create policy study_sessions_own on public.study_sessions
-  for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+  for all to authenticated using (user_id = public.current_user_id()) with check (user_id = public.current_user_id());
 create policy quiz_attempts_own on public.quiz_attempts
-  for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+  for all to authenticated using (user_id = public.current_user_id()) with check (user_id = public.current_user_id());
 create policy daily_progress_own on public.daily_progress
-  for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+  for all to authenticated using (user_id = public.current_user_id()) with check (user_id = public.current_user_id());
 create policy learning_analytics_own on public.learning_analytics
-  for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+  for all to authenticated using (user_id = public.current_user_id()) with check (user_id = public.current_user_id());
 create policy user_preferences_own on public.user_preferences
-  for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+  for all to authenticated using (user_id = public.current_user_id()) with check (user_id = public.current_user_id());
 
 create policy resources_select_own on public.resources
   for select to authenticated using (public.is_subject_owner(subject_id));
@@ -466,9 +513,9 @@ create policy resources_delete_own on public.resources
   for delete to authenticated using (public.is_subject_owner(subject_id));
 
 create policy lessons_own on public.lessons
-  for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+  for all to authenticated using (user_id = public.current_user_id()) with check (user_id = public.current_user_id());
 create policy lesson_sessions_own on public.lesson_sessions
-  for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+  for all to authenticated using (user_id = public.current_user_id()) with check (user_id = public.current_user_id());
 create policy lesson_chunks_own on public.lesson_chunks
   for all to authenticated using (public.is_session_owner(session_id))
   with check (public.is_session_owner(session_id));
@@ -511,7 +558,7 @@ as $$
 $$;
 
 create or replace function public.create_lesson(
-  user_uuid uuid,
+  user_uuid text,
   subject_uuid uuid,
   topic_uuid uuid,
   lesson_text text,
@@ -525,7 +572,7 @@ as $$
 declare
   lesson_id uuid;
 begin
-  if user_uuid <> auth.uid() then
+  if user_uuid <> public.current_user_id() then
     raise exception 'Access denied' using errcode = '42501';
   end if;
 
@@ -554,7 +601,7 @@ begin
   update public.lessons
   set audio_url = audio_file_url
   where id = lesson_uuid
-    and user_id = auth.uid();
+    and user_id = public.current_user_id();
 
   if not found then
     raise exception 'Lesson not found or access denied' using errcode = '42501';
@@ -591,7 +638,7 @@ begin
 end;
 $$;
 
-create or replace function public.get_user_analytics(user_uuid uuid)
+create or replace function public.get_user_analytics(user_uuid text)
 returns json
 language plpgsql
 stable
@@ -601,7 +648,7 @@ as $$
 declare
   result json;
 begin
-  if user_uuid <> auth.uid() then
+  if user_uuid <> public.current_user_id() then
     raise exception 'Access denied' using errcode = '42501';
   end if;
 
@@ -630,7 +677,7 @@ end;
 $$;
 
 create or replace function public.update_daily_progress(
-  user_uuid uuid,
+  user_uuid text,
   study_minutes integer,
   session_completed boolean,
   quiz_taken boolean,
@@ -642,7 +689,7 @@ security invoker
 set search_path = public, auth
 as $$
 begin
-  if user_uuid <> auth.uid() then
+  if user_uuid <> public.current_user_id() then
     raise exception 'Access denied' using errcode = '42501';
   end if;
 
@@ -671,7 +718,7 @@ begin
 end;
 $$;
 
-create or replace function public.get_weekly_progress(user_uuid uuid)
+create or replace function public.get_weekly_progress(user_uuid text)
 returns json
 language plpgsql
 stable
@@ -681,7 +728,7 @@ as $$
 declare
   result json;
 begin
-  if user_uuid <> auth.uid() then
+  if user_uuid <> public.current_user_id() then
     raise exception 'Access denied' using errcode = '42501';
   end if;
 
@@ -973,62 +1020,25 @@ begin
 end;
 $$;
 
-grant usage on schema public to anon, authenticated;
+grant usage on schema public to anonymous, authenticated;
 grant select, insert, update, delete on all tables in schema public to authenticated;
 grant usage, select on all sequences in schema public to authenticated;
+grant execute on function public.current_user_id() to authenticated;
+revoke execute on all functions in schema public from public, anonymous;
 grant execute on function public.is_subject_owner(uuid) to authenticated;
 grant execute on function public.is_session_owner(uuid) to authenticated;
 grant execute on function public.get_resources_by_topic(uuid, uuid) to authenticated;
-grant execute on function public.create_lesson(uuid, uuid, uuid, text, text) to authenticated;
+grant execute on function public.create_lesson(text, uuid, uuid, text, text) to authenticated;
 grant execute on function public.update_lesson_audio(uuid, text) to authenticated;
 grant execute on function public.get_or_create_master_lesson_plan(uuid, uuid) to authenticated;
-grant execute on function public.get_user_analytics(uuid) to authenticated;
-grant execute on function public.update_daily_progress(uuid, integer, boolean, boolean, integer)
+grant execute on function public.get_user_analytics(text) to authenticated;
+grant execute on function public.update_daily_progress(text, integer, boolean, boolean, integer)
   to authenticated;
-grant execute on function public.get_weekly_progress(uuid) to authenticated;
+grant execute on function public.get_weekly_progress(text) to authenticated;
 grant execute on function public.update_session_progress(uuid) to authenticated;
 grant execute on function public.get_session_progress_summary(uuid) to authenticated;
 grant execute on function public.add_concept_progress(uuid, text, text, jsonb) to authenticated;
 grant execute on function public.mark_concept_delivered(uuid, numeric) to authenticated;
 grant execute on function public.check_session_completion_readiness(uuid, numeric, integer, integer)
   to authenticated;
-
-insert into storage.buckets (id, name, public, file_size_limit)
-values
-  ('resources', 'resources', true, 52428800),
-  ('lessons', 'lessons', true, 10485760),
-  ('audio', 'audio', true, 10485760)
-on conflict (id) do update
-set
-  public = excluded.public,
-  file_size_limit = excluded.file_size_limit;
-
-create policy storage_public_read_koro
-  on storage.objects for select
-  to public
-  using (bucket_id in ('resources', 'lessons', 'audio'));
-
-create policy storage_authenticated_insert_koro
-  on storage.objects for insert
-  to authenticated
-  with check (bucket_id in ('resources', 'lessons', 'audio'));
-
-create policy storage_owner_update_koro
-  on storage.objects for update
-  to authenticated
-  using (
-    bucket_id in ('resources', 'lessons', 'audio')
-    and owner_id = auth.uid()::text
-  )
-  with check (
-    bucket_id in ('resources', 'lessons', 'audio')
-    and owner_id = auth.uid()::text
-  );
-
-create policy storage_owner_delete_koro
-  on storage.objects for delete
-  to authenticated
-  using (
-    bucket_id in ('resources', 'lessons', 'audio')
-    and owner_id = auth.uid()::text
-  );
+grant execute on function public.initialize_user_profile(jsonb) to authenticated;

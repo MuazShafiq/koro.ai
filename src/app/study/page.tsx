@@ -15,7 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
-import { useSupabase } from '../../utils/supabase/provider';
+import { useNeon } from '../../utils/supabase/provider';
 import { AITutorInterface } from '@/components/lesson/AITutorInterface';
 import { toast } from 'sonner';
 import { Database } from '@/utils/supabase/database.types';
@@ -37,7 +37,7 @@ const ACTIVE_LOCAL_SESSION_KEY = 'koro-active-tutor-session';
 
 export default function StudyPage() {
   const { currentSubject, userProgress } = useStore();
-  const { supabase } = useSupabase();
+  const { supabase } = useNeon();
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [topics, setTopics] = useState<Topic[]>([]);
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
@@ -57,7 +57,7 @@ export default function StudyPage() {
     }
   }, []);
   
-  // Fetch subjects and topics from Supabase
+  // Fetch subjects and topics from Neon.
   useEffect(() => {
     async function fetchData() {
       try {

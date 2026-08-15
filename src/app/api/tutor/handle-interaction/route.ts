@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { uploadAudio } from '@/lib/storage/audio';
 import { hostedAI as openai, hostedAIModel } from '@/lib/services/hostedAI';
 import { logger } from '@/lib/logger';
 import { convertTextToSpeech } from '@/lib/services/cloudflareSpeech';
@@ -285,38 +286,21 @@ Respond in this JSON format:
           bufferSize: ttsResponse.audioBuffer.byteLength
         }, requestId);
         
-        // Upload audio to Supabase Storage
+        // Store generated audio in Vercel Blob.
         const fileName = `interaction-audio/${sessionId}/response-${interaction.id}-${Date.now()}.mp3`;
-        logger.storage('Uploading to Supabase storage', { fileName }, requestId);
-        
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('lessons')
-          .upload(fileName, ttsResponse.audioBuffer, {
-            contentType: 'audio/mpeg',
-            cacheControl: '3600'
-          });
+        logger.storage('Uploading to Vercel Blob', { fileName }, requestId);
+        const blob = await uploadAudio(fileName, ttsResponse.audioBuffer);
+        audioUrl = blob.url;
+        logger.storage('Audio uploaded successfully', { path: blob.pathname, audioUrl }, requestId);
 
-        if (uploadError) {
-          logger.error('HANDLE-INTERACTION', 'Error uploading audio', { uploadError }, requestId);
-        } else {
-          logger.storage('Audio uploaded successfully', { path: uploadData.path }, requestId);
-          // Get public URL
-          const { data: urlData } = supabase.storage
-            .from('lessons')
-            .getPublicUrl(fileName);
-          
-          audioUrl = urlData.publicUrl;
-          logger.storage('Audio URL generated', { audioUrl }, requestId);
-          
-          // Update the interaction record with audio URL
-          const { error: audioUpdateError } = await supabase
-            .from('student_assessments')
-            .update({ audio_url: audioUrl })
-            .eq('id', interaction.id);
-            
-          if (audioUpdateError) {
-            logger.warn('HANDLE-INTERACTION', 'Failed to update interaction with audio URL', { audioUpdateError }, requestId);
-          }
+        // Update the interaction record with audio URL.
+        const { error: audioUpdateError } = await supabase
+          .from('student_assessments')
+          .update({ audio_url: audioUrl })
+          .eq('id', interaction.id);
+
+        if (audioUpdateError) {
+          logger.warn('HANDLE-INTERACTION', 'Failed to update interaction with audio URL', { audioUpdateError }, requestId);
         }
       } else {
         logger.error('HANDLE-INTERACTION', 'Audio generation failed', {

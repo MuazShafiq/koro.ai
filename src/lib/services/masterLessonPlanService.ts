@@ -1,4 +1,4 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { NeonPostgrestClient } from '@neondatabase/neon-js';
 import { logger } from '@/lib/logger';
 import { hostedAI as openai, hostedAIModel } from '@/lib/services/hostedAI';
 
@@ -76,7 +76,7 @@ export interface MasterLessonPlan {
 }
 
 export class MasterLessonPlanService {
-  constructor(private readonly supabase: SupabaseClient<any>) {}
+  constructor(private readonly supabase: NeonPostgrestClient<any>) {}
 
   /**
    * Get existing master lesson plan or create a new one

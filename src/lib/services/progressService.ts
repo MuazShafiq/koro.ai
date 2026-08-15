@@ -1,4 +1,4 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { NeonPostgrestClient } from '@neondatabase/neon-js';
 import { logger } from '@/lib/logger';
 
 export interface ConceptProgress {
@@ -55,7 +55,7 @@ export interface CompletionReadiness {
 }
 
 export class ProgressService {
-  constructor(private readonly supabase: SupabaseClient<any>) {}
+  constructor(private readonly supabase: NeonPostgrestClient<any>) {}
 
   /**
    * Analyze RAG content to extract concepts, equations, and structure
