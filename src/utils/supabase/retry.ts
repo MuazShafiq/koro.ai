@@ -1,4 +1,4 @@
-import { SupabaseClient } from '@supabase/supabase-js';
+import type { ServerDataClient } from './server';
 import { logger } from '@/lib/logger';
 
 export interface RetryOptions {
@@ -9,7 +9,7 @@ export interface RetryOptions {
 }
 
 /**
- * Execute a Supabase operation with retry logic for network failures
+ * Execute a Neon operation with retry logic for network failures
  */
 export async function withRetry<T>(
   operation: () => Promise<T>,
@@ -28,7 +28,7 @@ export async function withRetry<T>(
     try {
       const result = await operation();
       
-      // If this is a Supabase result object, check for errors
+      // If this is a PostgREST result object, check for errors
       if (result && typeof result === 'object' && 'error' in result) {
         const supabaseResult = result as any;
         
@@ -102,11 +102,11 @@ export function isRetryableError(error: unknown): boolean {
 }
 
 /**
- * Wrapper for Supabase auth operations with retry logic
+ * Wrapper for Neon Auth operations with retry logic
  */
 export async function withAuthRetry<T>(
-  supabase: SupabaseClient,
-  operation: (client: SupabaseClient) => Promise<T>,
+  supabase: ServerDataClient,
+  operation: (client: ServerDataClient) => Promise<T>,
   options: RetryOptions = {}
 ): Promise<T> {
   return withRetry(
@@ -116,11 +116,11 @@ export async function withAuthRetry<T>(
 }
 
 /**
- * Wrapper for Supabase database operations with retry logic
+ * Wrapper for Neon database operations with retry logic
  */
 export async function withDatabaseRetry<T>(
-  supabase: SupabaseClient,
-  operation: (client: SupabaseClient) => Promise<T>,
+  supabase: ServerDataClient,
+  operation: (client: ServerDataClient) => Promise<T>,
   options: RetryOptions = {}
 ): Promise<T> {
   return withRetry(

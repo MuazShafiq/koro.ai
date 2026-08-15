@@ -1005,6 +1005,10 @@ export type Database = {
       }
       get_user_analytics: { Args: { user_uuid: string }; Returns: Json }
       get_weekly_progress: { Args: { user_uuid: string }; Returns: Json }
+      initialize_user_profile: {
+        Args: { profile_data?: Json }
+        Returns: undefined
+      }
       is_session_owner: { Args: { session_uuid: string }; Returns: boolean }
       is_subject_owner: { Args: { subject_uuid: string }; Returns: boolean }
       mark_concept_delivered: {

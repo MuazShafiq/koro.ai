@@ -7,12 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { useSupabase } from '../../utils/supabase/provider';
+import { useNeon } from '../../utils/supabase/provider';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 
 export function AuthForm() {
   const router = useRouter();
-  const { supabase } = useSupabase();
+  const { supabase } = useNeon();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);

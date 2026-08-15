@@ -1,14 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { convertTextToSpeech, type ContentType } from '@/lib/services/cloudflareSpeech';
-import { createClient as createSupabaseAdminClient } from '@supabase/supabase-js';
+import { uploadAudio } from '@/lib/storage/audio';
 import { createClient as createServerClient } from '@/utils/supabase/server';
 
 export const maxDuration = 60;
-
-const supabase = createSupabaseAdminClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321',
-  process.env.SUPABASE_SECRET_KEY || 'missing-secret-key'
-);
 
 async function requireUser() {
   const client = await createServerClient();
@@ -53,31 +48,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Upload audio to Supabase Storage
+    // Store generated audio in Vercel Blob.
     const fileName = `tts-audio/generated-${Date.now()}-${Math.random().toString(36).substring(7)}.mp3`;
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('lessons')
-      .upload(fileName, ttsResponse.audioBuffer, {
-        contentType: 'audio/mpeg',
-        cacheControl: '3600'
-      });
-
-    if (uploadError) {
-      console.error('Error uploading audio to Supabase:', uploadError);
-      return NextResponse.json(
-        { error: 'Failed to upload audio' },
-        { status: 500 }
-      );
-    }
-
-    // Get public URL
-    const { data: urlData } = supabase.storage
-      .from('lessons')
-      .getPublicUrl(fileName);
+    const blob = await uploadAudio(fileName, ttsResponse.audioBuffer);
 
     return NextResponse.json({
       success: true,
-      audioUrl: urlData.publicUrl,
+      audioUrl: blob.url,
       duration: ttsResponse.estimatedDuration
     });
 
@@ -125,31 +102,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Upload audio to Supabase Storage
+    // Store generated audio in Vercel Blob.
     const fileName = `tts-audio/generated-${Date.now()}-${Math.random().toString(36).substring(7)}.mp3`;
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('lessons')
-      .upload(fileName, ttsResponse.audioBuffer, {
-        contentType: 'audio/mpeg',
-        cacheControl: '3600'
-      });
-
-    if (uploadError) {
-      console.error('Error uploading audio to Supabase:', uploadError);
-      return NextResponse.json(
-        { error: 'Failed to upload audio' },
-        { status: 500 }
-      );
-    }
-
-    // Get public URL
-    const { data: urlData } = supabase.storage
-      .from('lessons')
-      .getPublicUrl(fileName);
+    const blob = await uploadAudio(fileName, ttsResponse.audioBuffer);
 
     return NextResponse.json({
       success: true,
-      audioUrl: urlData.publicUrl,
+      audioUrl: blob.url,
       duration: ttsResponse.estimatedDuration
     });
 

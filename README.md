@@ -1,15 +1,15 @@
 # Koro.ai
 
-Koro.ai is a voice-first tutoring application built with Next.js. The deployed
-product uses Vercel, Supabase, and Cloudflare Workers AI. Localhost runs the
-same hosted flow for development; it is not a separate product.
+Koro.ai is a voice-first tutoring application built with Next.js. It uses
+Cloudflare Workers AI for lesson generation and speech, Neon for authentication
+and Postgres data, and Vercel Blob for generated audio.
 
 **Live app:** [koro-ai-lime.vercel.app](https://koro-ai-lime.vercel.app)
 
 ## Local development
 
-Requirements: Node.js 20+, npm, a Supabase project, and Cloudflare Workers AI
-credentials.
+Requirements: Node.js 20.9+, npm, a Neon project with Auth and the Data API
+enabled, a Vercel Blob store, and Cloudflare Workers AI credentials.
 
 ```powershell
 npm install
@@ -23,42 +23,38 @@ then start a tutor session.
 Required `.env.local` values:
 
 ```dotenv
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
-SUPABASE_SECRET_KEY=
+DATABASE_URL=
+NEON_AUTH_BASE_URL=
+NEXT_PUBLIC_NEON_AUTH_URL=
+NEON_DATA_API_URL=
+NEXT_PUBLIC_NEON_DATA_API_URL=
+NEON_AUTH_COOKIE_SECRET=
+BLOB_READ_WRITE_TOKEN=
 
 CLOUDFLARE_ACCOUNT_ID=
 CLOUDFLARE_AI_TOKEN=
 ```
 
-Cloudflare supplies both lesson generation and Aura speech. Supabase stores
-accounts, tutor state, progress, resources, and generated audio. The app is
-designed to remain within provider free allocations, but those allocations and
-limits belong to the providers and can change.
+`NEON_AUTH_COOKIE_SECRET` must be at least 32 characters. Never expose the
+database URL, cookie secret, Blob token, or Cloudflare token through a
+`NEXT_PUBLIC_` variable.
 
 ## Database setup
 
-The canonical schema is in `supabase/migrations/`. Link the intended Supabase
-project and push it:
-
-```powershell
-npx supabase login
-npx supabase link --project-ref YOUR_PROJECT_REF
-npx supabase db push
-```
-
-Never expose `SUPABASE_SECRET_KEY` or `CLOUDFLARE_AI_TOKEN` through a
-`NEXT_PUBLIC_` variable.
+Enable Neon Auth and the Neon Data API, then run
+[`neon/migrations/0001_koro_schema.sql`](./neon/migrations/0001_koro_schema.sql)
+in the Neon SQL Editor. The migration creates the application schema, functions,
+grants, and row-level security policies. More detail is in
+[`neon/README.md`](./neon/README.md).
 
 ## Deployment
 
-The production app is available at
-[koro-ai-lime.vercel.app](https://koro-ai-lime.vercel.app). To deploy your own
-instance, create a Vercel project for this repository and add the same hosted
-environment variables in Vercel. Use the production Supabase URL and keys. The
-application does not require a local model or a long-running local process after
-deployment.
-Cloudflare Workers AI is the only configured AI provider; the model is selected
-in code so deployment environments stay consistent.
+Connect the repository to Vercel, add Neon through the Vercel Marketplace, and
+create a Vercel Blob store linked to the same project. Add the Cloudflare values
+and `NEON_AUTH_COOKIE_SECRET` to the Vercel environment, then deploy normally.
+
+Neon compute scales to zero when idle and wakes on the next request, which makes
+this architecture suitable for a portfolio project without a weekly activity
+requirement. Provider free-plan allocations can change.
 
 Outstanding engineering and release work is tracked in [ISSUES.md](./ISSUES.md).

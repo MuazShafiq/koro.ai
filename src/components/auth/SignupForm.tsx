@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useSupabase } from '../../utils/supabase/provider';
+import { useNeon } from '../../utils/supabase/provider';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Mail, Lock, User, MapPin, GraduationCap, BookOpen, Target } from 'lucide-react';
 
@@ -42,7 +42,7 @@ export default function SignupForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const { supabase } = useSupabase();
+  const { supabase } = useNeon();
   const router = useRouter();
 
   const handleInputChange = (field: string, value: string | string[]) => {
@@ -112,10 +112,36 @@ export default function SignupForm() {
       if (error) {
         toast.error(error.message);
       } else {
-        toast.success('Account created successfully! Please check your email to verify your account.');
-        router.push('/login');
+        if (data.user && data.session) {
+          const profileResponse = await fetch('/api/profile/initialize', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              full_name: formData.fullName,
+              age: formData.age ? parseInt(formData.age) : null,
+              location: formData.location,
+              school: formData.school,
+              grade_level: formData.gradeLevel,
+              subjects_of_interest: formData.subjectsOfInterest,
+              learning_goals: formData.learningGoals,
+              bio: formData.bio,
+            }),
+          });
+
+          if (!profileResponse.ok) {
+            toast.error('Your account was created, but profile setup failed. Please sign in and try again.');
+            router.push('/login');
+            return;
+          }
+
+          toast.success('Account created successfully!');
+          router.push('/dashboard');
+        } else {
+          toast.success('Account created successfully! Please check your email to verify your account.');
+          router.push('/login');
+        }
       }
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred');
     } finally {
       setIsLoading(false);
